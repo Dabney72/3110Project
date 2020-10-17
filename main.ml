@@ -1,0 +1,1 @@
+print_endline "Successfully ran main.ml"
