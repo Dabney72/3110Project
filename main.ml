@@ -13,14 +13,14 @@ let create_grid (start_x, start_y) num_rows num_cols box_size =
   done
 
 let start () =
-  Graphics.open_graph "";
+  open_graph "";
   let width = size_x () in
   let height = size_y () in
   create_grid (width / 2, height / 2) 20 10 20;
   while true do
     let st = wait_next_event [ Mouse_motion; Button_down; Key_pressed ] in
     synchronize ();
-    if st.keypressed then raise Exit
+    if st.keypressed then close_graph ();
   done
 
 let () = start ()
