@@ -1,4 +1,6 @@
 #require "graphics";;
-#use "main.ml";;
 #directory "_build";;
-#load "state.ml";;
+#load "display.cmo";;
+#load "input.cmo";;
+#load "state.cmo";;
+#load "tetromino.cmo";;
