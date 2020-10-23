@@ -1,15 +1,14 @@
-module type Tetromino = sig
-  type tetromino
+(** The type [tetromino] represents a tetris piece. *)
+type t
 
-  type t =
-    | I_block
-    | J_block
-    | L_block
-    | O_block
-    | S_block
-    | T_block
-    | Z_block
+(** [generate_list ()] is a list containing one of each of the seven
+    tetrominoes in a random order. *)
+val generate_list : unit -> t list
 
-  val generate_list : unit -> t list
+(** [get_width tetromino] is the number of blocks that [tetromino] takes up
+    in the x direction. *)
+val get_width : t -> int
 
-end
+(** [get_height tetromino] is the number of blocks that [tetromino] takes up
+    in the y direction. *)
+val get_height : t -> int

@@ -22,8 +22,18 @@ val fall : t -> unit
 
 val update_score : t -> unit
 
-(* val spawn_tetromino : Tetromino.t -> unit
+(** [grid_width st] is the width of the tetris grid in game state [st]. *)
+val grid_width : t -> int
 
-val get_upcoming_blocks : unit -> Tetromino.t list *)
+(** [grid_height st] is the height of the tetris grid in game state [st]. *)
+val grid_height : t -> int
+
+(** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
+    at the top of the grid. *)
+val spawn_tetromino : t -> Tetromino.t -> unit
+
+(** [get_upcoming_blocks st] is a list of the upcoming tetrominoes, with the
+    leftmost entries being the ones that will spawn next. *)
+val get_upcoming_blocks : t -> Tetromino.t list
 
 

@@ -8,7 +8,7 @@ type t =
   | Hold
 
 (** [update cmd state] mutates [state] by executing the command [cmd]. *)
-(* val update : t -> State.t -> unit *)
+val update : t -> State.t -> unit
 
 (** [parse c] is the command given by the keyboard input [c]. *)
 val parse : char -> t
