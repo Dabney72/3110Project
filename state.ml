@@ -1,14 +1,14 @@
 type falling = {
-  block : Tetromino.t;
-  pos : (int * int);
+  mutable block : Tetromino.t;
+  mutable pos : (int * int);
 }
 
 type t = {
-  grid : int array array;
-  falling_block : falling option;
-  upcoming_blocks : Tetromino.t list;
-  held_block : Tetromino.t option;
-  score : int
+  mutable grid : int array array;
+  mutable falling_block : falling option;
+  mutable upcoming_blocks : Tetromino.t list;
+  mutable held_block : Tetromino.t option;
+  mutable score : int
 }
 
 let initialize () =
