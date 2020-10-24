@@ -26,7 +26,7 @@ let draw_grid arr =
   done
 
 (** [draw_start_screen] opens a graph to display the start screen of tetris. *)
-let draw_start_screen =
+let draw_start_screen () =
   open_graph "";
   moveto ((size_x () / 2) - 72) (size_y () - 50);
   draw_string "Welcome to OCaml Tetris!";
@@ -45,8 +45,8 @@ let draw_start_screen =
   moveto ((size_x () / 2) - 115) 50;
   draw_string "push the [space bar] to start the game"
 
-let draw_game_screen =
+let draw_game_screen () =
   failwith "Unimplemented"
 
-let draw_game_over_screen =
+let draw_game_over_screen () =
   failwith "Unimplemented"

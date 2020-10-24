@@ -1,4 +1,4 @@
-val draw_grid : int array -> unit
+val draw_grid : int array array -> unit
 
 val draw_start_screen : unit -> unit
 
