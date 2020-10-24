@@ -1,4 +1,24 @@
-type t = unit
+type falling = {
+  block : Tetromino.t;
+  pos : (int * int);
+}
+
+type t = {
+  grid : int array array;
+  falling_block : falling option;
+  upcoming_blocks : Tetromino.t list;
+  held_block : Tetromino.t option;
+  score : int
+}
+
+let initialize () =
+  {
+    grid = Array.make_matrix 10 20 0;
+    falling_block = None;
+    upcoming_blocks = Tetromino.generate_list ();
+    held_block = None;
+    score = 0;
+  }
 
 let rotate st =
   failwith "Unimplemented"
@@ -39,9 +59,9 @@ let get_top_left_pos st tetromino =
 let spawn_tetromino st tetromino =
   match get_top_left_pos st tetromino with
   | (r, c) -> assert false (* iterate / pattern match against tetromino's 
-  composition list, and for every coordinate (x,y), set the entry in the
-  matrix given by (r + x, c + y) to 1 (later, we will have to also check to
-  make sure the matrix entry isn't already 1). *)
+                              composition list, and for every coordinate (x,y), set the entry in the
+                              matrix given by (r + x, c + y) to 1 (later, we will have to also check to
+                              make sure the matrix entry isn't already 1). *)
 
 let get_upcoming_blocks st = 
   failwith "Unimplemented"

@@ -8,6 +8,14 @@
 *)
 type t
 
+(** [initialize ()] creates a new state that contains the following:
+    - Empty grid
+    - Score set to zero
+    - List of upcoming blocks
+    - No upcoming blocks
+    - No  block being held*)
+val initialize : unit -> t
+
 val rotate : t -> unit
 
 val move_left : t -> unit
