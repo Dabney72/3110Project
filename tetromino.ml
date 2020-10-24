@@ -28,7 +28,7 @@ let o_block = {
 }
 
 let s_block = {
-  composition = [(0, 1); (1, 1); (1, 0); (2, 0);];
+  composition = [(0, 1); (1, 1); (1, 0); (2, 0)];
 }
 
 let t_block = {
@@ -54,5 +54,5 @@ let generate_list () =
 let get_width tetromino = 
   failwith "Unimplemented"
 
-let rotate t = 
+let rotate tetromino =
   failwith "Unimplemented"

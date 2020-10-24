@@ -17,3 +17,6 @@ test:
 
 start:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+
+zip:
+	zip tetris.zip *.ml* *.json _tags Makefile .merlin .ocamlinit -x _build
