@@ -1,5 +1,5 @@
 *Make sure you have the Graphics package installed using OPAM in addition to all
-the base line packages from the class OCaml install. 
-(the command is opam install Graphics)
+the baseline packages from the class OCaml install. 
+(the command is "opam install Graphics")
 
 *Then run "make start" from the project directory.
