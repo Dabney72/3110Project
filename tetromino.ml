@@ -53,4 +53,6 @@ let generate_list () =
 
 let get_width tetromino = 
   failwith "Unimplemented"
-  
+
+let rotate t = 
+  failwith "Unimplemented"

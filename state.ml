@@ -20,6 +20,9 @@ let initialize () =
     score = 0;
   }
 
+let get_grid t =
+  t.grid
+
 let rotate st =
   failwith "Unimplemented"
 

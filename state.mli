@@ -16,6 +16,8 @@ type t
     - No  block being held*)
 val initialize : unit -> t
 
+val get_grid: t -> int array array 
+
 val rotate : t -> unit
 
 val move_left : t -> unit
