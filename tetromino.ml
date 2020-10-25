@@ -54,5 +54,13 @@ let generate_list () =
 let get_width tetromino = 
   failwith "Unimplemented"
 
-let rotate tetromino =
-  failwith "Unimplemented"
+(** [rotate_composition offset comp] is a new list of coordinates obtained
+    after rotating each coordinate in [comp] 90 degrees clockwise. *)
+let rec rotate_composition offset = function
+  | [] -> []
+  | (x, y) :: t -> (-y + offset, x) :: rotate_composition offset t
+
+let rotate tetromino = 
+  let offset = get_width tetromino - 1 in {
+    composition = rotate_composition offset tetromino.composition
+  }
