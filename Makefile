@@ -19,4 +19,8 @@ start:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
 
 zip:
-	zip tetris.zip *.ml* *.json _tags Makefile .merlin .ocamlinit -x _build
+	zip tetris.zip *.ml* *.txt _tags Makefile .merlin .ocamlinit -x _build
+
+clean:
+	ocamlbuild -clean
+	rm -rf doc.public doc.private tetris.zip
