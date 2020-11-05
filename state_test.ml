@@ -15,6 +15,9 @@ let pp_matrix (m : int array array) =
   let s = Array.fold_left aux "" m in 
   "[|" ^ String.sub s 2 (String.length s - 2) ^ "\n|]"
 
+(** [spawn_tetromino_test name st tetromino grid] is an OUnit test case named 
+    [name] for [spawn_tetromino st tetromino] asserting that the output 
+    is [grid]. *)
 let spawn_tetromino_test name st tetromino grid =
   name >:: fun ctxt ->  
     assert_equal grid (spawn_tetromino st tetromino; get_grid st) 
@@ -27,6 +30,11 @@ let spawn_tetromino_test name st tetromino grid =
 let initial = State.initialize
 let tenbyseventeen = Array.make_matrix 17 10 0
 let create_10x20 top3 = Array.append top3 tenbyseventeen 
+let iblock_top3 = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;1;1;1;1;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;0|]
+|]
 let lblock_top3 = [|
   [|0;0;0;1;0;0;0;0;0;0|]; 
   [|0;0;0;1;1;1;0;0;0;0|]; 
@@ -58,6 +66,7 @@ let zblock_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
+let iblock_grid = create_10x20 iblock_top3
 let lblock_grid = create_10x20 lblock_top3
 let jblock_grid = create_10x20 jblock_top3 
 let oblock_grid = create_10x20 oblock_top3 
@@ -67,6 +76,8 @@ let zblock_grid = create_10x20 zblock_top3
 
 
 let spawn_tetromino_tests = [
+  spawn_tetromino_test "spawn iblock" (initial ()) 
+    (Tetromino.init_tetromino I_block) iblock_grid;
   spawn_tetromino_test "spawn lblock" (initial ()) 
     (Tetromino.init_tetromino L_block) lblock_grid;
   spawn_tetromino_test "spawn jblock" (initial ())
