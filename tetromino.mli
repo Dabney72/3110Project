@@ -13,9 +13,13 @@ type tetromino_type =
     connected orthogonally. *)
 type t
 
-(** [create_tetromino t_type] is the tetromino given by the tetromino type
+(** [init_tetromino t_type] is the tetromino given by the tetromino type
     [t_type]. *)
-val create_tetromino : tetromino_type -> t
+val init_tetromino : tetromino_type -> t
+
+(** [create_tetromino comp w] is a tetromino with the composition [comp]
+    and width [w]. *)
+val create_tetromino : (int * int) list -> int -> t
 
 (** [rotate tetromino] is a new tetromino after [tetromino] is rotated 90
     degrees clockwise. It will shift the tetromino after rotation in order
@@ -29,3 +33,9 @@ val generate_list : unit -> t list
 (** [get_width tetromino] is the width/height of the square that encloses
     [tetromino]. *)
 val get_width : t -> int
+
+(** [get_comp tetromino] is list of the four coordinates of [tetromino]. *)
+val get_comp : t -> (int * int) list
+
+(** [to_string tetromino] is a string representation of [tetromino]. *)
+val to_string : t -> string
