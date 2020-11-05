@@ -16,7 +16,13 @@ type t
     - No  block being held*)
 val initialize : unit -> t
 
-val get_grid: t -> int array array 
+val get_grid : t -> int array array 
+
+val get_score : t -> int
+
+val get_hold : t -> Tetromino.t option
+
+val get_upcoming : t -> Tetromino.t list
 
 val rotate : t -> unit
 

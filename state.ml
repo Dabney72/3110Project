@@ -23,6 +23,15 @@ let initialize () =
 let get_grid t =
   t.grid
 
+let get_score t =
+  t.score
+
+let get_hold t =
+  t.held_block
+
+let get_upcoming t =
+  t.upcoming_blocks
+
 let rotate st =
   failwith "Unimplemented"
 
