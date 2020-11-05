@@ -49,7 +49,10 @@ let create_tetromino = function
   | Z_block -> z_block
 
 let generate_list () = 
-  failwith "Unimplemented"
+  let ct_list = [i_block;l_block;j_block;o_block;s_block;t_block;
+                 z_block] in
+  let start_lst = List.map (fun c -> (Random.bits (),c)) ct_list
+  in List.sort compare start_lst |> List.map snd 
 
 let get_width tetromino = 
   failwith "Unimplemented"
