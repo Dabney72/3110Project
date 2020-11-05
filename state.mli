@@ -51,5 +51,3 @@ val spawn_tetromino : t -> Tetromino.t -> unit
 (** [get_upcoming_blocks st] is a list of the upcoming tetrominoes, with the
     leftmost entries being the ones that will spawn next. *)
 val get_upcoming_blocks : t -> Tetromino.t list
-
-

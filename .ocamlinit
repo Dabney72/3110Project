@@ -2,5 +2,5 @@
 #directory "_build";;
 #load "display.cmo";;
 #load "input.cmo";;
-#load "state.cmo";;
 #load "tetromino.cmo";;
+#load "state.cmo";;

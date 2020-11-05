@@ -2,6 +2,7 @@ MODULES=main display input state tetromino
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
+STATE_TEST = state_test.byte
 TETR_TEST = tetromino_test.byte
 TEST=test.byte
 MAIN=main.byte
@@ -15,10 +16,13 @@ build:
 
 tetr_test:
 	$(OCAMLBUILD) -tag 'debug' $(TETR_TEST) && ./$(TETR_TEST)
+	
+state_test:
+	$(OCAMLBUILD) -tag 'debug' $(STATE_TEST) && ./$(STATE_TEST)
 
-test_all:
-	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
+test:
 	$(OCAMLBUILD) -tag 'debug' $(TETR_TEST) && ./$(TETR_TEST)
+	$(OCAMLBUILD) -tag 'debug' $(STATE_TEST) && ./$(STATE_TEST)
 
 start:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
