@@ -4,7 +4,6 @@ MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
 STATE_TEST = state_test.byte
 TETR_TEST = tetromino_test.byte
-DISPLAY_TEST = display_test.byte
 TEST=test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind
@@ -14,9 +13,6 @@ default: build
 
 build:
 	$(OCAMLBUILD) $(OBJECTS)
-
-display_test:
-	$(OCAMLBUILD) -tag 'debug' $(DISPLAY_TEST) && ./$(DISPLAY_TEST)
 
 tetr_test:
 	$(OCAMLBUILD) -tag 'debug' $(TETR_TEST) && ./$(TETR_TEST)
