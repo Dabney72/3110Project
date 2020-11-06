@@ -13,7 +13,7 @@ type t = {
 
 let initialize () =
   {
-    grid = Array.make_matrix 20 10 0;
+    grid = Array.make_matrix 10 20 0;
     falling_block = None;
     upcoming_blocks = []; (*Tetromino.generate_list ();*)
     held_block = None;
