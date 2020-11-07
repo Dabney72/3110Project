@@ -111,10 +111,26 @@ let rotate_tests = List.flatten [
     test_rotate T_block t1 t2 t3;
     test_rotate Z_block z1 z2 z3;
   ]
+let a  = generate_list ()
+let b = generate_list ()
+let c = generate_list ()
+
+let gen_test = [
+  "Generate list a has all 7 blocks" >:: 
+  (fun _ -> assert_equal 7 (List.sort_uniq compare a |> List.length) 
+      ~printer: (string_of_int));
+  "Generate list b has all 7 blocks" >:: 
+  (fun _ -> assert_equal 7 (List.sort_uniq compare b |> List.length) 
+      ~printer: (string_of_int));
+  "Generate list c has all 7 blocks" >:: 
+  (fun _ -> assert_equal 7 (List.sort_uniq compare c |> List.length) 
+      ~printer: (string_of_int));
+] 
 
 let suite =
   "Tetromino test suite"  >::: List.flatten [
     rotate_tests;
+    gen_test;
   ]
 
 let _ = run_test_tt_main suite
