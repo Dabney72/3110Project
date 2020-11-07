@@ -11,8 +11,8 @@ type falling = {
 type t = {
   mutable grid : int array array;
   mutable falling_block : falling option;
-  mutable upcoming_blocks : Tetromino.t list;
-  mutable held_block : Tetromino.t option;
+  mutable upcoming_blocks : Tetromino.tetromino_type list;
+  mutable held_block : Tetromino.tetromino_type option;
   mutable score : int
 }
 

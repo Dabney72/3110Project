@@ -26,13 +26,11 @@ val get_score : t -> int
 
 (** [get_hold st] is the Tetromino block that is currently being held, [None] 
     if no block is being held. *)
-val get_hold : t -> Tetromino.t option
+val get_hold : t -> Tetromino.tetromino_type option
 
 (** [get_upcoming st] is a list of the upcoming tetrominoes, with the
     leftmost entries being the ones that will spawn next. *)
-val get_upcoming : t -> Tetromino.t list
-
-val rotate : t -> unit
+val get_upcoming : t -> Tetromino.tetromino_type list
 
 (** [move_left st] mutates the game state by moving the falling block to the 
     left by one. *)
