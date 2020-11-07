@@ -7,15 +7,15 @@ open Tetromino
     Note: [arr.(0).(0)] corresponds to the bottom left position of the grid.
           [arr.(1).(0)] corresponds to one position to the right of bottom left.
           [arr.(0).(1)] corresponds to one position above bottom left.
-          In general [arr.(x).(y)] corresponds to the position [x] spaces to the
+          In general [arr.(y).(x)] corresponds to the position [x] spaces to the
           right and [y] spaces above the bottom left corner.
     Requires: [arr] is a non-empty 2D array of ints. *)
 let draw_grid arr =
   let box_size = 20 in
   let start_x = size_x () / 2 in
   let start_y = size_y () / 2 in
-  let grid_width = Array.length arr * box_size in
-  let grid_height = Array.length arr.(0) * box_size in
+  let grid_width = Array.length arr.(0) * box_size in
+  let grid_height = Array.length arr * box_size in
   for x = 0 to Array.length arr - 1 do
     for y = 0 to Array.length arr.(0) - 1 do
       if arr.(x).(y) = 1 
@@ -31,14 +31,31 @@ let draw_score score =
   moveto 200 430;
   draw_string ("Score: " ^ string_of_int score)
 
+(** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
+    [x], [y]. *)
+let draw_tetromino x y tetromino =
+  match tetromino with
+  | I_block -> fill_rect (x - 10) (y - 40) 20 80
+  | L_block -> ()
+  | J_block -> ()
+  | O_block -> ()
+  | S_block -> ()
+  | T_block -> ()
+  | Z_block -> ()
+
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
     tetromino or an empty box if it is none. *)
 let draw_hold tetromino =
   moveto 72 430;
   draw_string "Held Block";
-  draw_rect 50 325 100 100
-(* draw_tetromino 100 375 tetromino *)
+  draw_rect 50 325 100 100;
+  match tetromino with
+  | None -> ()
+  | Some tetr -> draw_tetromino 100 375 tetr
 
+(** [draw_upcoming tlist] draws the first three elements of [tlist] onto an 
+    opened game screen. For each element if it is some tetromino then that 
+    tetromino is drawn and if it is none than nothing is drawn. *)
 let draw_upcoming tlst =
   moveto 456 430;
   draw_string "Upcoming Blocks";
