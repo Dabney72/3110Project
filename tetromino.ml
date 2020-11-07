@@ -62,8 +62,8 @@ let create_tetromino comp w = {
 }
 
 let generate_list () = 
-  let ct_list = [i_block;l_block;j_block;o_block;s_block;t_block;
-                 z_block] in
+  let ct_list = [I_block;L_block;J_block;O_block;S_block;T_block;
+                 Z_block] in
   let start_lst = List.map (fun c -> (Random.bits (),c)) ct_list
   in List.sort compare start_lst |> List.map snd 
 

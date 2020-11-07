@@ -28,7 +28,7 @@ val rotate : t -> t
 
 (** [generate_list ()] is a list containing one of each of the seven
     tetrominoes in a random order. *)
-val generate_list : unit -> t list
+val generate_list : unit -> tetromino_type list
 
 (** [get_width tetromino] is the width/height of the square that encloses
     [tetromino]. *)

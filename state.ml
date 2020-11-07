@@ -20,7 +20,7 @@ let initialize () =
   {
     grid = Array.make_matrix 20 10 0;
     falling_block = None;
-    upcoming_blocks = []; (*Tetromino.generate_list ();*)
+    upcoming_blocks = Tetromino.generate_list ();
     held_block = None;
     score = 0;
   }

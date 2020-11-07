@@ -1,6 +1,7 @@
 open Graphics
 open Display
 open State
+open Tetromino
 
 let start () =
   open_graph "";
@@ -11,6 +12,7 @@ let start () =
   (* This what we want to use but have not implemented Tetromino.generate_list
      so it fails with Failure("Unimplemented") right now *)
   let init = State.initialize () in
+  spawn_tetromino (init_tetromino J_block) init;
   draw_game_screen init;
   (*Right now we hard code the array to make the list. *)
   (*Display.draw_grid (Array.make_matrix 10 20 0);*)
