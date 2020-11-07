@@ -18,11 +18,12 @@ let draw_grid arr =
   let grid_height = Array.length arr * box_size in
   for x = 0 to Array.length arr.(0) - 1 do
     for y = 0 to Array.length arr - 1 do
+      let y_adjstd = Array.length arr - 1 - y in
       if arr.(y).(x) = 1 
       then fill_rect (start_x + x * box_size - grid_width / 2) 
-          (start_y + y * box_size - grid_height / 2) box_size box_size
+          (start_y + y_adjstd * box_size - grid_height / 2) box_size box_size
       else draw_rect (start_x + x * box_size - grid_width / 2) 
-          (start_y + y * box_size - grid_height / 2) box_size box_size
+          (start_y + y_adjstd * box_size - grid_height / 2) box_size box_size
     done
   done
 
