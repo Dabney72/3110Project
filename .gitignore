@@ -4,3 +4,7 @@ _build
 # bisect
 _coverage
 bisect*.coverage
+
+#docs
+doc.public
+doc.private
