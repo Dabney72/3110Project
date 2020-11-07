@@ -1,2 +1,6 @@
 _build
 *.byte
+
+# bisect
+_coverage
+bisect*.coverage
