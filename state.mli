@@ -16,24 +16,37 @@ type t
     - No  block being held*)
 val initialize : unit -> t
 
+(** [get_grid st] is a 2d array that contains the placements of the blocks. The
+    grid is in row major so grid.(0) is the first row and grid.(0).(1) is the
+    first row, second column. *)
 val get_grid : t -> int array array 
 
+(** [get_score st] is an integer representing the game's current score. *)
 val get_score : t -> int
 
+(** [get_hold st] is the Tetromino block that is currently being held, [None] 
+    if no block is being held. *)
 val get_hold : t -> Tetromino.t option
 
+(** [get_upcoming st] is a list of the upcoming tetrominoes, with the
+    leftmost entries being the ones that will spawn next. *)
 val get_upcoming : t -> Tetromino.t list
 
 val rotate : t -> unit
 
+(** [move_left st] mutates the game state by moving the falling block to the 
+    left by one. *)
 val move_left : t -> unit
 
+(** [move_right st] mutates the game state by moving the falling block to the
+    right by one. *)
 val move_right : t -> unit
 
 val drop : t -> unit
 
 val hold : t -> unit
 
+(** [fall st] mutates the game state by moving the falling block down by one. *)
 val fall : t -> unit
 
 val update_score : t -> unit
@@ -46,8 +59,5 @@ val grid_height : t -> int
 
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
     at the top of the grid. *)
-val spawn_tetromino : t -> Tetromino.t -> unit
+val spawn_tetromino : Tetromino.t -> t -> unit
 
-(** [get_upcoming_blocks st] is a list of the upcoming tetrominoes, with the
-    leftmost entries being the ones that will spawn next. *)
-val get_upcoming_blocks : t -> Tetromino.t list
