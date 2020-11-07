@@ -1,2 +1,3 @@
-true: package(ounit2)
-true: package(graphics)
+<{display,input,state,tetromino}.ml>: coverage
+<{*_test}.{byte,native}>: coverage
+true: package(ounit2), package(graphics), package(bisect_ppx)

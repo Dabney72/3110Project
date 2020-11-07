@@ -1,3 +1,8 @@
+type direction = 
+  | Left
+  | Right
+  | Down
+
 type falling = {
   mutable block : Tetromino.t;
   mutable pos : (int * int);
@@ -13,7 +18,7 @@ type t = {
 
 let initialize () =
   {
-    grid = Array.make_matrix 10 20 0;
+    grid = Array.make_matrix 20 10 0;
     falling_block = None;
     upcoming_blocks = []; (*Tetromino.generate_list ();*)
     held_block = None;
@@ -35,11 +40,42 @@ let get_upcoming t =
 let rotate st =
   failwith "Unimplemented"
 
+(** [place_block st position tetromino value] takes [tetromino] and alters 
+    [st]'s grid attribute. This is done by setting the rectangle that encloses 
+    [tetromino] at grid [position] and setting the tetromino spots as [value].*)
+let place_block st position tetromino value = 
+  let mutate_grid (y, x) = 
+    match position with
+    | (r, c) -> st.grid.(r + x).(c + y) <- value in
+  List.iter mutate_grid (Tetromino.get_comp tetromino);
+  st.falling_block <- Some {
+      block = tetromino;
+      pos = position
+    }
+
+(** [move st p] takes in the falling block in [st] and moves it one unit in 
+    direction [dir]. *)
+let move st dir =
+  match st.falling_block with
+  | None -> failwith "No block to move"
+  | Some {block ; pos = (x, y)} ->
+    begin
+      let new_pos = 
+        match dir with
+        | Left -> (x, y - 1)
+        | Right -> (x, y + 1)
+        | Down -> (x + 1, y) in
+      place_block st (x, y) block 0;
+      place_block st new_pos block 1 
+    end
+
 let move_left st =
-  failwith "Unimplemented"
+  (** Assuming that there's no collision TODO: Add collision check. *)
+  move st Left
 
 let move_right st =
-  failwith "Unimplemented"
+  (** Assuming that there's no collision TODO: Add collision check. *)
+  move st Right
 
 let drop st =
   failwith "Unimplemented"
@@ -48,7 +84,8 @@ let hold st =
   failwith "Unimplemented"
 
 let fall st =
-  failwith "Unimplemented"
+  (** Assuming that there's no collision TODO: Add collision check. *)
+  move st Down
 
 let update_score st =
   failwith "Unimplemented"
@@ -63,22 +100,10 @@ let grid_height st = Array.length st.grid
     (0, (number of grid columns - block width - 1) / 2).
     For example, if there are 10 columns in the grid, the top left corner of the 
     L block will go in entry (0, (10 - 3 - 1) / 2) = (0, 3). *)
-let get_top_left_pos st tetromino =
+let get_top_left_pos tetromino st =
   (0, (grid_width st - Tetromino.get_width tetromino) / 2)
 
-let spawn_tetromino st tetromino =
+let spawn_tetromino tetromino st =
   (** Assuming that there's no collision while spawning yet. *)
-  let top_left = get_top_left_pos st tetromino in
-  let mutate_grid (y, x) = 
-    match top_left with
-    | (r, c) -> st.grid.(r + x).(c + y) <- 1 in
-  List.iter mutate_grid (Tetromino.get_comp tetromino)
-
-(* match get_top_left_pos st tetromino with
-   | (r, c) -> assert false (* iterate / pattern match against tetromino's 
-                            composition list, and for every coordinate (x,y), set the entry in the
-                            matrix given by (r + x, c + y) to 1 (later, we will have to also check to
-                            make sure the matrix entry isn't already 1). *) *)
-
-let get_upcoming_blocks st = 
-  failwith "Unimplemented"
+  let top_left = get_top_left_pos tetromino st in 
+  place_block st top_left tetromino 1
