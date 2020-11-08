@@ -2,11 +2,13 @@ open Graphics
 open State
 open Tetromino
 
+exception NotEnoughUpcomingBlocks
+
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
-    Note: [arr.(0).(0)] corresponds to the bottom left position of the grid.
-          [arr.(1).(0)] corresponds to one position to the right of bottom left.
-          [arr.(0).(1)] corresponds to one position above bottom left.
+    Note: [arr.(0).(0)] corresponds to the top left position of the grid.
+          [arr.(1).(0)] corresponds to one position to the right of top left.
+          [arr.(0).(1)] corresponds to one position below top left.
           In general [arr.(y).(x)] corresponds to the position [x] spaces to the
           right and [y] spaces above the bottom left corner.
     Requires: [arr] is a non-empty 2D array of ints. *)
@@ -37,12 +39,12 @@ let draw_score score =
 let draw_tetromino x y tetromino =
   match tetromino with
   | I_block -> fill_rect (x - 10) (y - 40) 20 80
-  | L_block -> ()
-  | J_block -> ()
-  | O_block -> ()
-  | S_block -> ()
-  | T_block -> ()
-  | Z_block -> ()
+  | L_block -> fill_rect (x - 20) (y - 30) 20 60; fill_rect x (y - 30) 20 20
+  | J_block -> fill_rect (x - 20) (y - 30) 20 20; fill_rect x (y - 30) 20 60
+  | O_block -> fill_rect (x - 20) (y - 20) 40 40
+  | S_block -> fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20
+  | T_block -> fill_rect (x - 30) y 60 20; fill_rect (x - 10) (y - 20) 20 20
+  | Z_block -> fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20
 
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
     tetromino or an empty box if it is none. *)
@@ -54,15 +56,24 @@ let draw_hold tetromino =
   | None -> ()
   | Some tetr -> draw_tetromino 100 375 tetr
 
-(** [draw_upcoming tlist] draws the first three elements of [tlist] onto an 
-    opened game screen. For each element if it is some tetromino then that 
-    tetromino is drawn and if it is none than nothing is drawn. *)
+(** [draw_upcoming tlst] draws the first three elements of [tlst] onto an 
+    opened game screen.
+    Raises not enough upcoming blocks exception if length tlst < 3. *)
 let draw_upcoming tlst =
   moveto 456 430;
   draw_string "Upcoming Blocks";
   draw_rect 450 325 100 100;
   draw_rect 450 225 100 100;
-  draw_rect 450 125 100 100
+  draw_rect 450 125 100 100;
+  match tlst with
+  | [] -> raise NotEnoughUpcomingBlocks
+  | h :: t -> draw_tetromino 500 375 h;
+    match t with
+    | [] -> raise NotEnoughUpcomingBlocks
+    | h :: t -> draw_tetromino 500 275 h;
+      match t with 
+      | [] -> raise NotEnoughUpcomingBlocks
+      | h :: t -> draw_tetromino 500 175 h
 
 let draw_start_screen () =
   open_graph "";
