@@ -27,6 +27,13 @@ let initialize () =
     score = 0;
   }
 
+(** [get_falling st] is the current block that is falling.
+    Raises: Failure if no block is currently falling. *)
+let get_falling st = 
+  match st.falling_block with
+  | None -> failwith "No falling block"
+  | Some f -> f
+
 let get_grid st =
   st.grid
 
@@ -38,16 +45,6 @@ let get_hold t =
 
 let get_upcoming t =
   t.upcoming_blocks
-
-let rotate st =
-  failwith "Unimplemented"
-
-(** [get_falling st] is the current block that is falling.
-    Raises: Failure if no block is currently falling. *)
-let get_falling st = 
-  match st.falling_block with
-  | None -> failwith "No falling block"
-  | Some f -> f
 
 (** [optimum coord cmp comp] is the most extreme coordinate in [comp].
     [coord] is a function that tells which coordinate to optimize (e.g. 
@@ -75,51 +72,53 @@ let falling_block_coords st =
       | (r, c) -> (r + x, c + y) :: help falling t
   in help falling (get_comp falling.block)
 
-(** [collision st block_bound grid_bound bound_reached] is true if [block_bound]
-    has reached [grid_bound], or if [block_bound] has reached another block,
-    determined by the function [bound_reached]. *)
-let collision st block_bound grid_bound bound_reached =
-  let coords = falling_block_coords st in
-  let rec check_coords st = function
+
+(** [blocks_surrounding st offset_r offset_c comp] is whether there is a block
+    next to any of the coordinates in [comp]. [offset_r] and [offset_c]
+    determine where to check, e.g. it will check whether there is a block at
+    (r + offset_r, c + offset_c) for any (r, c) in [comp]. 
+    Requires: (r + offset_r, c + offset_c) is not out of the grid bounds for 
+    any (r, c) in [comp]. *)
+let blocks_surrounding st offset_r offset_c comp =
+  let rec loop st = function
     | [] -> false
-    | (r, c) :: t -> 
-      block_bound = grid_bound (* Checking out of bounds *)
-      || bound_reached st.grid r c block_bound
-      || check_coords st t
-  in check_coords st coords
-
-(** [block_at_row_bound grid _ c row_bound] is true if the grid has a block
-    at [(row_bound, c)]. *)
-let block_at_row_bound grid _ c row_bound =
-  grid.(row_bound).(c) = 1
-
-(** [block_at_col_bound grid r _ col_bound] is true if the grid has a block
-    at [(r, col_bound)]. *)
-let block_at_col_bound grid r _ col_bound =
-  grid.(r).(col_bound) = 1
+    | (r', c') :: t ->
+      let r = r' + offset_r in
+      let c = c' + offset_c in 
+      not (List.mem (r, c) comp) (* Make sure block can't collide with itself *)
+      && st.grid.(r).(c) = 1 
+      || loop st t
+  in loop st comp
 
 (** [collision_under st] is true iff there is a block under the currently
     falling block, or if the falling block has reached the bottom of the
     grid. *)
 let collision_under st =
-  let bottom_row = optimum fst (>) (falling_block_coords st) in
-  let num_rows = Array.length st.grid in
-  collision st (bottom_row + 1) num_rows block_at_row_bound
+  let coords = falling_block_coords st in
+  let bottom_row = optimum fst (>) coords in
+  bottom_row + 1 = Array.length st.grid
+  ||
+  blocks_surrounding st 1 0 coords
 
 (** [collision_left st] is true iff there is a block to the left the currently
     falling block, or if the falling block has reached the left edge of the
     grid. *)
 let collision_left st =
+  let coords = falling_block_coords st in
   let left_col = optimum snd (<) (falling_block_coords st) in
-  collision st (left_col - 1) 0 block_at_col_bound
+  left_col - 1 = 0
+  ||
+  blocks_surrounding st 0 (-1) coords
 
 (** [collision_right st] is true iff there is a block to the right the currently
     falling block, or if the falling block has reached the right edge of the
     grid. *)
 let collision_right st =
+  let coords = falling_block_coords st in
   let right_col = optimum snd (>) (falling_block_coords st) in
-  let num_cols = Array.length st.grid.(0) in
-  collision st (right_col + 1) num_cols block_at_col_bound
+  right_col + 1 = Array.length st.grid.(0)
+  ||
+  blocks_surrounding st 0 1 coords
 
 (** [place_block st position tetromino value] takes [tetromino] and alters 
     [st]'s grid attribute. This is done by setting the rectangle that encloses 
@@ -158,6 +157,16 @@ let move_right st =
   (** Assuming that there's no collision TODO: Add collision check. *)
   move st Right
 
+let rotate st =
+  let falling = get_falling st in
+  place_block st falling.pos falling.block 0;
+  place_block st falling.pos (rotate falling.block) 1
+
+let drop st =
+  while not (collision_under st) do
+    move st Down
+  done
+
 let hold st =
   failwith "Unimplemented"
 
@@ -186,7 +195,11 @@ let spawn_tetromino tetromino st =
   let top_left = get_top_left_pos tetromino st in 
   place_block st top_left tetromino 1
 
-let drop st =
-  while not (collision_under st) do
-    move st Down
-  done
+let spawn_next st =
+  match st.upcoming_blocks with
+  | [] -> failwith "Error: no upcoming blocks found"
+  | h :: t -> 
+    spawn_tetromino (init_tetromino h) st;
+    if List.length t > 3
+    then st.upcoming_blocks <- t
+    else st.upcoming_blocks <- t @ generate_list ()

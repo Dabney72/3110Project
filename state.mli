@@ -40,6 +40,8 @@ val move_left : t -> unit
     right by one. *)
 val move_right : t -> unit
 
+val rotate : t -> unit
+
 val drop : t -> unit
 
 val hold : t -> unit
@@ -58,4 +60,8 @@ val grid_height : t -> int
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
     at the top of the grid. *)
 val spawn_tetromino : Tetromino.t -> t -> unit
+
+(** [spawn_next st] spawns the next tetromino from the list of upcoming blocks
+    maintained by [st]. *)
+val spawn_next : t -> unit
 
