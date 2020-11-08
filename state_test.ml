@@ -38,6 +38,7 @@ let grid_test name st grid =
 let initial = State.initialize
 let tenbyseventeen = Array.make_matrix 17 10 0
 let create_10x20 top3 = Array.append top3 tenbyseventeen 
+let append3 bot3 = Array.append tenbyseventeen bot3
 
 (* Top three rows of each tetromino type. *)
 let i_top3 = [|
@@ -114,6 +115,7 @@ let spawn block st = st |> spawn_tetromino block; st
 let block_left block st =  st |> spawn block |> move_left; st
 let block_right block st =  st |> spawn block |> move_right; st
 let block_down block st =  st |> spawn block |> fall; st
+let block_drop block st = st |> spawn block |> drop; st
 
 (* Spawn block, move it left then return the state.*)
 let i_left = initial () |> block_left i_block
@@ -142,8 +144,17 @@ let s_down = initial () |> block_down s_block
 let t_down = initial () |> block_down t_block
 let z_down = initial () |> block_down z_block
 
+(* Spawn block, drop to bottom then return the state.*)
+let i_drop = initial () |> block_drop i_block
+let l_drop = initial () |> block_drop l_block
+let j_drop = initial () |> block_drop j_block
+let o_drop = initial () |> block_drop o_block
+let s_drop = initial () |> block_drop s_block
+let t_drop = initial () |> block_drop t_block
+let z_drop = initial () |> block_drop z_block
 
-(* Top three rows of spawning each tetrimno block then moving it left.*)
+
+(* Top three rows of spawning each tetrimno block then moving it left. *)
 let i_left_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;1;1;1;1;0;0;0;0|]; 
@@ -284,10 +295,21 @@ let fall_tests = [
   grid_test "move spawned z block down" z_down (create_10x20 z_down_top3);
 ]
 
+let drop_tests = [
+  grid_test "drop spawned i block down" i_drop (append3 i_down_top3);
+  grid_test "drop spawned l block down" l_drop (append3 l_down_top3);
+  grid_test "drop spawned j block down" j_drop (append3 j_down_top3);
+  grid_test "drop spawned o block down" o_drop (append3 o_down_top3);
+  grid_test "drop spawned s block down" s_drop (append3 s_down_top3);
+  grid_test "drop spawned t block down" t_drop (append3 t_down_top3);
+  grid_test "drop spawned z block down" z_drop (append3 z_down_top3);
+]
+
 let movement_tests = List.flatten [
     move_left_tests;
     move_right_tests;
     fall_tests;
+    drop_tests;
   ]
 
 (********************************************************************
