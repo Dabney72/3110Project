@@ -15,5 +15,5 @@ val draw_upcoming : Tetromino.tetromino_type list -> unit
 val draw_game_screen : State.t -> unit
 
 (** [draw_game_over_screem ()] creates a game over screen for the tetris game 
-    and displays the score. *)
-val draw_game_over_screen : unit -> unit
+    and displays the total score achieved. *)
+val draw_game_over_screen : int -> unit

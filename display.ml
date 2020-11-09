@@ -99,5 +99,11 @@ let draw_game_screen state =
   draw_hold (get_hold state);
   draw_upcoming (get_upcoming state)
 
-let draw_game_over_screen () =
-  failwith "Unimplemented"
+let draw_game_over_screen score =
+  open_graph "";
+  moveto (size_x () / 2 - 20) (5 * size_y () / 7);
+  draw_string "Game Over";
+  moveto (size_x () / 2 - 60) (size_y () / 2);
+  draw_string ("Your final score was: " ^ string_of_int score);
+  moveto (size_x () / 2 - 150) (2 * size_y () / 7);
+  draw_string "To play again, close this screen and relaunch the game"

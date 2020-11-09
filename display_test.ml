@@ -46,3 +46,9 @@ let test_upcoming tlst =
 let test_init_game_state () =
   let state = State.initialize () in
   draw_game_screen state
+
+(** [test_game_over scr] opens the game over screen using [scr] as the total 
+    score to display.
+    Requires: [scr] has type int. *)
+let test_game_over scr = 
+  Graphics.open_graph ""; draw_game_over_screen scr
