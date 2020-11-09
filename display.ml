@@ -2,8 +2,6 @@ open Graphics
 open State
 open Tetromino
 
-exception NotEnoughUpcomingBlocks
-
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
     Note: [arr.(0).(0)] corresponds to the top left position of the grid.
@@ -58,7 +56,7 @@ let draw_hold tetromino =
 
 (** [draw_upcoming tlst] draws the first three elements of [tlst] onto an 
     opened game screen.
-    Raises not enough upcoming blocks exception if length tlst < 3. *)
+    Fails with a helpful message if length [tlst] < 3. *)
 let draw_upcoming tlst =
   moveto 456 430;
   draw_string "Upcoming Blocks";
@@ -66,13 +64,13 @@ let draw_upcoming tlst =
   draw_rect 450 225 100 100;
   draw_rect 450 125 100 100;
   match tlst with
-  | [] -> raise NotEnoughUpcomingBlocks
+  | [] -> failwith "Less than 3 upcoming blocks"
   | h :: t -> draw_tetromino 500 375 h;
     match t with
-    | [] -> raise NotEnoughUpcomingBlocks
+    | [] -> failwith "Less than 3 upcoming blocks"
     | h :: t -> draw_tetromino 500 275 h;
       match t with 
-      | [] -> raise NotEnoughUpcomingBlocks
+      | [] -> failwith "Less than 3 upcoming blocks"
       | h :: t -> draw_tetromino 500 175 h
 
 let draw_start_screen () =
