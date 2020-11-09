@@ -117,6 +117,11 @@ let block_right block st =  st |> spawn block |> move_right; st
 let block_down block st =  st |> spawn block |> fall; st
 let block_drop block st = st |> spawn block |> drop; st
 
+let drop_block st = st |> drop; st
+let left n st = for i = 1 to n do st |> move_left done; st
+let right n st = for i = 1 to n do st |> move_right done; st
+let rotate n st = for i = 1 to n do st |> State.rotate done; st
+
 (* Spawn block, move it left then return the state.*)
 let i_left = initial () |> block_left i_block
 let l_left = initial () |> block_left l_block
@@ -153,6 +158,19 @@ let s_drop = initial () |> block_drop s_block
 let t_drop = initial () |> block_drop t_block
 let z_drop = initial () |> block_drop z_block
 
+(* Fill the first 4 rows entirely, using different rotations and translations
+   of each tetromino. *)
+let block_4x10 = initial ()
+                 |> spawn t_block |> right 1 |> drop_block
+                 |> spawn s_block |> left 1 |> drop_block
+                 |> spawn o_block |> left 4 |> drop_block
+                 |> spawn l_block |> rotate 3 |> right 4 |> drop_block
+                 |> spawn t_block |> rotate 2 |> left 2 |> drop_block
+                 |> spawn z_block |> drop_block
+                 |> spawn o_block |> right 2 |> drop_block
+                 |> spawn j_block |> rotate 2 |> left 3 |> drop_block
+                 |> spawn i_block |> right 2 |> drop_block
+                 |> spawn i_block |> rotate 1 |> right 4 |> drop_block
 
 (* Top three rows of spawning each tetrimno block then moving it left. *)
 let i_left_top3 = [|
@@ -264,6 +282,7 @@ let z_down_top3 = [|
   [|0;0;0;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;1;1;0;0;0;0|]
 |]
+let filled_4 = Array.append (Array.make_matrix 16 10 0) (Array.make_matrix 4 10 1)
 
 let move_left_tests = [
   grid_test "move spawned i block left" i_left (create_10x20 i_left_top3);
@@ -303,6 +322,7 @@ let drop_tests = [
   grid_test "drop spawned s block down" s_drop (append3 s_down_top3);
   grid_test "drop spawned t block down" t_drop (append3 t_down_top3);
   grid_test "drop spawned z block down" z_drop (append3 z_down_top3);
+  grid_test "fill first 4 rows" block_4x10 filled_4;
 ]
 
 let movement_tests = List.flatten [
