@@ -32,6 +32,9 @@ val get_hold : t -> Tetromino.tetromino_type option
     leftmost entries being the ones that will spawn next. *)
 val get_upcoming : t -> Tetromino.tetromino_type list
 
+(** [game_over st] is whether the game is over in [st]. *)
+val game_over : t -> bool
+
 (** [move_left st] mutates the game state by moving the falling block to the 
     left by one. *)
 val move_left : t -> unit

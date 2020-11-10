@@ -15,17 +15,9 @@ type t = {
   mutable falling_block : falling option;
   mutable upcoming_blocks : tetromino_type list;
   mutable held_block : tetromino_type option;
-  mutable score : int
+  mutable score : int;
+  mutable game_over : bool;
 }
-
-let initialize () =
-  {
-    grid = Array.make_matrix 20 10 0;
-    falling_block = None;
-    upcoming_blocks = generate_list ();
-    held_block = None;
-    score = 0;
-  }
 
 (** [get_falling st] is the current block that is falling.
     Raises: Failure if no block is currently falling. *)
@@ -46,6 +38,9 @@ let get_hold t =
 let get_upcoming t =
   t.upcoming_blocks
 
+let game_over t =
+  t.game_over
+
 let grid_width st = Array.length st.grid.(0)
 
 let grid_height st = Array.length st.grid
@@ -64,18 +59,16 @@ let rec optimum coord cmp = function
     let current_val = coord h in
     if cmp current_val opt_tail then current_val else opt_tail
 
-(** [falling_block_coords st] is a list of (row, column) coordinates for the 
-    current falling block. *)
-let falling_block_coords st =
-  let falling = get_falling st in
-  let rec help falling comp =
+(** [block_coords tetromino pos st] is a list of (row, column) coordinates for the 
+    tetromino [tetr] at position [pos] in state [st]. *)
+let block_coords tetromino pos st =
+  let rec help comp =
     match comp with
     | [] -> []
     | (y, x) :: t -> 
-      match falling.pos with
-      | (r, c) -> (r + x, c + y) :: help falling t
-  in help falling (get_comp falling.block)
-
+      match pos with
+      | (r, c) -> (r + x, c + y) :: help t
+  in help (get_comp tetromino)
 
 (** [blocks_surrounding st offset_r offset_c comp] is whether there is a block
     next to any of the coordinates in [comp]. [offset_r] and [offset_c]
@@ -98,7 +91,8 @@ let blocks_surrounding st offset_r offset_c comp =
     falling block, or if the falling block has reached the bottom of the
     grid. *)
 let collision_under st =
-  let coords = falling_block_coords st in
+  let falling = get_falling st in
+  let coords = block_coords falling.block falling.pos st in
   let bottom_row = optimum fst (>) coords in
   bottom_row + 1 = Array.length st.grid
   ||
@@ -108,8 +102,9 @@ let collision_under st =
     falling block, or if the falling block has reached the left edge of the
     grid. *)
 let collision_left st =
-  let coords = falling_block_coords st in
-  let left_col = optimum snd (<) (falling_block_coords st) in
+  let falling = get_falling st in
+  let coords = block_coords falling.block falling.pos st in
+  let left_col = optimum snd (<) coords in
   left_col - 1 = 0
   ||
   blocks_surrounding st 0 (-1) coords
@@ -118,8 +113,9 @@ let collision_left st =
     falling block, or if the falling block has reached the right edge of the
     grid. *)
 let collision_right st =
-  let coords = falling_block_coords st in
-  let right_col = optimum snd (>) (falling_block_coords st) in
+  let falling = get_falling st in
+  let coords = block_coords falling.block falling.pos st in
+  let right_col = optimum snd (>) coords in
   right_col + 1 = Array.length st.grid.(0)
   ||
   blocks_surrounding st 0 1 coords
@@ -144,10 +140,20 @@ let place_block st position tetromino value =
 let get_top_left tetromino st =
   (0, (grid_width st - Tetromino.get_width tetromino) / 2)
 
+(** [can_spawn tetromino pos st] is whether [tetromino] can be spawned at 
+    position [pos] in state [st]. *)
+let can_spawn tetromino pos st =
+  let rec help = function
+    | [] -> true
+    | (r, c) :: t -> st.grid.(r).(c) == 0 && help t
+  in block_coords tetromino pos st |> help
+
 let spawn_tetromino tetromino st =
   (** Assuming that there's no collision while spawning yet. *)
   let top_left = get_top_left tetromino st in 
-  place_block st top_left tetromino 1
+  if can_spawn tetromino top_left st
+  then place_block st top_left tetromino 1
+  else st.game_over <- true
 
 let spawn_next st =
   match st.upcoming_blocks with
@@ -204,3 +210,14 @@ let hold st =
 
 let update_score st =
   failwith "Unimplemented"
+
+let initialize () =
+  let st = {
+    grid = Array.make_matrix 20 10 0;
+    falling_block = None;
+    upcoming_blocks = generate_list ();
+    held_block = None;
+    score = 0;
+    game_over = false;
+  }
+  in spawn_next st; st
