@@ -10,19 +10,16 @@ let start () =
   (*Display.draw_grid ();*)
   ignore (read_key () : char);
   clear_graph ();
-  let init = State.initialize () in
-  spawn_tetromino (Tetromino.init_tetromino J_block) init;
-  drop init;
-  draw_game_screen init;  
+  let state = initialize () in
+  draw_game_screen state;  
   (* Used Unix.sleep for the interval. I think it is pretty straightfoward that
      Unix.sleep takes in an int, which is represented in seconds. times has to
      be inputted manually so I guess put the largest number Ocaml can take if we 
      are to make this work *)
-  let rec print_hello times =
-    Unix.sleep 3;
-    if times <> 0 then (print_endline "Hello World!"; print_hello (times-1)) 
-    else print_endline "Hello World"; 
-  in print_hello 10;
+  let rec game () =
+    Unix.sleepf 0.75;
+    spawn_next state; move_left state; drop state; draw_game_screen state; game ()
+  in game ();
   while true do
     let st = wait_next_event [ Mouse_motion; Button_down; Key_pressed ] in
     synchronize ();
