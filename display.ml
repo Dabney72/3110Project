@@ -78,9 +78,9 @@ let draw_start_screen () =
   moveto ((size_x () / 2) - 72) (size_y () - 50);
   draw_string "Welcome to OCaml Tetris!";
   moveto 80 (size_y () - 70);
-  draw_string "game created by Dan Batan, David Hu, Lenhard Thomas, and Rafael Chaves";
+  draw_string "Game created by Dan Batan, David Hu, Lenhard Thomas, and Rafael Chaves";
   moveto ((size_x () / 2) - 90) ((size_y () * 2 / 3) - 40);
-  draw_string "the controls are the following:";
+  draw_string "The controls are the following:";
   moveto 120 ((size_y () * 2 / 3) - 60);
   draw_string "* [a/d] to move the falling tetromino left and right respectively";
   moveto 120 ((size_y () * 2 / 3) - 80);
@@ -89,8 +89,8 @@ let draw_start_screen () =
   draw_string "* [s] to immediately drop the falling tetromino down";
   moveto 120 ((size_y () * 2 / 3) - 120);
   draw_string "* [space bar] to hold the falling tetromino";
-  moveto ((size_x () / 2) - 115) 50;
-  draw_string "push the [space bar] to start the game"
+  moveto ((size_x () / 2) - 100) 50;
+  draw_string "Push any button to start the game"
 
 let draw_game_screen state =
   open_graph "";
