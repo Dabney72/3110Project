@@ -46,6 +46,10 @@ let get_hold t =
 let get_upcoming t =
   t.upcoming_blocks
 
+let grid_width st = Array.length st.grid.(0)
+
+let grid_height st = Array.length st.grid
+
 (** [optimum coord cmp comp] is the most extreme coordinate in [comp].
     [coord] is a function that tells which coordinate to optimize (e.g. 
     fst for x or snd for y), and [cmp a b] is true if a is more extreme than b. 
@@ -133,6 +137,28 @@ let place_block st position tetromino value =
       pos = position;
     }
 
+(** [get_top_left tetromino] is the (row, column) entry in the grid that
+    the top left corner of the rectangle that encloses [tetromino] be in. This
+    entry is given by the formula:
+    (0, (number of grid columns - block width) / 2). *)
+let get_top_left tetromino st =
+  (0, (grid_width st - Tetromino.get_width tetromino) / 2)
+
+let spawn_tetromino tetromino st =
+  (** Assuming that there's no collision while spawning yet. *)
+  let top_left = get_top_left tetromino st in 
+  place_block st top_left tetromino 1
+
+let spawn_next st =
+  match st.upcoming_blocks with
+  | [] -> failwith "Error: no upcoming blocks found"
+  | h :: t -> 
+    let next_block = init_tetromino h in
+    spawn_tetromino next_block st;
+    if List.length t <= 3
+    then st.upcoming_blocks <- t @ generate_list ()
+    else st.upcoming_blocks <- t 
+
 (** [move st p] takes in the falling block in [st] and moves it one unit in 
     direction [dir]. *)
 let move st dir =
@@ -165,41 +191,16 @@ let rotate st =
 let drop st =
   while not (collision_under st) do
     move st Down
-  done
+  done;
+  spawn_next st
+
+let fall st =
+  if not (collision_under st)
+  then move st Down
+  else spawn_next st
 
 let hold st =
   failwith "Unimplemented"
 
-let fall st =
-  (** Assuming that there's no collision TODO: Add collision check. *)
-  move st Down
-
 let update_score st =
   failwith "Unimplemented"
-
-let grid_width st = Array.length st.grid.(0)
-
-let grid_height st = Array.length st.grid
-
-(** [get_top_left_pos tetromino] is the (row, column) entry in the grid that
-    the top left corner of the rectangle that encloses [tetromino] be in. This
-    entry is given by the formula:
-    (0, (number of grid columns - block width - 1) / 2).
-    For example, if there are 10 columns in the grid, the top left corner of the 
-    L block will go in entry (0, (10 - 3 - 1) / 2) = (0, 3). *)
-let get_top_left_pos tetromino st =
-  (0, (grid_width st - Tetromino.get_width tetromino) / 2)
-
-let spawn_tetromino tetromino st =
-  (** Assuming that there's no collision while spawning yet. *)
-  let top_left = get_top_left_pos tetromino st in 
-  place_block st top_left tetromino 1
-
-let spawn_next st =
-  match st.upcoming_blocks with
-  | [] -> failwith "Error: no upcoming blocks found"
-  | h :: t -> 
-    spawn_tetromino (init_tetromino h) st;
-    if List.length t > 3
-    then st.upcoming_blocks <- t
-    else st.upcoming_blocks <- t @ generate_list ()
