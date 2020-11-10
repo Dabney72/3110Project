@@ -15,28 +15,6 @@ let cmp_set_like_lists lst1 lst2 =
   &&
   uniq1 = uniq2
 
-(** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt]
-    to pretty-print each element of [lst]. *)
-let pp_list pp_elt lst =
-  let pp_elts lst =
-    let rec loop n acc = function
-      | [] -> acc
-      | [h] -> acc ^ pp_elt h
-      | h1 :: (h2 :: t as t') ->
-        if n = 100 then acc ^ "..."  (* stop printing long list *)
-        else loop (n + 1) (acc ^ (pp_elt h1) ^ "; ") t'
-    in loop 0 "" lst
-  in "[" ^ pp_elts lst ^ "]"
-
-(** [string_of_ints (x, y)] is a string representation of the tuple of ints 
-    [(x, y)]. *)
-let string_of_ints (x, y) =
-  "(" ^ string_of_int x ^ ", " ^ string_of_int y ^ ")"
-
-(** [print_tetr t] is a string representation of the tetromino [t]. *)
-let print_tetr t =
-  t |> get_comp |> pp_list string_of_ints
-
 (** [compare_tetrominos] is true iff [t1] and [t2] have the same composition
     and width. *)
 let compare_tetrominos t1 t2 =
