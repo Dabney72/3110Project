@@ -42,7 +42,8 @@ let test_upcoming tlst =
 
 (** [test_init_game_state ()] initializes a game state and then draws it to test
     the draw_game_screen function. This has the added bonus of testing the 
-    upcoming block draw function with the randomized upcoming block list. *)
+    upcoming block draw function with the randomized upcoming block list as well
+    as a random block being spawned at the top of the grid. *)
 let test_init_game_state () =
   let state = State.initialize () in
   draw_game_screen state

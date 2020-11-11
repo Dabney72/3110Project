@@ -105,5 +105,5 @@ let draw_game_over_screen score =
   draw_string "Game Over";
   moveto (size_x () / 2 - 60) (size_y () / 2);
   draw_string ("Your final score was: " ^ string_of_int score);
-  moveto (size_x () / 2 - 150) (2 * size_y () / 7);
-  draw_string "To play again, close this screen and relaunch the game"
+  moveto (size_x () / 2 - 76) (2 * size_y () / 7);
+  draw_string "Press any button to play again"
