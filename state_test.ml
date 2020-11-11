@@ -495,6 +495,14 @@ let movement_tests = List.flatten [
   ]
 
 (********************************************************************
+   Score Testing
+ ********************************************************************)
+
+let score_tests = [
+  (* TODO: Add tests for scoring. *)
+]
+
+(********************************************************************
    End Helper Suites
  ********************************************************************)
 
@@ -502,6 +510,7 @@ let suite =
   "test suite"  >::: List.flatten [
     spawn_tetromino_tests;
     movement_tests;
+    score_tests;
   ]
 
 let _ = run_test_tt_main suite

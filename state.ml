@@ -178,6 +178,50 @@ let spawn_next st =
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
 
+(** [increment_score st] updates the player's score according to the number of
+    rows they have completely filled and returns a list of the indexes of the 
+    rows that were accounted for while adding score. *)
+let increment_score st =
+  let rows = ref [] in
+  let get_points = function
+    | 1 -> 40
+    | 2 -> 100
+    | 3 -> 300
+    | 4 -> 1200 
+    | _ -> 0 in 
+  let consec = ref 0 in
+  let points = ref 0 in
+  let inc_score index row = 
+    if Array.for_all (fun x -> x = 1) row 
+    then begin 
+      consec := !consec + 1; 
+      rows := index :: !rows 
+    end
+    else begin
+      points := !points + get_points !consec; 
+      consec := 0 
+    end in
+  Array.iteri inc_score st.grid;
+  points := !points + get_points !consec;
+  st.score <- st.score + !points;
+  !rows
+
+(** [update_score st] checks to see if any rows are completely filled and 
+    updates the player's score depending on how many rows are filled. A single
+    row is 40 points, two rows is 100 points, three rows is 300 points, and 
+    four rows is 1200 points. *)
+let update_score st =
+  let filled_rows = increment_score st in
+  let unfilled_rows = ref [||] in
+  let drop_rows index row = 
+    if not (List.mem index filled_rows)
+    then unfilled_rows := Array.append !unfilled_rows [|row|] in
+  Array.iteri drop_rows st.grid;
+  let new_height = List.length filled_rows in
+  let new_rows = Array.make_matrix new_height (grid_width st) 0 in 
+  let updated_grid = Array.append new_rows !unfilled_rows in
+  st.grid <- updated_grid
+
 (** [move st p] takes in the falling block in [st] and moves it one unit in 
     direction [dir]. *)
 let move st dir =
@@ -209,17 +253,18 @@ let drop ?auto_respawn:(ar = true) st =
   while not (collision_under st) do
     move st Down
   done;
+  update_score st;
   if ar then spawn_next st
 
 let fall ?auto_respawn:(ar = true) st =
   if not (collision_under st)
   then move st Down
-  else if ar then spawn_next st
+  else begin 
+    update_score st; 
+    if ar then spawn_next st 
+  end
 
 let hold st =
-  failwith "Unimplemented"
-
-let update_score st =
   failwith "Unimplemented"
 
 let initialize ?auto_spawn:(auto = true) () =

@@ -35,12 +35,10 @@ val get_upcoming : t -> Tetromino.tetromino_type list
 (** [game_over st] is whether the game is over in [st]. *)
 val game_over : t -> bool
 
-(** [move_left st] mutates the game state by moving the falling block to the 
-    left by one. *)
+(** [move_left st] moves the falling block to the left by one. *)
 val move_left : t -> unit
 
-(** [move_right st] mutates the game state by moving the falling block to the
-    right by one. *)
+(** [move_right st] moves the falling block to the right by one. *)
 val move_right : t -> unit
 
 (** [rotate st] rotates the currently falling tetromino 90 degrees clockwise. *)
@@ -59,13 +57,11 @@ val drop : ?auto_respawn : bool -> t -> unit
     not, the next block in the list of upcoming blocks in [st] will spawn. *)
 val hold : t -> unit
 
-(** [fall st] mutates the game state by moving the falling block down by one.
+(** [fall st] moves the falling block down by one.
     The optional argument [auto_respawn] is whether the user would like
     the next block to be spawned automatically after the block is placed.
     Its default value is true. *)
 val fall : ?auto_respawn : bool -> t -> unit
-
-val update_score : t -> unit
 
 (** [grid_width st] is the width of the tetris grid in game state [st]. *)
 val grid_width : t -> int
