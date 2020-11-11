@@ -35,7 +35,7 @@ let grid_test name st grid =
  ********************************************************************)
 
 (* Matrix creation *)
-let initial = State.initialize
+let initial = State.initialize ~auto_spawn: false
 let tenbyseventeen = Array.make_matrix 17 10 0
 let create_10x20 top3 = Array.append top3 tenbyseventeen 
 let append3 bot3 = Array.append tenbyseventeen bot3
@@ -114,10 +114,10 @@ let spawn_tetromino_tests = [
 let spawn block st = st |> spawn_tetromino block; st
 let block_left block st =  st |> spawn block |> move_left; st
 let block_right block st =  st |> spawn block |> move_right; st
-let block_down block st =  st |> spawn block |> fall; st
-let block_drop block st = st |> spawn block |> drop; st
+let block_down block st =  st |> spawn block |> fall ~auto_respawn: false; st
+let spawn_and_drop block st = st |> spawn block |> drop ~auto_respawn: false; st
 
-let drop_block st = st |> drop; st
+let drop_block st = st |> drop ~auto_respawn: false; st
 let left n st = for i = 1 to n do st |> move_left done; st
 let right n st = for i = 1 to n do st |> move_right done; st
 let rotate n st = for i = 1 to n do st |> State.rotate done; st
@@ -150,13 +150,13 @@ let t_down = initial () |> block_down t_block
 let z_down = initial () |> block_down z_block
 
 (* Spawn block, drop to bottom then return the state.*)
-let i_drop = initial () |> block_drop i_block
-let l_drop = initial () |> block_drop l_block
-let j_drop = initial () |> block_drop j_block
-let o_drop = initial () |> block_drop o_block
-let s_drop = initial () |> block_drop s_block
-let t_drop = initial () |> block_drop t_block
-let z_drop = initial () |> block_drop z_block
+let i_drop = initial () |> spawn_and_drop i_block
+let l_drop = initial () |> spawn_and_drop l_block
+let j_drop = initial () |> spawn_and_drop j_block
+let o_drop = initial () |> spawn_and_drop o_block
+let s_drop = initial () |> spawn_and_drop s_block
+let t_drop = initial () |> spawn_and_drop t_block
+let z_drop = initial () |> spawn_and_drop z_block
 
 (* Fill the first 4 rows entirely, using different rotations and translations
    of each tetromino. *)

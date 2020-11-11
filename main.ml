@@ -27,7 +27,7 @@ let rec main () =
   let state = initialize () in
   draw_game_screen state;
   (* Main game loop that runs until game over. *)  
-  while (not (game_over state)) do
+  while not (game_over state) do
     sleepf 0.1;
     (* Checks if there is an input from the player. *)
     let () = if key_pressed () then read_input state (read_key ()) else () in
@@ -41,6 +41,7 @@ let rec main () =
     ()
   done;
   (* Game over where any button press will restart main. *)
+  sleepf 1.0;
   draw_game_over_screen (get_score state);
   ignore (read_key ());
   main ()

@@ -13,8 +13,8 @@ type t
     - Score set to zero
     - List of upcoming blocks
     - No upcoming blocks
-    - No  block being held*)
-val initialize : unit -> t
+    - No block being held *)
+val initialize : ?auto_spawn: bool -> unit -> t
 
 (** [get_grid st] is a 2d array that contains the placements of the blocks. The
     grid is in row major so grid.(0) is the first row and grid.(0).(1) is the
@@ -43,14 +43,27 @@ val move_left : t -> unit
     right by one. *)
 val move_right : t -> unit
 
+(** [rotate st] rotates the currently falling tetromino 90 degrees clockwise. *)
 val rotate : t -> unit
 
-val drop : t -> unit
+(** [drop ?auto_respawn st] instantaneously drops the currently falling
+    tetromino to the bottom of the grid. If there is a block in the way,
+    it will drop it on top of that block.
+    The optional argument [auto_respawn] is whether the user would like
+    the next block to be spawned automatically after the block is placed.
+    Its default value is true. *)
+val drop : ?auto_respawn : bool -> t -> unit
 
+(** [hold st] puts the currently falling tetromino to the side for later use.
+    If there is already a block being held, that block will spawn at the top. If
+    not, the next block in the list of upcoming blocks in [st] will spawn. *)
 val hold : t -> unit
 
-(** [fall st] mutates the game state by moving the falling block down by one. *)
-val fall : t -> unit
+(** [fall st] mutates the game state by moving the falling block down by one.
+    The optional argument [auto_respawn] is whether the user would like
+    the next block to be spawned automatically after the block is placed.
+    Its default value is true. *)
+val fall : ?auto_respawn : bool -> t -> unit
 
 val update_score : t -> unit
 

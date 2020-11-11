@@ -148,11 +148,24 @@ let can_spawn tetromino pos st =
     | (r, c) :: t -> st.grid.(r).(c) == 0 && help t
   in block_coords tetromino pos st |> help
 
+(** [truncate tetromino] is [tetromino] with its top row cut off. Used for
+    safely filling the grid with a final block when the game is over. *)
+let truncate tetromino =
+  let crds = tetromino
+             |> get_comp
+             |> List.filter (fun (_, y) -> y >= 1) in
+  create_tetromino crds (get_width tetromino)
+
 let spawn_tetromino tetromino st =
-  (** Assuming that there's no collision while spawning yet. *)
-  let top_left = get_top_left tetromino st in 
+  let (r, c) as top_left = get_top_left tetromino st in 
+  let trunc = truncate tetromino in
   if can_spawn tetromino top_left st
   then place_block st top_left tetromino 1
+  else if can_spawn trunc (r - 1, c) st
+  then begin
+    place_block st (r - 1, c) trunc 1;
+    st.game_over <- true
+  end
   else st.game_over <- true
 
 let spawn_next st =
@@ -194,16 +207,16 @@ let rotate st =
   place_block st falling.pos falling.block 0;
   place_block st falling.pos (rotate falling.block) 1
 
-let drop st =
+let drop ?auto_respawn:(ar = true) st =
   while not (collision_under st) do
     move st Down
   done;
-  spawn_next st
+  if ar then spawn_next st
 
-let fall st =
+let fall ?auto_respawn:(ar = true) st =
   if not (collision_under st)
   then move st Down
-  else spawn_next st
+  else if ar then spawn_next st
 
 let hold st =
   failwith "Unimplemented"
@@ -211,7 +224,7 @@ let hold st =
 let update_score st =
   failwith "Unimplemented"
 
-let initialize () =
+let initialize ?auto_spawn:(auto = true) () =
   let st = {
     grid = Array.make_matrix 20 10 0;
     falling_block = None;
@@ -219,5 +232,6 @@ let initialize () =
     held_block = None;
     score = 0;
     game_over = false;
-  }
-  in spawn_next st; st
+  } in
+  if auto then spawn_next st;
+  st
