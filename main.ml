@@ -44,6 +44,7 @@ let rec main () =
   sleepf 1.0;
   draw_game_over_screen (get_score state);
   ignore (read_key ());
+  ignore (read_key ());
   main ()
 
 let () = main ()

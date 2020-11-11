@@ -36,12 +36,12 @@ let draw_score score =
     [x], [y]. *)
 let draw_tetromino x y tetromino =
   match tetromino with
-  | I_block -> fill_rect (x - 10) (y - 40) 20 80
-  | L_block -> fill_rect (x - 20) (y - 30) 20 60; fill_rect x (y - 30) 20 20
-  | J_block -> fill_rect (x - 20) (y - 30) 20 20; fill_rect x (y - 30) 20 60
+  | I_block -> fill_rect (x - 40) (y - 10) 80 20
+  | L_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x + 10) y 20 20
+  | J_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 30) y 20 20
   | O_block -> fill_rect (x - 20) (y - 20) 40 40
   | S_block -> fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20
-  | T_block -> fill_rect (x - 30) y 60 20; fill_rect (x - 10) (y - 20) 20 20
+  | T_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 10) y 20 20
   | Z_block -> fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20
 
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
