@@ -43,13 +43,13 @@ let i1 = create_tetromino [(2,0); (2,1); (2,2); (2,3)] 4
 let i2 = create_tetromino [(0,2); (1,2); (2,2); (3,2)] 4
 let i3 = create_tetromino [(1,0); (1,1); (1,2); (1,3)] 4
 
-let l1 = create_tetromino [(1,0); (1,1); (1,2); (2,0)] 3
-let l2 = create_tetromino [(0,1); (1,1); (2,1); (2,2)] 3
-let l3 = create_tetromino [(0,2); (1,0); (1,1); (1,2)] 3
+let l1 = create_tetromino [(1,0); (1,1); (1,2); (2,2)] 3
+let l2 = create_tetromino [(0,1); (1,1); (2,1); (0,2)] 3
+let l3 = create_tetromino [(0,0); (1,0); (1,1); (1,2)] 3
 
-let j1 = create_tetromino [(1,0); (1,1); (1,2); (2,2)] 3
-let j2 = create_tetromino [(0,1); (1,1); (2,1); (0,2)] 3
-let j3 = create_tetromino [(0,0); (1,0); (1,1); (1,2)] 3
+let j1 = create_tetromino [(1,0); (1,1); (1,2); (2,0)] 3
+let j2 = create_tetromino [(0,1); (1,1); (2,1); (2,2)] 3
+let j3 = create_tetromino [(0,2); (1,0); (1,1); (1,2)] 3
 
 let s1 = create_tetromino [(1,0); (1,1); (2,1); (2,2)] 3
 let s2 = create_tetromino [(0,2); (1,2); (1,1); (2,1)] 3

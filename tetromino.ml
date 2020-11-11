@@ -17,12 +17,12 @@ let i_block = {
   width = 4;
 }
 
-let l_block = {
+let j_block = {
   composition = [(0,0); (0,1); (1,1); (2,1)];
   width = 3;
 }
 
-let j_block = {
+let l_block = {
   composition = [(2,0); (0,1); (1,1); (2,1)];
   width = 3;
 }
