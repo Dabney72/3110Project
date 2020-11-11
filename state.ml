@@ -105,7 +105,7 @@ let collision_left st =
   let falling = get_falling st in
   let coords = block_coords falling.block falling.pos st in
   let left_col = optimum snd (<) coords in
-  left_col - 1 = 0
+  left_col = 0
   ||
   blocks_surrounding st 0 (-1) coords
 
@@ -195,12 +195,10 @@ let move st dir =
     end
 
 let move_left st =
-  (** Assuming that there's no collision TODO: Add collision check. *)
-  move st Left
+  if not (collision_left st) then move st Left
 
 let move_right st =
-  (** Assuming that there's no collision TODO: Add collision check. *)
-  move st Right
+  if not (collision_right st) then move st Right
 
 let rotate st =
   let falling = get_falling st in
