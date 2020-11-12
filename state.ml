@@ -265,7 +265,12 @@ let fall ?auto_respawn:(ar = true) st =
   end
 
 let hold st =
-  failwith "Unimplemented"
+  begin
+    let fall_block = get_falling st in
+    st.held_block <- Some (find_tetromino_type fall_block.block);
+    st.falling_block <- None;
+    spawn_next st
+  end 
 
 let initialize ?auto_spawn:(auto = true) () =
   let st = {

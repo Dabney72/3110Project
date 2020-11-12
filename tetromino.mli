@@ -17,6 +17,10 @@ type t
     [t_type]. *)
 val init_tetromino : tetromino_type -> t
 
+(** [t_type] is the tetromino given by the tetromino type [init_tetromino t_type] 
+*)
+val find_tetromino_type : t -> tetromino_type
+
 (** [create_tetromino comp w] is a tetromino with the composition [comp]
     and width [w]. *)
 val create_tetromino : (int * int) list -> int -> t

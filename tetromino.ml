@@ -56,6 +56,11 @@ let init_tetromino = function
   | T_block -> t_block
   | Z_block -> z_block
 
+let find_tetromino_type t = 
+  if t = j_block then J_block else if t = l_block then L_block else if 
+    t = j_block then J_block else if t = o_block then O_block else if 
+    t = s_block then S_block else if t = t_block then T_block else Z_block
+
 let create_tetromino comp w = {
   composition = comp;
   width = w
