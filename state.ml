@@ -276,7 +276,8 @@ let hold st =
   *)
   begin
     let fall_block = get_falling st in
-    st.held_block <- Some (find_tetromino_type fall_block.block);
+    st.held_block <- Some fall_block.block_type;
+    place_block st fall_block 0;
     st.falling_block <- None;
     spawn_next st
   end 
