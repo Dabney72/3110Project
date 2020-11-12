@@ -6,6 +6,7 @@ type direction =
   | Down
 
 type falling = {
+  block_type : Tetromino.tetromino_type;
   mutable block : Tetromino.t;
   mutable pos : (int * int);
 }
@@ -123,15 +124,12 @@ let collision_right st =
 (** [place_block st position tetromino value] takes [tetromino] and alters 
     [st]'s grid attribute. This is done by setting the rectangle that encloses 
     [tetromino] at grid [position] and setting the tetromino spots as [value].*)
-let place_block st position tetromino value = 
+let place_block st falling value =
   let mutate_grid (y, x) = 
-    match position with
+    match falling.pos with
     | (r, c) -> st.grid.(r + x).(c + y) <- value in
-  List.iter mutate_grid (Tetromino.get_comp tetromino);
-  st.falling_block <- Some {
-      block = tetromino;
-      pos = position;
-    }
+  List.iter mutate_grid (Tetromino.get_comp falling.block);
+  st.falling_block <- Some falling
 
 (** [get_top_left tetromino] is the (row, column) entry in the grid that
     the top left corner of the rectangle that encloses [tetromino] be in. This
@@ -159,12 +157,18 @@ let truncate tetromino =
 let spawn_tetromino tetromino_type st =
   let tetromino = init_tetromino tetromino_type in
   let (r, c) as top_left = get_top_left tetromino st in 
+  let falling = {
+    block_type = tetromino_type;
+    block = tetromino;
+    pos = top_left;
+  } in
   let trunc = truncate tetromino in
+  let trunc_falling = { falling with block = trunc; pos = (r - 1, c) } in
   if can_spawn tetromino top_left st
-  then place_block st top_left tetromino 1
+  then place_block st falling 1
   else if can_spawn trunc (r - 1, c) st
   then begin
-    place_block st (r - 1, c) trunc 1;
+    place_block st trunc_falling 1;
     st.game_over <- true
   end
   else st.game_over <- true
@@ -227,15 +231,15 @@ let update_score st =
 let move st dir =
   match st.falling_block with
   | None -> failwith "No block to move"
-  | Some {block ; pos = (x, y)} ->
+  | Some ({pos = (x, y)} as falling) ->
     begin
       let new_pos = 
         match dir with
         | Left -> (x, y - 1)
         | Right -> (x, y + 1)
         | Down -> (x + 1, y) in
-      place_block st (x, y) block 0;
-      place_block st new_pos block 1 
+      place_block st falling 0;
+      place_block st { falling with pos = new_pos } 1 
     end
 
 let move_left st =
@@ -246,8 +250,8 @@ let move_right st =
 
 let rotate st =
   let falling = get_falling st in
-  place_block st falling.pos falling.block 0;
-  place_block st falling.pos (rotate falling.block) 1
+  place_block st falling 0;
+  place_block st {falling with block = rotate falling.block} 1
 
 let drop ?auto_respawn:(auto = true) st =
   while not (collision_under st) do
