@@ -269,10 +269,6 @@ let fall ?auto_respawn:(auto = true) st =
   end
 
 let hold st =
-  (* TODO: 
-     add field to falling that keeps track of the tetromino type. 
-     This may require us to change place_block to take in a
-     falling rather than a position and block.*)
   let fall_block = get_falling st in
   match st.held_block with
   | None -> begin
