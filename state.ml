@@ -156,7 +156,8 @@ let truncate tetromino =
              |> List.filter (fun (_, y) -> y >= 1) in
   create_tetromino crds (get_width tetromino)
 
-let spawn_tetromino tetromino st =
+let spawn_tetromino tetromino_type st =
+  let tetromino = init_tetromino tetromino_type in
   let (r, c) as top_left = get_top_left tetromino st in 
   let trunc = truncate tetromino in
   if can_spawn tetromino top_left st
@@ -172,8 +173,7 @@ let spawn_next st =
   match st.upcoming_blocks with
   | [] -> failwith "Error: no upcoming blocks found"
   | h :: t -> 
-    let next_block = init_tetromino h in
-    spawn_tetromino next_block st;
+    spawn_tetromino h st;
     if List.length t <= 3
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
@@ -249,22 +249,27 @@ let rotate st =
   place_block st falling.pos falling.block 0;
   place_block st falling.pos (rotate falling.block) 1
 
-let drop ?auto_respawn:(ar = true) st =
+let drop ?auto_respawn:(auto = true) st =
   while not (collision_under st) do
     move st Down
   done;
   update_score st;
-  if ar then spawn_next st
+  if auto then spawn_next st
 
-let fall ?auto_respawn:(ar = true) st =
+let fall ?auto_respawn:(auto = true) st =
   if not (collision_under st)
   then move st Down
   else begin 
     update_score st; 
-    if ar then spawn_next st 
+    if auto then spawn_next st 
   end
 
 let hold st =
+  (* TODO: 
+     add field to falling that keeps track of the tetromino type. 
+     This may require us to change place_block to take in a
+     falling rather than a position and block.
+  *)
   begin
     let fall_block = get_falling st in
     st.held_block <- Some (find_tetromino_type fall_block.block);

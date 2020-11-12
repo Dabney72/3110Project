@@ -71,7 +71,7 @@ val grid_height : t -> int
 
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
     at the top of the grid. *)
-val spawn_tetromino : Tetromino.t -> t -> unit
+val spawn_tetromino : Tetromino.tetromino_type -> t -> unit
 
 (** [spawn_next st] spawns the next tetromino from the list of upcoming blocks
     maintained by [st]. *)

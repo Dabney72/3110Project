@@ -86,24 +86,14 @@ let s_grid () = prepend3 s_top3
 let t_grid () = prepend3 t_top3 
 let z_grid () = prepend3 z_top3 
 
-(* Initialize tetromino types*)
-let init_tetr tetromino = Tetromino.init_tetromino tetromino
-let i_block = init_tetr I_block
-let l_block = init_tetr L_block
-let j_block = init_tetr J_block
-let o_block = init_tetr O_block
-let s_block = init_tetr S_block
-let t_block = init_tetr T_block
-let z_block = init_tetr Z_block
-
 let spawn_tetromino_tests = [
-  spawn_tetromino_test "spawn iblock" (initial ()) i_block i_grid;
-  spawn_tetromino_test "spawn lblock" (initial ()) l_block l_grid;
-  spawn_tetromino_test "spawn jblock" (initial ()) j_block j_grid;
-  spawn_tetromino_test "spawn oblock" (initial ()) o_block o_grid;
-  spawn_tetromino_test "spawn sblock" (initial ()) s_block s_grid;
-  spawn_tetromino_test "spawn tblock" (initial ()) t_block t_grid;
-  spawn_tetromino_test "spawn zblock" (initial ()) z_block z_grid;
+  spawn_tetromino_test "spawn iblock" (initial ()) I_block i_grid;
+  spawn_tetromino_test "spawn lblock" (initial ()) L_block l_grid;
+  spawn_tetromino_test "spawn jblock" (initial ()) J_block j_grid;
+  spawn_tetromino_test "spawn oblock" (initial ()) O_block o_grid;
+  spawn_tetromino_test "spawn sblock" (initial ()) S_block s_grid;
+  spawn_tetromino_test "spawn tblock" (initial ()) T_block t_grid;
+  spawn_tetromino_test "spawn zblock" (initial ()) Z_block z_grid;
 ]
 
 (********************************************************************
@@ -124,81 +114,80 @@ let down n st = for i = 1 to n do st |> fall ~auto_respawn: false done; st
 let rotate n st = for i = 1 to n do st |> State.rotate done; st
 
 (* Spawn block, move it left then return the state.*)
-let i_left = initial () |> block_left i_block
-let l_left = initial () |> block_left l_block
-let j_left = initial () |> block_left j_block
-let o_left = initial () |> block_left o_block
-let s_left = initial () |> block_left s_block
-let t_left = initial () |> block_left t_block
-let z_left = initial () |> block_left z_block
+let i_left = initial () |> block_left I_block
+let l_left = initial () |> block_left L_block
+let j_left = initial () |> block_left J_block
+let o_left = initial () |> block_left O_block
+let s_left = initial () |> block_left S_block
+let t_left = initial () |> block_left T_block
+let z_left = initial () |> block_left Z_block
 
 (* Spawn block, move it right then return the state.*)
-let i_right = initial () |> block_right i_block
-let l_right = initial () |> block_right l_block
-let j_right = initial () |> block_right j_block
-let o_right = initial () |> block_right o_block
-let s_right = initial () |> block_right s_block
-let t_right = initial () |> block_right t_block
-let z_right = initial () |> block_right z_block
+let i_right = initial () |> block_right I_block
+let l_right = initial () |> block_right L_block
+let j_right = initial () |> block_right J_block
+let o_right = initial () |> block_right O_block
+let s_right = initial () |> block_right S_block
+let t_right = initial () |> block_right T_block
+let z_right = initial () |> block_right Z_block
 
 (* Spawn block, fall down one row then return the state.*)
-let i_down = initial () |> block_down i_block
-let l_down = initial () |> block_down l_block
-let j_down = initial () |> block_down j_block
-let o_down = initial () |> block_down o_block
-let s_down = initial () |> block_down s_block
-let t_down = initial () |> block_down t_block
-let z_down = initial () |> block_down z_block
+let i_down = initial () |> block_down I_block
+let l_down = initial () |> block_down L_block
+let j_down = initial () |> block_down J_block
+let o_down = initial () |> block_down O_block
+let s_down = initial () |> block_down S_block
+let t_down = initial () |> block_down T_block
+let z_down = initial () |> block_down Z_block
 
 (* Spawn block, drop to bottom then return the state.*)
-let i_drop = initial () |> spawn_and_drop i_block
-let l_drop = initial () |> spawn_and_drop l_block
-let j_drop = initial () |> spawn_and_drop j_block
-let o_drop = initial () |> spawn_and_drop o_block
-let s_drop = initial () |> spawn_and_drop s_block
-let t_drop = initial () |> spawn_and_drop t_block
-let z_drop = initial () |> spawn_and_drop z_block
+let i_drop = initial () |> spawn_and_drop I_block
+let l_drop = initial () |> spawn_and_drop L_block
+let j_drop = initial () |> spawn_and_drop J_block
+let o_drop = initial () |> spawn_and_drop O_block
+let s_drop = initial () |> spawn_and_drop S_block
+let t_drop = initial () |> spawn_and_drop T_block
+let z_drop = initial () |> spawn_and_drop Z_block
 
 (* Spawn block, move it all the way to the left then return the state.*)
-let i_leftmost = initial () |> spawn i_block |> left 10
-let l_leftmost = initial () |> spawn l_block |> left 10
-let j_leftmost = initial () |> spawn j_block |> left 10
-let o_leftmost = initial () |> spawn o_block |> left 10
-let s_leftmost = initial () |> spawn s_block |> left 10
-let t_leftmost = initial () |> spawn t_block |> left 10
-let z_leftmost = initial () |> spawn z_block |> left 10
+let i_leftmost = initial () |> spawn I_block |> left 10
+let l_leftmost = initial () |> spawn L_block |> left 10
+let j_leftmost = initial () |> spawn J_block |> left 10
+let o_leftmost = initial () |> spawn O_block |> left 10
+let s_leftmost = initial () |> spawn S_block |> left 10
+let t_leftmost = initial () |> spawn T_block |> left 10
+let z_leftmost = initial () |> spawn Z_block |> left 10
 
 (* Spawn block, move it all the way to the left then return the state.*)
-let i_rightmost = initial () |> spawn i_block |> right 10
-let l_rightmost = initial () |> spawn l_block |> right 10
-let j_rightmost = initial () |> spawn j_block |> right 10
-let o_rightmost = initial () |> spawn o_block |> right 10
-let s_rightmost = initial () |> spawn s_block |> right 10
-let t_rightmost = initial () |> spawn t_block |> right 10
-let z_rightmost = initial () |> spawn z_block |> right 10
+let i_rightmost = initial () |> spawn I_block |> right 10
+let l_rightmost = initial () |> spawn L_block |> right 10
+let j_rightmost = initial () |> spawn J_block |> right 10
+let o_rightmost = initial () |> spawn O_block |> right 10
+let s_rightmost = initial () |> spawn S_block |> right 10
+let t_rightmost = initial () |> spawn T_block |> right 10
+let z_rightmost = initial () |> spawn Z_block |> right 10
 
 (* Spawn block, move it all the way to the down using fall then return the state.*)
-let i_downmost = initial () |> spawn i_block |> down 20
-let l_downmost = initial () |> spawn l_block |> down 20
-let j_downmost = initial () |> spawn j_block |> down 20
-let o_downmost = initial () |> spawn o_block |> down 20
-let s_downmost = initial () |> spawn s_block |> down 20
-let t_downmost = initial () |> spawn t_block |> down 20
-let z_downmost = initial () |> spawn z_block |> down 20
+let i_downmost = initial () |> spawn I_block |> down 20
+let l_downmost = initial () |> spawn L_block |> down 20
+let j_downmost = initial () |> spawn J_block |> down 20
+let o_downmost = initial () |> spawn O_block |> down 20
+let s_downmost = initial () |> spawn S_block |> down 20
+let t_downmost = initial () |> spawn T_block |> down 20
+let z_downmost = initial () |> spawn Z_block |> down 20
 
 (* Fill the first 4 rows entirely, using different rotations and translations
    of each tetromino. *)
 let block_4x10 = initial ()
-                 |> spawn t_block |> right 1 |> drop_block
-                 |> spawn s_block |> left 1 |> drop_block
-                 |> spawn o_block |> left 4 |> drop_block
-                 |> spawn j_block |> rotate 3 |> right 4 |> drop_block
-                 |> spawn t_block |> rotate 2 |> left 2 |> drop_block
-                 |> spawn z_block |> drop_block
-                 |> spawn o_block |> right 2 |> drop_block
-                 |> spawn l_block |> rotate 2 |> left 3 |> drop_block
-                 |> spawn i_block |> right 2 |> drop_block
-                 (* |> spawn i_block |> rotate 1 |> right 4 |> drop_block *)
+                 |> spawn T_block |> right 1 |> drop_block
+                 |> spawn S_block |> left 1 |> drop_block
+                 |> spawn O_block |> left 4 |> drop_block
+                 |> spawn J_block |> rotate 3 |> right 4 |> drop_block
+                 |> spawn T_block |> rotate 2 |> left 2 |> drop_block
+                 |> spawn Z_block |> drop_block
+                 |> spawn O_block |> right 2 |> drop_block
+                 |> spawn L_block |> rotate 2 |> left 3 |> drop_block
+                 |> spawn I_block |> right 2 |> drop_block
 
 (* Top three rows of spawning each tetrimno block then moving it left. *)
 let i_left_top3 = [|
