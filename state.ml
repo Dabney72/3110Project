@@ -283,22 +283,17 @@ let hold st =
     let fall_block = get_falling st in
     if st.held_block <> None then 
       begin 
+        let prev_block  = (get_tetromino_type st) in 
         st.held_block <- Some fall_block.block_type;
-        spawn_tetromino (get_tetromino_type st) st
+        place_block st fall_block 0;
+        spawn_tetromino prev_block st
       end
     else
       begin
         st.held_block <- Some fall_block.block_type;
+        place_block st fall_block 0;
         spawn_next st
       end
-
-    (*let hold_block = get_tetromino_type st in
-      st.held_block <- Some fall_block.block_type;
-      place_block st fall_block 0;
-      st.falling_block <- None;
-      if hold_block <> None 
-      then spawn_tetromino hold_block st
-      else spawn_next st*)
   end 
 
 let initialize ?auto_spawn:(auto = true) () =
