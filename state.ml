@@ -251,7 +251,7 @@ let move_right st =
 let rotate st =
   let falling = get_falling st in
   place_block st falling 0;
-  place_block st {falling with block = rotate falling.block} 1
+  place_block st {falling with block = rotate_cw falling.block} 1
 
 let drop ?auto_respawn:(auto = true) st =
   while not (collision_under st) do

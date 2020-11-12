@@ -1,3 +1,5 @@
+(** A tetris piece. *)
+
 (** The type [tetromino_type] represents the type of tetromino. Each type
     has a different block composition. *)
 type tetromino_type =
@@ -17,10 +19,6 @@ type t
     [t_type]. *)
 val init_tetromino : tetromino_type -> t
 
-(** [t_type] is the tetromino given by the tetromino type [init_tetromino t_type] 
-*)
-val find_tetromino_type : t -> tetromino_type
-
 (** [create_tetromino comp w] is a tetromino with the composition [comp]
     and width [w]. *)
 val create_tetromino : (int * int) list -> int -> t
@@ -28,10 +26,15 @@ val create_tetromino : (int * int) list -> int -> t
 (** [rotate tetromino] is a new tetromino after [tetromino] is rotated 90
     degrees clockwise. It will shift the tetromino after rotation in order
     to keep it within the same boundary. *)
-val rotate : t -> t
+val rotate_cw : t -> t
+
+(** [rotate tetromino] is a new tetromino after [tetromino] is rotated 90
+    degrees counterclockwise. It will shift the tetromino after rotation in
+    order to keep it within the same boundary. *)
+val rotate_ccw : t -> t
 
 (** [generate_list ()] is a list containing one of each of the seven
-    tetrominoes in a random order. *)
+    tetromino types in a random order. *)
 val generate_list : unit -> tetromino_type list
 
 (** [get_width tetromino] is the width/height of the square that encloses

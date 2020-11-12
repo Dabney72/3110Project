@@ -22,11 +22,11 @@ let compare_tetrominos t1 t2 =
   && 
   get_width t1 = get_width t2
 
-(** [rotate_test name tetromino expected] is an OUnit test case named [name]
-    for [rotate tetromino], asserting that the output is [expected]. *)
-let rotate_test name tetromino expected =
-  name >:: (fun _ -> assert_equal expected (rotate tetromino)
-               ~printer: (to_string)
+(** [rotate_test rotator name tetromino expected] is an OUnit test case named
+    [name] for [rotator tetromino], asserting that the output is [expected]. *)
+let rotate_test rotator name tetromino expected =
+  name >:: (fun _ -> assert_equal expected (rotator tetromino)
+               ~printer: to_string
                ~cmp: compare_tetrominos)
 
 (* 7 standard tetrominoes *)
@@ -64,20 +64,29 @@ let z2 = create_tetromino [(0,1); (1,1); (1,2); (2,2)] 3
 let z3 = create_tetromino [(1,0); (1,1); (0,1); (0,2)] 3
 
 (** [test_rotate t_type one_rot two_rot three_rot] is a list of OUnit tests
-    for each rotation of the tetromino of type [t_type]. The rotations are
-    tested against [one_rot] for the first rotation, [two_rot] for the second,
-    and [three_rot] for the third. The fourth rotation should yield the
-    original tetromino. *)
+    for each rotation of the tetromino of type [t_type]. First, the clockwise
+    rotations are tested against [one_rot] for the first rotation,
+    [two_rot] for the second, and [three_rot] for the third.
+    The fourth rotation should yield the original tetromino. The process is
+    then repeated again for counterclockwise rotations. *)
 let test_rotate t_type one_rot two_rot three_rot = 
   let tetr = init_tetromino t_type in [
-    rotate_test ("Rotate " ^ get_name t_type ^ " once")
+    rotate_test rotate_cw ("Rotate " ^ get_name t_type ^ " cw once")
       tetr one_rot;
-    rotate_test ("Rotate " ^ get_name t_type ^ " twice")
+    rotate_test rotate_cw ("Rotate " ^ get_name t_type ^ " cw twice")
       one_rot two_rot;
-    rotate_test ("Rotate " ^ get_name t_type ^ " three times")
+    rotate_test rotate_cw ("Rotate " ^ get_name t_type ^ " cw three times")
       two_rot three_rot;
-    rotate_test ("Rotate " ^ get_name t_type ^ " four times")
+    rotate_test rotate_cw ("Rotate " ^ get_name t_type ^ " cw four times")
       three_rot tetr;
+    rotate_test rotate_ccw ("Rotate " ^ get_name t_type ^ " ccw once")
+      tetr three_rot;
+    rotate_test rotate_ccw ("Rotate " ^ get_name t_type ^ " ccw twice")
+      three_rot two_rot;
+    rotate_test rotate_ccw ("Rotate " ^ get_name t_type ^ " ccw three times")
+      two_rot one_rot;
+    rotate_test rotate_ccw ("Rotate " ^ get_name t_type ^ " ccw four times")
+      one_rot tetr;
   ]
 
 let rotate_tests = List.flatten [

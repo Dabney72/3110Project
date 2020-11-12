@@ -56,11 +56,6 @@ let init_tetromino = function
   | T_block -> t_block
   | Z_block -> z_block
 
-let find_tetromino_type t = 
-  if t = j_block then J_block else if t = l_block then L_block else if 
-    t = j_block then J_block else if t = o_block then O_block else if 
-    t = s_block then S_block else if t = t_block then T_block else Z_block
-
 let create_tetromino comp w = {
   composition = comp;
   width = w
@@ -78,21 +73,36 @@ let get_width tetromino =
 let get_comp tetromino =
   tetromino.composition
 
-(** [rotate_composition offset comp] is a new list of coordinates obtained
+(** [cw offset comp] is a new list of coordinates obtained
     after rotating each coordinate in [comp] 90 degrees clockwise. *)
-let rec rotate_composition offset = function
+let rec cw offset = function
   | [] -> []
-  | (x, y) :: t -> (-y + offset, x) :: rotate_composition offset t
+  | (x, y) :: t -> (-y + offset, x) :: cw offset t
 
-let rotate tetromino =
+(** [ccw offset comp] is a new list of coordinates obtained
+    after rotating each coordinate in [comp] 90 degrees counterclockwise. *)
+let rec ccw offset = function
+  | [] -> []
+  | (x, y) :: t -> (y, offset - x) :: ccw offset t
+
+(** [rotate tetromino] is [tetromino] after [dir] rotates its coordinates.
+    It will shift the tetromino after rotation in order to keep it within the
+    same boundary. *)
+let rotate rot_dir tetromino =
   let comp = tetromino.composition in
   let w = tetromino.width in 
   if comp = o_block.composition 
   && w = o_block.width
   then tetromino
   else {
-    tetromino with composition = rotate_composition (w - 1) comp;
+    tetromino with composition = rot_dir (w - 1) comp;
   }
+
+let rotate_cw =
+  rotate cw
+
+let rotate_ccw =
+  rotate ccw
 
 (** [get_coord x y tetromino] is "X" if it corresponds to a block on
     [tetromino], and "*" if it does not. *)
