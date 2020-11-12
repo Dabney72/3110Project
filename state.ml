@@ -46,6 +46,11 @@ let grid_width st = Array.length st.grid.(0)
 
 let grid_height st = Array.length st.grid
 
+let get_tetromino_type st = 
+  match st.held_block with 
+  | Some a -> a
+  | None -> failwith "No block held"
+
 (** [optimum coord cmp comp] is the most extreme coordinate in [comp].
     [coord] is a function that tells which coordinate to optimize (e.g. 
     fst for x or snd for y), and [cmp a b] is true if a is more extreme than b. 
@@ -276,10 +281,24 @@ let hold st =
   *)
   begin
     let fall_block = get_falling st in
-    st.held_block <- Some fall_block.block_type;
-    place_block st fall_block 0;
-    st.falling_block <- None;
-    spawn_next st
+    if st.held_block <> None then 
+      begin 
+        st.held_block <- Some fall_block.block_type;
+        spawn_tetromino (get_tetromino_type st) st
+      end
+    else
+      begin
+        st.held_block <- Some fall_block.block_type;
+        spawn_next st
+      end
+
+    (*let hold_block = get_tetromino_type st in
+      st.held_block <- Some fall_block.block_type;
+      place_block st fall_block 0;
+      st.falling_block <- None;
+      if hold_block <> None 
+      then spawn_tetromino hold_block st
+      else spawn_next st*)
   end 
 
 let initialize ?auto_spawn:(auto = true) () =
