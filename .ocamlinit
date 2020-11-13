@@ -1,7 +1,6 @@
 #directory "_build";;
 #require "graphics";;
 #require "bisect_ppx.runtime";;
-#load "input.cmo";;
 #load "tetromino.cmo";;
 #load "state.cmo";;
 #load "display.cmo";;

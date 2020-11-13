@@ -6,7 +6,7 @@ STATE_TEST = state_test.byte
 TETR_TEST = tetromino_test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag 'package(bisect_ppx-ocamlbuild)'
-PKGS=ounit2,graphics
+PKGS=unix,ounit2,graphics
 
 default: build
 	utop

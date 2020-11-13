@@ -15,9 +15,9 @@ let cmp_set_like_lists lst1 lst2 =
   &&
   uniq1 = uniq2
 
-(** [compare_tetrominos] is true iff [t1] and [t2] have the same composition
+(** [compare_tetrominoes] is true iff [t1] and [t2] have the same composition
     and width. *)
-let compare_tetrominos t1 t2 =
+let compare_tetrominoes t1 t2 =
   cmp_set_like_lists (get_comp t1) (get_comp t2)
   && 
   get_width t1 = get_width t2
@@ -27,7 +27,7 @@ let compare_tetrominos t1 t2 =
 let rotate_test rotator name tetromino expected =
   name >:: (fun _ -> assert_equal expected (rotator tetromino)
                ~printer: to_string
-               ~cmp: compare_tetrominos)
+               ~cmp: compare_tetrominoes)
 
 (* 7 standard tetrominoes *)
 let i_block = init_tetromino I_block
