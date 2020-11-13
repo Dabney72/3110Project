@@ -77,20 +77,25 @@ let draw_start_screen () =
   open_graph "";
   moveto ((size_x () / 2) - 72) (size_y () - 50);
   draw_string "Welcome to OCaml Tetris!";
-  moveto 80 (size_y () - 70);
-  draw_string "Game created by Dan Batan, David Hu, Lenhard Thomas, and Rafael Chaves";
-  moveto ((size_x () / 2) - 90) ((size_y () * 2 / 3) - 40);
+  moveto 100 (size_y () - 70);
+  draw_string ("Created by Dan Batan, David Hu, Lenhard Thomas, " ^
+               "and Rafael Chaves");
+  moveto ((size_x () / 2) - 92) ((size_y () * 2 / 3) - 30);
   draw_string "The controls are the following:";
-  moveto 120 ((size_y () * 2 / 3) - 60);
-  draw_string "* [a/d] to move the falling tetromino left and right respectively";
-  moveto 120 ((size_y () * 2 / 3) - 80);
-  draw_string "* [w] to rotate the falling tetromino clockwise";
-  moveto 120 ((size_y () * 2 / 3) - 100);
-  draw_string "* [s] to immediately drop the falling tetromino down";
-  moveto 120 ((size_y () * 2 / 3) - 120);
+  moveto 80 ((size_y () * 2 / 3) - 50);
+  draw_string ("* [a/d] to move the falling tetromino left and right " ^
+               "respectively");
+  moveto 80 ((size_y () * 2 / 3) - 70);
+  draw_string "* [w] to immediately drop the falling tetromino down";
+  moveto 80 ((size_y () * 2 / 3) - 90);
+  draw_string "* [s] to have the falling tetromino fall faster";
+  moveto 80 ((size_y () * 2 / 3) - 110);
+  draw_string ("* [k/l] to rotate the falling tetromino counter-clockwise " ^
+               "and clockwise respectively");
+  moveto 80 ((size_y () * 2 / 3) - 130);
   draw_string "* [space bar] to hold the falling tetromino";
-  moveto ((size_x () / 2) - 100) 50;
-  draw_string "Push any button to start the game"
+  moveto ((size_x () / 2) - 110) 50;
+  draw_string "Press the space bar to start the game"
 
 let draw_game_screen state =
   open_graph "";
@@ -103,7 +108,7 @@ let draw_game_over_screen score =
   open_graph "";
   moveto (size_x () / 2 - 20) (5 * size_y () / 7);
   draw_string "Game Over";
-  moveto (size_x () / 2 - 60) (size_y () / 2);
+  moveto (size_x () / 2 - 62) (size_y () / 2);
   draw_string ("Your final score was: " ^ string_of_int score);
-  moveto (size_x () / 2 - 76) (2 * size_y () / 7);
-  draw_string "Press any button to play again"
+  moveto (size_x () / 2 - 90) (2 * size_y () / 7);
+  draw_string "Press the space bar to play again"

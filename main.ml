@@ -4,26 +4,32 @@ open Tetromino
 open State
 open Unix 
 
+(** [wait_for_space ()] stalls until the space bar is pressed. *)
+let rec wait_for_space () =
+  if read_key () = ' ' then () else wait_for_space ()
+
 (** [read_input state char] updates game state [state] based on the character
     [char] is or does nothing if [char] is not one of the valid inputs. 
     Valid inputs are w, a, s, d, and space. *)
 let read_input state =
   function
-  | 'w' -> rotate_cw state
   | 'a' -> move_left state
   | 'd' -> move_right state
-  | 's' -> drop state
+  | 'w' -> drop state
+  | 's' -> () (* TODO: change to soft drop once implemented. *)
+  | 'k' -> rotate_ccw state
+  | 'l' -> rotate_cw state
   | ' ' -> hold state
   | _ -> ()
 
 (** [main ()] runs the tetris game. *)
 let rec main () =
-  (* Initialize game variables and game state and wait for any button press to 
+  (* Initialize game variables and game state and wait for a space bar press to 
      start game. *)
   let counter = ref 0 in
   let diff = ref 5 in
   draw_start_screen ();
-  ignore (read_key ());
+  wait_for_space ();
   let state = initialize () in
   draw_game_screen state;
   (* Main game loop that runs until game over. *)  
@@ -40,11 +46,10 @@ let rec main () =
     let () = if !counter > !diff then counter := 0 else () in
     ()
   done;
-  (* Game over where any button press will restart main. *)
+  (* Game over where a space bar press will restart main. *)
   sleepf 1.0;
   draw_game_over_screen (get_score state);
-  ignore (read_key ());
-  ignore (read_key ());
+  wait_for_space ();
   main ()
 
 let () = main ()
