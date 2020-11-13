@@ -248,10 +248,36 @@ let move_left st =
 let move_right st =
   if not (collision_right st) then move st Right
 
-let rotate st =
+(** [valid_position st] takes in the state [st] and returns the block that
+    is falling. 
+    [Failure "No block falling"] if st.falling_block is None  *)
+let valid_position st old_pos r c =
+  if r < 0 || c < 0 then false 
+  else if r >= grid_height st || c >= grid_width st then false
+  else st.grid.(r).(c) = 0  || List.mem(r, c) old_pos 
+
+let rotate dir st =
   let falling = get_falling st in
-  place_block st falling 0;
-  place_block st {falling with block = rotate_cw falling.block} 1
+  let rotate_comp = get_comp (dir falling.block) in
+  let add_pos acc (y, x) = (fst falling.pos + x, snd falling.pos + y) :: acc in
+  let falling_positions = List.fold_left add_pos [] (get_comp falling.block) in 
+  let valid_placement (y, x) =
+    match st.falling_block with 
+    | None -> failwith "No block falling"
+    | Some {block; pos = (r, c)} -> 
+      valid_position st falling_positions (r + x) (c + y) in
+  if List.for_all valid_placement rotate_comp 
+  then begin
+    place_block st falling 0;
+    place_block st {falling with block = dir falling.block} 1
+  end
+
+let rotate_cw =
+  rotate Tetromino.rotate_cw
+
+let rotate_ccw =
+  rotate Tetromino.rotate_ccw
+
 
 let drop ?auto_respawn:(auto = true) st =
   while not (collision_under st) do

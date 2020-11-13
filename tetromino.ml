@@ -85,17 +85,17 @@ let rec ccw offset = function
   | [] -> []
   | (x, y) :: t -> (y, offset - x) :: ccw offset t
 
-(** [rotate tetromino] is [tetromino] after [dir] rotates its coordinates.
+(** [rotate dir tetromino] is [tetromino] after [dir] rotates its coordinates.
     It will shift the tetromino after rotation in order to keep it within the
     same boundary. *)
-let rotate rot_dir tetromino =
+let rotate dir tetromino =
   let comp = tetromino.composition in
   let w = tetromino.width in 
   if comp = o_block.composition 
   && w = o_block.width
   then tetromino
   else {
-    tetromino with composition = rot_dir (w - 1) comp;
+    tetromino with composition = dir (w - 1) comp;
   }
 
 let rotate_cw =

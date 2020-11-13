@@ -9,7 +9,7 @@ open Unix
     Valid inputs are w, a, s, d, and space. *)
 let read_input state =
   function
-  | 'w' -> rotate state
+  | 'w' -> rotate_cw state
   | 'a' -> move_left state
   | 'd' -> move_right state
   | 's' -> drop state

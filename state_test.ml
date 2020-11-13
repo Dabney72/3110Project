@@ -111,7 +111,7 @@ let drop_block st = st |> drop ~auto_respawn: false; st
 let left n st = for i = 1 to n do st |> move_left done; st
 let right n st = for i = 1 to n do st |> move_right done; st
 let down n st = for i = 1 to n do st |> fall ~auto_respawn: false done; st
-let rotate n st = for i = 1 to n do st |> State.rotate done; st
+let rotate n st = for i = 1 to n do st |> State.rotate_cw done; st
 
 (* Spawn block, move it left then return the state.*)
 let i_left = initial () |> block_left I_block

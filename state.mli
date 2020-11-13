@@ -41,8 +41,13 @@ val move_left : t -> unit
 (** [move_right st] moves the falling block to the right by one. *)
 val move_right : t -> unit
 
-(** [rotate st] rotates the currently falling tetromino 90 degrees clockwise. *)
-val rotate : t -> unit
+(** [rotate_cw st] rotates the currently falling tetromino 90 degrees
+    clockwise. *)
+val rotate_cw : t -> unit
+
+(** [rotate_ccw st] rotates the currently falling tetromino 90 degrees
+    counterclockwise. *)
+val rotate_ccw : t -> unit
 
 (** [drop ?auto_respawn st] instantaneously drops the currently falling
     tetromino to the bottom of the grid. If there is a block in the way,
