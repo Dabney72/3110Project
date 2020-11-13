@@ -248,13 +248,13 @@ let move_left st =
 let move_right st =
   if not (collision_right st) then move st Right
 
-(** [valid_position st] takes in the state [st] and returns the block that
-    is falling. 
-    [Failure "No block falling"] if st.falling_block is None  *)
-let valid_position st old_pos r c =
+(** [valid_position st positions r c] returns true if [r] and [c] are bound between
+    the grid and position row = r, column = c in the grid is either empty or 
+    one of the original [positions]. *)
+let valid_position st positions r c =
   if r < 0 || c < 0 then false 
   else if r >= grid_height st || c >= grid_width st then false
-  else st.grid.(r).(c) = 0  || List.mem(r, c) old_pos 
+  else st.grid.(r).(c) = 0  || List.mem (r, c) positions 
 
 let rotate dir st =
   let falling = get_falling st in
