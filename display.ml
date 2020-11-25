@@ -2,6 +2,31 @@ open Graphics
 open State
 open Tetromino
 
+(** [change_color tetromino] alters the Graphics color to match the 
+    tetromino type. *)
+let change_color = function
+  | I_block -> set_color cyan;
+  | L_block -> set_color blue;
+  | J_block -> set_color (rgb 255 165 0);
+  | O_block -> set_color yellow;
+  | S_block -> set_color green;
+  | T_block -> set_color magenta;
+  | Z_block -> set_color red
+
+(** [draw_tetromino x y arr] draws a tetromino. *)
+let draw_tetrominogrid start_x start_y x y size arr = 
+  let grid_width = Array.length arr.(0) * size in
+  let grid_height = Array.length arr * size in
+  let y_adjstd = Array.length arr - 1 - y in 
+  match arr.(y).(x) with 
+  | None -> 
+    draw_rect (start_x + x * size - grid_width / 2) 
+      (start_y + y_adjstd * size - grid_height / 2) size size
+  | Some tetromino -> 
+    change_color tetromino;
+    fill_rect (start_x + x * size - grid_width / 2) 
+      (start_y + y_adjstd * size - grid_height / 2) size size; set_color black
+
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
     Note: [arr.(0).(0)] corresponds to the top left position of the grid.
@@ -14,16 +39,9 @@ let draw_grid arr =
   let box_size = 20 in
   let start_x = size_x () / 2 in
   let start_y = size_y () / 2 in
-  let grid_width = Array.length arr.(0) * box_size in
-  let grid_height = Array.length arr * box_size in
   for x = 0 to Array.length arr.(0) - 1 do
     for y = 0 to Array.length arr - 1 do
-      let y_adjstd = Array.length arr - 1 - y in
-      if arr.(y).(x) = 1 
-      then fill_rect (start_x + x * box_size - grid_width / 2) 
-          (start_y + y_adjstd * box_size - grid_height / 2) box_size box_size
-      else draw_rect (start_x + x * box_size - grid_width / 2) 
-          (start_y + y_adjstd * box_size - grid_height / 2) box_size box_size
+      draw_tetrominogrid start_x start_y x y box_size arr
     done
   done
 
@@ -35,14 +53,18 @@ let draw_score score =
 (** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
     [x], [y]. *)
 let draw_tetromino x y tetromino =
-  match tetromino with
-  | I_block -> fill_rect (x - 40) (y - 10) 80 20
-  | L_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x + 10) y 20 20
-  | J_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 30) y 20 20
-  | O_block -> fill_rect (x - 20) (y - 20) 40 40
-  | S_block -> fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20
-  | T_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 10) y 20 20
-  | Z_block -> fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20
+  change_color tetromino;
+  begin 
+    match tetromino with
+    | I_block -> fill_rect (x - 40) (y - 10) 80 20
+    | L_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x + 10) y 20 20
+    | J_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 30) y 20 20
+    | O_block -> fill_rect (x - 20) (y - 20) 40 40
+    | S_block -> fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20
+    | T_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 10) y 20 20
+    | Z_block -> fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20
+  end;
+  set_color black
 
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
     tetromino or an empty box if it is none. *)

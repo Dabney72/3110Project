@@ -6,13 +6,13 @@ type direction =
   | Down
 
 type falling = {
-  block_type : Tetromino.tetromino_type;
+  block_type : tetromino_type;
   mutable block : Tetromino.t;
   mutable pos : (int * int);
 }
 
 type t = {
-  mutable grid : int array array;
+  mutable grid : tetromino_type option array array;
   mutable falling_block : falling option;
   mutable upcoming_blocks : tetromino_type list;
   mutable held_block : tetromino_type option;
@@ -84,7 +84,7 @@ let blocks_surrounding st offset_r offset_c comp =
       let r = r' + offset_r in
       let c = c' + offset_c in 
       not (List.mem (r, c) comp) (* Make sure block can't collide with itself *)
-      && st.grid.(r).(c) = 1 
+      && Option.is_some st.grid.(r).(c)
       || loop st t
   in loop st comp
 
@@ -128,7 +128,7 @@ let place_block st falling value =
   let mutate_grid (y, x) = 
     match falling.pos with
     | (r, c) -> st.grid.(r + x).(c + y) <- value in
-  List.iter mutate_grid (Tetromino.get_comp falling.block);
+  List.iter mutate_grid (get_comp falling.block);
   st.falling_block <- Some falling
 
 (** [get_top_left tetromino] is the (row, column) entry in the grid that
@@ -136,14 +136,14 @@ let place_block st falling value =
     entry is given by the formula:
     (0, (number of grid columns - block width) / 2). *)
 let get_top_left tetromino st =
-  (0, (grid_width st - Tetromino.get_width tetromino) / 2)
+  (0, (grid_width st - get_width tetromino) / 2)
 
 (** [can_spawn tetromino pos st] is whether [tetromino] can be spawned at 
     position [pos] in state [st]. *)
 let can_spawn tetromino pos st =
   let rec help = function
     | [] -> true
-    | (r, c) :: t -> st.grid.(r).(c) == 0 && help t
+    | (r, c) :: t -> Option.is_none st.grid.(r).(c) && help t
   in block_coords tetromino pos st |> help
 
 (** [truncate tetromino] is [tetromino] with its top row cut off. Used for
@@ -165,10 +165,10 @@ let spawn_tetromino tetromino_type st =
   let trunc = truncate tetromino in
   let trunc_falling = { falling with block = trunc; pos = (r - 1, c) } in
   if can_spawn tetromino top_left st
-  then place_block st falling 1
+  then place_block st falling (Some tetromino_type)
   else if can_spawn trunc (r - 1, c) st
   then begin
-    place_block st trunc_falling 1;
+    place_block st trunc_falling (Some tetromino_type);
     st.game_over <- true
   end
   else st.game_over <- true
@@ -196,7 +196,7 @@ let increment_score st =
   let consec = ref 0 in
   let points = ref 0 in
   let inc_score index row = 
-    if Array.for_all (fun x -> x = 1) row 
+    if Array.for_all Option.is_some row 
     then begin 
       consec := !consec + 1; 
       rows := index :: !rows 
@@ -222,7 +222,7 @@ let update_score st =
     then unfilled_rows := Array.append !unfilled_rows [|row|] in
   Array.iteri drop_rows st.grid;
   let new_height = List.length filled_rows in
-  let new_rows = Array.make_matrix new_height (grid_width st) 0 in 
+  let new_rows = Array.make_matrix new_height (grid_width st) None in 
   let updated_grid = Array.append new_rows !unfilled_rows in
   st.grid <- updated_grid
 
@@ -231,15 +231,15 @@ let update_score st =
 let move st dir =
   match st.falling_block with
   | None -> failwith "No block to move"
-  | Some ({pos = (x, y)} as falling) ->
+  | Some ({block_type; pos = (x, y)} as falling) ->
     begin
       let new_pos = 
         match dir with
         | Left -> (x, y - 1)
         | Right -> (x, y + 1)
         | Down -> (x + 1, y) in
-      place_block st falling 0;
-      place_block st { falling with pos = new_pos } 1 
+      place_block st falling None;
+      place_block st { falling with pos = new_pos } (Some block_type)
     end
 
 let move_left st =
@@ -254,7 +254,7 @@ let move_right st =
 let valid_position st positions r c =
   if r < 0 || c < 0 then false 
   else if r >= grid_height st || c >= grid_width st then false
-  else st.grid.(r).(c) = 0  || List.mem (r, c) positions 
+  else Option.is_none st.grid.(r).(c) || List.mem (r, c) positions 
 
 let rotate dir st =
   let falling = get_falling st in
@@ -268,16 +268,15 @@ let rotate dir st =
       valid_position st falling_positions (r + x) (c + y) in
   if List.for_all valid_placement rotate_comp 
   then begin
-    place_block st falling 0;
-    place_block st {falling with block = dir falling.block} 1
+    place_block st falling None;
+    place_block st {falling with block = dir falling.block} (Some falling.block_type)
   end
 
 let rotate_cw =
-  rotate Tetromino.rotate_cw
+  rotate rotate_ccw
 
 let rotate_ccw =
-  rotate Tetromino.rotate_ccw
-
+  rotate rotate_ccw
 
 let drop ?auto_respawn:(auto = true) st =
   while not (collision_under st) do
@@ -299,18 +298,18 @@ let hold st =
   match st.held_block with
   | None -> begin
       st.held_block <- Some fall_block.block_type;
-      place_block st fall_block 0;
+      place_block st fall_block None;
       spawn_next st
     end
   | Some c -> begin
       st.held_block <- Some fall_block.block_type;
-      place_block st fall_block 0;
+      place_block st fall_block None;
       spawn_tetromino c st
     end
 
 let initialize ?auto_spawn:(auto = true) () =
   let st = {
-    grid = Array.make_matrix 20 10 0;
+    grid = Array.make_matrix 20 10 None;
     falling_block = None;
     upcoming_blocks = generate_list ();
     held_block = None;

@@ -1,7 +1,7 @@
 (** [draw_start_sreen ()] creates a start screen for the tetris game. *)
 val draw_start_screen : unit -> unit
 
-val draw_grid : int array array -> unit
+val draw_grid : Tetromino.tetromino_type option array array -> unit
 
 val draw_score : int -> unit
 

@@ -19,7 +19,7 @@ val initialize : ?auto_spawn: bool -> unit -> t
 (** [get_grid st] is a 2d array that contains the placements of the blocks. The
     grid is in row major so grid.(0) is the first row and grid.(0).(1) is the
     first row, second column. *)
-val get_grid : t -> int array array 
+val get_grid : t -> Tetromino.tetromino_type option array array 
 
 (** [get_score st] is an integer representing the game's current score. *)
 val get_score : t -> int
