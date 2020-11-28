@@ -2,6 +2,15 @@ open OUnit2
 open State
 open Tetromino
 
+(** [to_intgrid arr] turns the 2D Tetromino option [arr] into a 2D int grid such
+    that None is 0 and Some Tetromino is 1. *)
+let to_intgrid arr =
+  let convert = function
+    | None -> 0
+    | Some _ -> 1 in 
+  let convertrow = Array.map convert in 
+  Array.map convertrow arr
+
 (** [pp_array arr] pretty prints an int array [arr]. *)
 let pp_array arr = 
   let build_string acc x = 
@@ -21,14 +30,14 @@ let pp_matrix (m : int array array) =
     the output is [grid]. *)
 let spawn_tetromino_test name st tetromino grid =
   name >:: fun ctxt ->  
-    assert_equal (grid ()) (spawn_tetromino tetromino st; get_grid st) 
+    assert_equal (grid ()) (spawn_tetromino tetromino st; st |> get_grid |> to_intgrid) 
       ~printer: pp_matrix
 
 (** [grid_test name st grid] is an OUnit test case named [name] for 
     [st] asserting that its grid attribute is [grid]. *)
 let grid_test name st grid =
   name >:: fun ctxt ->  
-    assert_equal grid (get_grid st) ~printer: pp_matrix
+    assert_equal grid (st |> get_grid |> to_intgrid) ~printer: pp_matrix
 
 (********************************************************************
    Initilization and Spawn Testing
@@ -182,7 +191,7 @@ let block_4x10 = initial ()
                  |> spawn T_block |> right 1 |> drop_block
                  |> spawn S_block |> left 1 |> drop_block
                  |> spawn O_block |> left 4 |> drop_block
-                 |> spawn J_block |> rotate 3 |> right 4 |> drop_block
+                 |> spawn J_block |> rotate 1 |> right 4 |> drop_block
                  |> spawn T_block |> rotate 2 |> left 2 |> drop_block
                  |> spawn Z_block |> drop_block
                  |> spawn O_block |> right 2 |> drop_block
