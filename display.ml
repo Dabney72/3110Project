@@ -45,10 +45,23 @@ let draw_grid arr =
     done
   done
 
-(** [draw_score score] draws the score onto an opened game screen. *)
+(** [draw_score score] draws the score [score] onto an opened game screen
+    beneath the held block.  *)
 let draw_score score =
-  moveto 200 430;
+  moveto 50 300;
   draw_string ("Score: " ^ string_of_int score)
+
+(** [draw_level level] draws the level [level] onto an opened game screen
+    beneath the score. *)
+let draw_level level =
+  moveto 50 275;
+  draw_string ("Level: " ^ string_of_int level)
+
+(** [draw_lines_cleared lines] draws the lines cleared [lines] onto an opened
+    game screen beneath the score. *)
+let draw_lines_cleared lines =
+  moveto 50 250;
+  draw_string ("Lines Cleared: " ^ string_of_int lines)
 
 (** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
     [x], [y]. *)
@@ -123,14 +136,20 @@ let draw_game_screen state =
   open_graph "";
   draw_grid (get_grid state);
   draw_score (get_score state);
+  draw_level (get_level state);
+  draw_lines_cleared (get_lines_cleared state);
   draw_hold (get_hold state);
   draw_upcoming (get_upcoming state)
 
-let draw_game_over_screen score =
+let draw_game_over_screen score level lines =
   open_graph "";
-  moveto (size_x () / 2 - 20) (5 * size_y () / 7);
+  moveto (size_x () / 2 - 20) (6 * size_y () / 7);
   draw_string "Game Over";
-  moveto (size_x () / 2 - 62) (size_y () / 2);
+  moveto (size_x () / 2 - 80) ((size_y () / 2) + 25);
   draw_string ("Your final score was: " ^ string_of_int score);
-  moveto (size_x () / 2 - 90) (2 * size_y () / 7);
+  moveto (size_x () / 2 - 80) (size_y () / 2);
+  draw_string ("Your final level was: " ^ string_of_int level);
+  moveto (size_x () / 2 - 80) ((size_y () / 2) - 25);
+  draw_string ("Your total lines cleared was: " ^ string_of_int lines);
+  moveto (size_x () / 2 - 90) (1 * size_y () / 7);
   draw_string "Press the space bar to play again"

@@ -23,6 +23,18 @@ let test_grid grd =
 let test_score scr =
   Graphics.open_graph ""; draw_score scr
 
+(** [test_level lvl] opens an empty display and then draws the difficulty level
+    as being [lvl]. 
+    Requires: [lvl] has type int. *)
+let test_level lvl =
+  Graphics.open_graph ""; draw_level lvl
+
+(** [test_lines_cleared lines] opens an empty display and then draws the number
+    of lines cleared as being [lines]. 
+    Requires: [lines] has type int. *)
+let test_lines lines =
+  Graphics.open_graph ""; draw_level lines
+
 (** [test_held_block tetr] opens an empty display and then draws [tetr] as the 
     held block. 
     Requires: [tetr] has type tetromino_type. *)
@@ -48,8 +60,9 @@ let test_init_game_state () =
   let state = State.initialize () in
   draw_game_screen state
 
-(** [test_game_over scr] opens the game over screen using [scr] as the total 
-    score to display.
-    Requires: [scr] has type int. *)
-let test_game_over scr = 
-  Graphics.open_graph ""; draw_game_over_screen scr
+(** [test_game_over scr lvl lines] opens the game over screen using [scr] as the
+    total score to display, [lvl] as the final level, and [lines] as the total
+    number of lines cleared.
+    Requires: [scr], [lvl], and [lines] have type int. *)
+let test_game_over scr lvl lines = 
+  Graphics.open_graph ""; draw_game_over_screen scr lvl lines

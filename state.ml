@@ -17,6 +17,8 @@ type t = {
   mutable upcoming_blocks : tetromino_type list;
   mutable held_block : tetromino_type option;
   mutable score : int;
+  mutable level : int;
+  mutable lines_cleared : int;
   mutable game_over : bool;
 }
 
@@ -38,6 +40,12 @@ let get_hold t =
 
 let get_upcoming t =
   t.upcoming_blocks
+
+let get_level t =
+  t.level
+
+let get_lines_cleared t =
+  t.lines_cleared
 
 let game_over t =
   t.game_over
@@ -182,6 +190,14 @@ let spawn_next st =
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
 
+(** [increment_lines_cleared st ln] updates the lines_cleared for game state
+    [st] based on how many lines [ln] were given as cleared. This also updates
+    level if the new lines_cleared value exceeds the next multiple of ten.*)
+let increment_lines_cleared st ln =
+  st.lines_cleared <- st.lines_cleared + ln;
+  if st.lines_cleared >= 10 * st.level && st.level < 10
+  then st.level <- min 10 (st.level + 1)
+
 (** [increment_score st] updates the player's score according to the number of
     rows they have completely filled and returns a list of the indexes of the 
     rows that were accounted for while adding score. *)
@@ -206,6 +222,7 @@ let increment_score st =
       consec := 0 
     end in
   Array.iteri inc_score st.grid;
+  increment_lines_cleared st !consec;
   points := !points + get_points !consec;
   st.score <- st.score + !points;
   !rows
@@ -314,6 +331,8 @@ let initialize ?auto_spawn:(auto = true) () =
     upcoming_blocks = generate_list ();
     held_block = None;
     score = 0;
+    level = 1;
+    lines_cleared = 0;
     game_over = false;
   } in
   if auto then spawn_next st;

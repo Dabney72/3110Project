@@ -5,6 +5,10 @@ val draw_grid : Tetromino.tetromino_type option array array -> unit
 
 val draw_score : int -> unit
 
+val draw_level : int -> unit
+
+val draw_lines_cleared : int -> unit
+
 val draw_hold : Tetromino.tetromino_type option -> unit
 
 val draw_upcoming : Tetromino.tetromino_type list -> unit
@@ -16,4 +20,4 @@ val draw_game_screen : State.t -> unit
 
 (** [draw_game_over_screem ()] creates a game over screen for the tetris game 
     and displays the total score achieved. *)
-val draw_game_over_screen : int -> unit
+val draw_game_over_screen : int -> int -> int -> unit

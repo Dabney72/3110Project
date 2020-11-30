@@ -32,6 +32,12 @@ val get_hold : t -> Tetromino.tetromino_type option
     leftmost entries being the ones that will spawn next. *)
 val get_upcoming : t -> Tetromino.tetromino_type list
 
+(** [get_level st] is the current difficulty level of the tetris game. *)
+val get_level : t -> int
+
+(** [get_level st] is the number of lines cleared of the tetris game. *)
+val get_lines_cleared : t -> int
+
 (** [game_over st] is whether the game is over in [st]. *)
 val game_over : t -> bool
 
