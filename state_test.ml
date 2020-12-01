@@ -39,12 +39,19 @@ let grid_test name st grid =
   name >:: fun ctxt ->  
     assert_equal grid (st |> get_grid |> to_intgrid) ~printer: pp_matrix
 
+(** [game_over_test name st expected] is an OUnit test case named [name] for
+    [st], asserting that [game_over st] is [expected]. *)
+let game_over_test name st expected =
+  name >:: fun _ ->
+    assert_equal expected (game_over st) ~printer: string_of_bool
+
 (********************************************************************
    Initilization and Spawn Testing
  ********************************************************************)
 
 (* Matrix creation *)
 let initial = State.initialize ~auto_spawn: false
+let initial_autospawn = State.initialize
 let tenbyseventeen = Array.make_matrix 17 10 0
 let prepend3 top3 = Array.append top3 tenbyseventeen 
 let append3 bot3 = Array.append tenbyseventeen bot3
@@ -117,12 +124,31 @@ let block_down block st =  st |> spawn block |> fall ~auto_respawn: false; st
 let spawn_and_drop block st = st |> spawn block |> drop ~auto_respawn: false; st
 
 let drop_block st = st |> drop ~auto_respawn: false; st
+let auto_drop_n n st = for i = 1 to n do st |> drop done; st
 let left n st = for i = 1 to n do st |> move_left done; st
 let right n st = for i = 1 to n do st |> move_right done; st
 let down n st = for i = 1 to n do st |> fall ~auto_respawn: false done; st
 let rotate n st = for i = 1 to n do st |> State.rotate_cw done; st
 
-(* Spawn block, move it left then return the state.*)
+(** [spawn_move_drop tetr n_rot n_l n_r st] spawns [tetr] in [st], rotates it
+    [n_rot] times, then moves it [n_l] blocks to the left, then [n_r] blocks to
+    the right, then drops it. *)
+let spawn_move_drop tetr n_rot n_l n_r st = 
+  st 
+  |> spawn tetr 
+  |> rotate n_rot 
+  |> left n_l 
+  |> right n_r 
+  |> drop ~auto_respawn: false;
+  st
+
+let spawn_move_drop_n tetr n_rot n_l n_r n st = 
+  let rec loop st i =
+    if i > n then st
+    else loop (spawn_move_drop tetr n_rot n_l n_r st) (i + 1)
+  in loop st 1
+
+(* Spawn block, move it left then return the state. *)
 let i_left = initial () |> block_left I_block
 let l_left = initial () |> block_left L_block
 let j_left = initial () |> block_left J_block
@@ -188,17 +214,39 @@ let z_downmost = initial () |> spawn Z_block |> down 20
 (* Fill the first 4 rows entirely, using different rotations and translations
    of each tetromino. *)
 let block_4x10 = initial ()
-                 |> spawn T_block |> right 1 |> drop_block
-                 |> spawn S_block |> left 1 |> drop_block
-                 |> spawn O_block |> left 4 |> drop_block
-                 |> spawn J_block |> rotate 1 |> right 4 |> drop_block
-                 |> spawn T_block |> rotate 2 |> left 2 |> drop_block
-                 |> spawn Z_block |> drop_block
-                 |> spawn O_block |> right 2 |> drop_block
-                 |> spawn L_block |> rotate 2 |> left 3 |> drop_block
-                 |> spawn I_block |> right 2 |> drop_block
+                 |> spawn_move_drop T_block 0 0 1
+                 |> spawn_move_drop S_block 0 1 0
+                 |> spawn_move_drop O_block 0 4 0
+                 |> spawn_move_drop J_block 1 0 4
+                 |> spawn_move_drop T_block 2 2 0
+                 |> spawn_move_drop Z_block 0 0 0
+                 |> spawn_move_drop O_block 0 0 2
+                 |> spawn_move_drop L_block 2 3 0
+                 |> spawn_move_drop I_block 0 0 2
 
-(* Top three rows of spawning each tetrimno block then moving it left. *)
+let i_rotation_left = initial ()
+                      |> spawn I_block
+                      |> rotate 1
+                      |> left 10
+                      |> rotate 1
+                      |> drop_block
+
+let i_rotation_right = initial ()
+                       |> spawn I_block
+                       |> rotate 1
+                       |> right 10
+                       |> rotate 1
+                       |> drop_block
+
+(* Drop the next 20 pieces in the game, which will overflow the board. *)
+let random_overflow = initial_autospawn () |> auto_drop_n 20
+
+let i_top = initial () |> spawn I_block
+
+let overflow blk = i_top |> spawn blk
+
+
+(* Top three rows of spawning each tetromino block then moving it left. *)
 let i_left_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;1;1;1;1;0;0;0;0|]; 
@@ -235,7 +283,7 @@ let z_left_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
-(** Top three rows of spawning each tetrimino block then moving it to leftmost.*)
+(* Top three rows of spawning each tetromino block then moving it to leftmost. *)
 let i_lmost_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|1;1;1;1;0;0;0;0;0;0|]; 
@@ -273,7 +321,7 @@ let z_lmost_top3 = [|
 |]
 
 
-(* Top three rows of spawning each tetrimino block then moving it right.*)
+(* Top three rows of spawning each tetromino block then moving it right. *)
 let i_right_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;1;1;1;1;0;0|]; 
@@ -310,7 +358,7 @@ let z_right_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
-(** Top three rows of spawning each tetrimino block then moving it to leftmost.*)
+(* Top three rows of spawning each tetromino block then moving it to leftmost. *)
 let i_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;1;1;1;1|]; 
@@ -347,7 +395,7 @@ let z_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
-(* Top three rows of spawning each tetrimino block then moving it down a row. *)
+(* Top three rows of spawning each tetromino block then moving it down a row. *)
 let i_down_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]; 
@@ -384,7 +432,7 @@ let z_down_top3 = [|
   [|0;0;0;0;1;1;0;0;0;0|]
 |]
 
-(** Top three rows of spawning each tetrimino block then moving it to leftmost.*)
+(* Top three rows of spawning each tetromino block then moving it to leftmost. *)
 let i_dmost_bot3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]; 
@@ -428,7 +476,23 @@ let almost_filled = [|
   [|1;1;1;1;1;1;1;1;1;0|]
 |]
 
+let i_rotated_lmost = [|
+  [|1;0;0;0;0;0;0;0;0;0|];
+  [|1;0;0;0;0;0;0;0;0;0|];
+  [|1;0;0;0;0;0;0;0;0;0|];
+  [|1;0;0;0;0;0;0;0;0;0|]
+|]
+
+let i_rotated_rmost = [|
+  [|0;0;0;0;0;0;0;0;0;1|];
+  [|0;0;0;0;0;0;0;0;0;1|];
+  [|0;0;0;0;0;0;0;0;0;1|];
+  [|0;0;0;0;0;0;0;0;0;1|]
+|]
+
 let filled_4 = Array.append (Array.make_matrix 16 10 0) almost_filled
+let i_rot_left = Array.append (Array.make_matrix 16 10 0) i_rotated_lmost
+let i_rot_right = Array.append (Array.make_matrix 16 10 0) i_rotated_rmost
 
 let move_left_tests = [
   grid_test "move spawned i block left" i_left (prepend3 i_left_top3);
@@ -445,6 +509,8 @@ let move_left_tests = [
   grid_test "move spawned s block lmost" s_leftmost (prepend3 s_lmost_top3);
   grid_test "move spawned t block lmost" t_leftmost (prepend3 t_lmost_top3);
   grid_test "move spawned z block lmost" z_leftmost (prepend3 z_lmost_top3);
+  grid_test "rotate i block at left edge" i_rotation_left i_rot_left;
+  grid_test "rotate i block at right edge" i_rotation_right i_rot_right;
 ]
 
 let move_right_tests = [
@@ -499,6 +565,18 @@ let movement_tests = List.flatten [
     drop_tests;
   ]
 
+let game_over_tests = [
+  game_over_test "Overflow causes game over" random_overflow true;
+  game_over_test "Grid of height 4" block_4x10 false;
+  game_over_test "i overflow" (overflow I_block) true;
+  game_over_test "l overflow" (overflow L_block) true;
+  game_over_test "j overflow" (overflow J_block) true;
+  game_over_test "o overflow" (overflow O_block) true;
+  game_over_test "s overflow" (overflow S_block) true;
+  game_over_test "t overflow" (overflow T_block) true;
+  game_over_test "z overflow" (overflow Z_block) true;
+]
+
 (********************************************************************
    Score Testing
  ********************************************************************)
@@ -523,6 +601,7 @@ let suite =
   "test suite"  >::: List.flatten [
     spawn_tetromino_tests;
     movement_tests;
+    game_over_tests;
     score_tests;
     level_tests;
   ]

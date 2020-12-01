@@ -4,3 +4,6 @@
 #load "tetromino.cmo";;
 #load "state.cmo";;
 #load "display.cmo";;
+#load "move.cmo";;
+#load "strategy.cmo";;
+#load "strategies.cmo";;

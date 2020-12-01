@@ -350,3 +350,10 @@ let initialize ?auto_spawn:(auto = true) () =
   } in
   if auto then spawn_next st;
   st
+
+let copy_row acc arr = 
+  Array.append acc [|Array.copy arr|]
+
+let copy_grid grid =
+  Array.fold_left copy_row [||] grid
+
