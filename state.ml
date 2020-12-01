@@ -20,6 +20,7 @@ type t = {
   mutable level : int;
   mutable lines_cleared : int;
   mutable game_over : bool;
+  mutable use_hold : bool;
 }
 
 (** [get_falling st] is the current block that is falling.
@@ -49,6 +50,9 @@ let get_lines_cleared t =
 
 let game_over t =
   t.game_over
+
+let use_hold t =
+  t.use_hold
 
 let grid_width st = Array.length st.grid.(0)
 
@@ -300,6 +304,7 @@ let drop ?auto_respawn:(auto = true) st =
     move st Down
   done;
   update_score st;
+  st.use_hold <-true;
   if auto then spawn_next st
 
 let fall ?auto_respawn:(auto = true) st =
@@ -307,22 +312,29 @@ let fall ?auto_respawn:(auto = true) st =
   then move st Down
   else begin 
     update_score st; 
+    st.use_hold <-true;
     if auto then spawn_next st 
   end
 
 let hold st =
-  let fall_block = get_falling st in
-  match st.held_block with
-  | None -> begin
-      st.held_block <- Some fall_block.block_type;
-      place_block st fall_block None;
-      spawn_next st
+  if use_hold st = true then
+    begin
+      let fall_block = get_falling st in
+      match st.held_block with
+      | None -> begin
+          st.held_block <- Some fall_block.block_type;
+          place_block st fall_block None;
+          st.use_hold <- false;
+          spawn_next st
+        end
+      | Some c -> begin
+          st.held_block <- Some fall_block.block_type;
+          place_block st fall_block None;
+          st.use_hold <- false;
+          spawn_tetromino c st
+        end
     end
-  | Some c -> begin
-      st.held_block <- Some fall_block.block_type;
-      place_block st fall_block None;
-      spawn_tetromino c st
-    end
+  else ()
 
 let initialize ?auto_spawn:(auto = true) () =
   let st = {
@@ -334,6 +346,7 @@ let initialize ?auto_spawn:(auto = true) () =
     level = 1;
     lines_cleared = 0;
     game_over = false;
+    use_hold = true;
   } in
   if auto then spawn_next st;
   st
