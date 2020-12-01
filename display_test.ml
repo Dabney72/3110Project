@@ -57,8 +57,7 @@ let test_upcoming tlst =
     upcoming block draw function with the randomized upcoming block list as well
     as a random block being spawned at the top of the grid. *)
 let test_init_game_state () =
-  let state = State.initialize () in
-  draw_game_screen state
+  Graphics.open_graph ""; draw_game_screen (State.initialize ())
 
 (** [test_game_over scr lvl lines] opens the game over screen using [scr] as the
     total score to display, [lvl] as the final level, and [lines] as the total

@@ -109,7 +109,7 @@ let draw_upcoming tlst =
       | h :: t -> draw_tetromino 500 175 h
 
 let draw_start_screen () =
-  open_graph "";
+  clear_graph ();
   moveto ((size_x () / 2) - 72) (size_y () - 50);
   draw_string "Welcome to OCaml Tetris!";
   moveto 100 (size_y () - 70);
@@ -133,7 +133,7 @@ let draw_start_screen () =
   draw_string "Press the space bar to start the game"
 
 let draw_game_screen state =
-  open_graph "";
+  clear_graph ();
   draw_grid (get_grid state);
   draw_score (get_score state);
   draw_level (get_level state);
@@ -142,7 +142,7 @@ let draw_game_screen state =
   draw_upcoming (get_upcoming state)
 
 let draw_game_over_screen score level lines =
-  open_graph "";
+  clear_graph ();
   moveto (size_x () / 2 - 20) (6 * size_y () / 7);
   draw_string "Game Over";
   moveto (size_x () / 2 - 80) ((size_y () / 2) + 25);
