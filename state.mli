@@ -13,7 +13,11 @@ type t
     - Score set to zero
     - List of upcoming blocks
     - No upcoming blocks
-    - No block being held *)
+    - No block being held
+    - Difficulty level set to one
+    - No lines cleared
+    - Game over set to false
+    - Use hold set to false *)
 val initialize : ?auto_spawn: bool -> unit -> t
 
 (** [get_grid st] is a 2d array that contains the placements of the blocks. The
@@ -87,4 +91,11 @@ val spawn_tetromino : Tetromino.tetromino_type -> t -> unit
 (** [spawn_next st] spawns the next tetromino from the list of upcoming blocks
     maintained by [st]. *)
 val spawn_next : t -> unit
+
+(**/**)
+(* These function are for testing purposes only and therefore are excluded from
+   the documentation. *)
+
+val increment_lines_cleared : t -> int -> unit
+(**/**)
 

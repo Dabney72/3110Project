@@ -589,8 +589,36 @@ let score_tests = [
    Level and Lines Cleared Testing
  ********************************************************************)
 
-let level_tests = [
-  (* TODO: Add tests for level. *)
+let level_test name output st ln =
+  name >:: (fun _ -> assert_equal output 
+               (increment_lines_cleared st ln; get_level st))
+
+let lines_cleared_test name output st ln =
+  name >:: (fun _ -> assert_equal output 
+               (increment_lines_cleared st ln; get_lines_cleared st))
+
+let make_level_10_game = 
+  let x = (initialize ()) in
+  for i = 0 to 9 do
+    increment_lines_cleared x 10;
+  done;
+  x
+
+let level_and_lines_tests = [
+  lines_cleared_test "adding 0 lines cleared to base game state" 
+    0 (initialize ()) 0;
+  lines_cleared_test "adding 1 line cleared to base game state"
+    1 (initialize ()) 1;
+  lines_cleared_test "adding 4 lines cleared to base game state"
+    4 (initialize ()) 4;
+  level_test "adding 1 line to base game state doesn't increase level"
+    1 (initialize ()) 1;
+  level_test "adding 10 lines to base game state increases level from 1 to 2" 
+    2 (initialize ()) 10;
+  level_test "adding 10 lines to base game 9 times gets it to level 10"
+    10 make_level_10_game 0;
+  level_test "adding 10 lines to game at level 10 doesn't increase level"
+    10 make_level_10_game 10;
 ]
 
 (********************************************************************
@@ -603,7 +631,7 @@ let suite =
     movement_tests;
     game_over_tests;
     score_tests;
-    level_tests;
+    level_and_lines_tests;
   ]
 
 let _ = run_test_tt_main suite
