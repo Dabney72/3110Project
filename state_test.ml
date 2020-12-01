@@ -508,6 +508,14 @@ let score_tests = [
 ]
 
 (********************************************************************
+   Level and Lines Cleared Testing
+ ********************************************************************)
+
+let level_tests = [
+  (* TODO: Add tests for level. *)
+]
+
+(********************************************************************
    End Helper Suites
  ********************************************************************)
 
@@ -516,6 +524,7 @@ let suite =
     spawn_tetromino_tests;
     movement_tests;
     score_tests;
+    level_tests;
   ]
 
 let _ = run_test_tt_main suite
