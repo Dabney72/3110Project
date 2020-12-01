@@ -16,7 +16,7 @@ let read_input state =
   | 'a' -> move_left state
   | 'd' -> move_right state
   | 'w' -> drop state
-  | 's' -> () (* TODO: change to soft drop once implemented. *)
+  | 's' -> fall state
   | 'k' -> rotate_ccw state
   | 'l' -> rotate_cw state
   | ' ' -> hold state

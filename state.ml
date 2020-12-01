@@ -294,7 +294,7 @@ let rotate dir st =
   end
 
 let rotate_cw =
-  rotate rotate_ccw
+  rotate rotate_cw
 
 let rotate_ccw =
   rotate rotate_ccw
