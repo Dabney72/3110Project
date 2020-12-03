@@ -226,6 +226,7 @@ let increment_score st =
       consec := 0 
     end in
   Array.iteri inc_score st.grid;
+  increment_lines_cleared st !consec;
   points := !points + get_points !consec;
   st.score <- st.score + !points;
   !rows
@@ -244,7 +245,6 @@ let update_score st =
   let new_height = List.length filled_rows in
   let new_rows = Array.make_matrix new_height (grid_width st) None in 
   let updated_grid = Array.append new_rows !unfilled_rows in
-  increment_lines_cleared st (List.length filled_rows);
   st.grid <- updated_grid
 
 (** [move st p] takes in the falling block in [st] and moves it one unit in 
@@ -294,7 +294,7 @@ let rotate dir st =
   end
 
 let rotate_cw =
-  rotate rotate_cw
+  rotate rotate_ccw
 
 let rotate_ccw =
   rotate rotate_ccw
@@ -350,10 +350,3 @@ let initialize ?auto_spawn:(auto = true) () =
   } in
   if auto then spawn_next st;
   st
-
-let copy_row acc arr = 
-  Array.append acc [|Array.copy arr|]
-
-let copy_grid grid =
-  Array.fold_left copy_row [||] grid
-

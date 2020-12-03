@@ -621,6 +621,26 @@ let level_and_lines_tests = [
     10 make_level_10_game 10;
 ]
 
+let initial_x = (initialize ())
+let initial_y = (initialize ())
+
+let hold_tests = [
+  "ability to hold is true at initialization" >:: 
+  (fun _ -> assert_equal true (use_hold (initial_x)) ~printer:string_of_bool);
+  "using hold function on a new block sets ability to use hold to false" >:: 
+  (fun _ -> assert_equal false (hold initial_x ; use_hold initial_x) ~printer:string_of_bool);
+  "using hold function over and over without new block is false" >::
+  (fun _ -> assert_equal false (hold initial_x ;hold initial_x;hold initial_x;hold initial_x;
+                                use_hold initial_x) ~printer:string_of_bool);
+  "drop block makes hold function usable again" >::
+  (fun _ -> assert_equal true (hold initial_x ;hold initial_x;hold initial_x;hold initial_x;
+                               drop initial_x; use_hold initial_x) ~printer:string_of_bool);   
+  "drop block and then using hold makes hold function unusable" >::
+  (fun _ -> assert_equal false (hold initial_x ;hold initial_x;hold initial_x;hold initial_x;
+                                drop initial_x; hold initial_x; use_hold initial_x) 
+      ~printer:string_of_bool);                           
+]
+
 (********************************************************************
    End Helper Suites
  ********************************************************************)
@@ -632,6 +652,7 @@ let suite =
     game_over_tests;
     score_tests;
     level_and_lines_tests;
+    hold_tests;
   ]
 
 let _ = run_test_tt_main suite

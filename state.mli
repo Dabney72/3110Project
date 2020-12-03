@@ -45,6 +45,9 @@ val get_lines_cleared : t -> int
 (** [game_over st] is whether the game is over in [st]. *)
 val game_over : t -> bool
 
+(** [use_hold st] is whether the hold function can be used in [st] *)
+val use_hold : t -> bool
+
 (** [move_left st] moves the falling block to the left by one. *)
 val move_left : t -> unit
 
