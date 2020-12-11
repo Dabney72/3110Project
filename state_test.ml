@@ -1,6 +1,8 @@
 open OUnit2
 open State
 open Tetromino
+open Printers
+
 
 (** [to_intgrid arr] turns the 2D Tetromino option [arr] into a 2D int grid such
     that None is 0 and Some Tetromino is 1. *)
@@ -11,33 +13,19 @@ let to_intgrid arr =
   let convertrow = Array.map convert in 
   Array.map convertrow arr
 
-(** [pp_array arr] pretty prints an int array [arr]. *)
-let pp_array arr = 
-  let build_string acc x = 
-    acc ^ "; " ^ string_of_int x in
-  let s = Array.fold_left build_string "" arr in 
-  "[|" ^ String.sub s 2 (String.length s - 2) ^ "|]"
-
-(** [pp_matrix m] pretty prints an int matrix [m]. *)
-let pp_matrix (m : int array array) = 
-  let aux acc row = 
-    acc ^ "; \n" ^ pp_array row  in
-  let s = Array.fold_left aux "" m in 
-  "[|" ^ String.sub s 2 (String.length s - 2) ^ "\n|]"
-
 (** [spawn_tetromino_test name st tetromino grid] is an OUnit test case named 
     after [tetromino] for [spawn_tetromino st tetromino] asserting that 
     the output is [grid]. *)
 let spawn_tetromino_test name st tetromino grid =
   name >:: fun ctxt ->  
     assert_equal (grid ()) (spawn_tetromino tetromino st; st |> get_grid |> to_intgrid) 
-      ~printer: pp_matrix
+      ~printer: pp_int_matrix
 
 (** [grid_test name st grid] is an OUnit test case named [name] for 
     [st] asserting that its grid attribute is [grid]. *)
 let grid_test name st grid =
   name >:: fun ctxt ->  
-    assert_equal grid (st |> get_grid |> to_intgrid) ~printer: pp_matrix
+    assert_equal grid (st |> get_grid |> to_intgrid) ~printer: pp_int_matrix
 
 (** [game_over_test name st expected] is an OUnit test case named [name] for
     [st], asserting that [game_over st] is [expected]. *)
@@ -655,4 +643,5 @@ let suite =
     hold_tests;
   ]
 
+let _ = print_newline (); print_endline "Running State Tests..."
 let _ = run_test_tt_main suite

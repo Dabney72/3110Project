@@ -1,5 +1,6 @@
 open OUnit2
 open Tetromino
+open Printers
 
 (** [cmp_set_like_lists lst1 lst2] compares two lists to see whether
     they are equivalent set-like lists.  That means checking two things.
@@ -26,7 +27,7 @@ let compare_tetrominoes t1 t2 =
     [name] for [rotator tetromino], asserting that the output is [expected]. *)
 let rotate_test rotator name tetromino expected =
   name >:: (fun _ -> assert_equal expected (rotator tetromino)
-               ~printer: to_string
+               ~printer: pp_tetromino
                ~cmp: compare_tetrominoes)
 
 (* 7 standard tetrominoes *)
@@ -120,4 +121,5 @@ let suite =
     gen_test;
   ]
 
+let _ = print_newline (); print_endline "Running Tetromino Tests..."
 let _ = run_test_tt_main suite

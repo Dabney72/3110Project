@@ -8,3 +8,5 @@ bisect*.coverage
 #docs
 doc.public
 doc.private
+
+.DS_Store

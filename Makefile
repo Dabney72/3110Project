@@ -1,9 +1,11 @@
-MODULES=main display state tetromino authors strategy strategies move
+MODULES=main display state tetromino authors strategy strategies move printers state_test tetromino_test move_test
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
+TEST = test.byte
 STATE_TEST = state_test.byte
 TETR_TEST = tetromino_test.byte
+MOVE_TEST = move_test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag 'package(bisect_ppx-ocamlbuild)'
 PKGS=unix,ounit2,graphics
@@ -20,7 +22,11 @@ tetr_test:
 state_test:
 	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(STATE_TEST) && ./$(STATE_TEST) -runner sequential
 
-test: tetr_test state_test
+move_test:
+	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(MOVE_TEST) && ./$(MOVE_TEST) -runner sequential
+
+test: 
+	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
 
 bisect: clean test
 	bisect-ppx-report html
