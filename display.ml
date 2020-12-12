@@ -69,7 +69,7 @@ let draw_lines_cleared lines =
 let draw_combo_multi multi =
   if multi > 1 then (moveto ((size_x () / 2) - 75) (size_y () - 20); 
                      draw_string 
-                       ("COMBO: next points are " ^ string_of_int multi ^ "x!"))
+                       ("COMBO: Next points are " ^ string_of_int multi ^ "x!"))
 
 (** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
     [x], [y]. *)

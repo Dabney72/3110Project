@@ -58,9 +58,11 @@ let game_over t =
 let use_hold t =
   t.use_hold
 
-let grid_width st = Array.length st.grid.(0)
+let grid_width st =
+  Array.length st.grid.(0)
 
-let grid_height st = Array.length st.grid
+let grid_height st =
+  Array.length st.grid
 
 let convert_opt = function 
   | None -> 0
