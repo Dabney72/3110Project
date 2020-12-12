@@ -58,13 +58,14 @@ let game_over t =
 let use_hold t =
   t.use_hold
 
-let grid_width st = Array.length st.grid.(0)
+let grid_width st =
+  Array.length st.grid.(0)
 
-let grid_height st = Array.length st.grid
+let grid_height st =
+  Array.length st.grid
 
-let convert_opt = function 
-  | None -> 0
-  | Some _ -> 1
+let convert_opt o =
+  if Option.is_some o then 1 else 0
 
 let copy_row acc arr = 
   Array.append acc [|Array.copy arr|]
@@ -215,7 +216,7 @@ let spawn_next st =
 let increment_lines_cleared st ln =
   st.lines_cleared <- st.lines_cleared + ln;
   if st.lines_cleared >= 10 * st.level && st.level < 10
-  then st.level <- min 10 (st.level + 1)
+  then st.level <- st.level + 1
 
 (** [update_grid grid st] sets the current grid of [st] equal to [grid]. *)
 let update_grid grid st = 
@@ -228,10 +229,10 @@ let update_grid grid st =
 let increment_score st =
   let rows = ref [] in
   let get_points = function
-    | 1 -> 40
-    | 2 -> 100
-    | 3 -> 300
-    | 4 -> 1200 
+    | 1 -> increment_lines_cleared st 1; 40
+    | 2 -> increment_lines_cleared st 2; 100
+    | 3 -> increment_lines_cleared st 3; 300
+    | 4 -> increment_lines_cleared st 4; 1200 
     | _ -> 0 in 
   let consec = ref 0 in
   let points = ref 0 in
@@ -246,7 +247,6 @@ let increment_score st =
       consec := 0 
     end in
   Array.iteri inc_score st.grid;
-  increment_lines_cleared st !consec;
   points := !points + get_points !consec;
   st.score <- st.score + (st.combo_multiplier * !points);
   st.combo_multiplier <- if !points > 0 then st.combo_multiplier + 1 else 1;

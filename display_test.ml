@@ -13,7 +13,7 @@ let test_start () =
 (** [test_grid grd] opens an empty display and then draws an empty grid with the 
     same dimensions as [grd] and with spots filled in if the corresponding entry 
     in [grd] is a 1 (see draw_grid documentation for more info).
-    Requires: [grd] has type int array array. *)
+    Requires: [grd] has type tetromino_type option array array. *)
 let test_grid grd = 
   Graphics.open_graph ""; draw_grid grd
 

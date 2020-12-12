@@ -13,7 +13,7 @@ val draw_game_over_screen : int -> int -> int -> unit
 
 (**/**)
 (* These function are for testing purposes only and therefore are excluded from
-   the documentation. *)
+   the documentation.*)
 val draw_grid : Tetromino.tetromino_type option array array -> unit
 
 val draw_score : int -> unit
