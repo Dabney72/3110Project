@@ -33,6 +33,14 @@ let game_over_test name st expected =
   name >:: fun _ ->
     assert_equal expected (game_over st) ~printer: string_of_bool
 
+(** [copy_grid_test name st] is an OUnit test case named [name], ensuring that
+    the grid in [st] is not mutated when a copy of it is mutated. *)
+let copy_grid_test name st =
+  let grid = copy_grid st in
+  let grid_mut = copy_grid st in
+  Array.iter (fun arr -> arr.(1) <- 3) grid_mut;
+  name >:: fun _ -> assert_equal grid (get_grid st |> to_intgrid)
+
 (********************************************************************
    Initilization and Spawn Testing
  ********************************************************************)
@@ -199,18 +207,18 @@ let s_downmost = initial () |> spawn S_block |> down 20
 let t_downmost = initial () |> spawn T_block |> down 20
 let z_downmost = initial () |> spawn Z_block |> down 20
 
-(* Fill the first 4 rows entirely, using different rotations and translations
-   of each tetromino. *)
-let block_4x10 = initial ()
-                 |> spawn_move_drop T_block 0 0 1
-                 |> spawn_move_drop S_block 0 1 0
-                 |> spawn_move_drop O_block 0 4 0
-                 |> spawn_move_drop J_block 1 0 4
-                 |> spawn_move_drop T_block 2 2 0
-                 |> spawn_move_drop Z_block 0 0 0
-                 |> spawn_move_drop O_block 0 0 2
-                 |> spawn_move_drop L_block 2 3 0
-                 |> spawn_move_drop I_block 0 0 2
+(* Fill the first 4 rows entirely, except for last column, using different 
+   rotations and translations of each tetromino. *)
+let block_4x9 = initial ()
+                |> spawn_move_drop T_block 0 0 1
+                |> spawn_move_drop S_block 0 1 0
+                |> spawn_move_drop O_block 0 4 0
+                |> spawn_move_drop J_block 3 0 4
+                |> spawn_move_drop T_block 2 2 0
+                |> spawn_move_drop Z_block 0 0 0
+                |> spawn_move_drop O_block 0 0 2
+                |> spawn_move_drop L_block 2 3 0
+                |> spawn_move_drop I_block 0 0 2
 
 let i_rotation_left = initial ()
                       |> spawn I_block
@@ -543,7 +551,7 @@ let drop_tests = [
   grid_test "drop spawned s block down" s_drop (append3 s_down_top3);
   grid_test "drop spawned t block down" t_drop (append3 t_down_top3);
   grid_test "drop spawned z block down" z_drop (append3 z_down_top3);
-  grid_test "fill first 4 rows" block_4x10 filled_4;
+  grid_test "fill first 4 rows" block_4x9 filled_4;
 ]
 
 let movement_tests = List.flatten [
@@ -555,7 +563,7 @@ let movement_tests = List.flatten [
 
 let game_over_tests = [
   game_over_test "Overflow causes game over" random_overflow true;
-  game_over_test "Grid of height 4" block_4x10 false;
+  game_over_test "Grid of height 4" block_4x9 false;
   game_over_test "i overflow" (overflow I_block) true;
   game_over_test "l overflow" (overflow L_block) true;
   game_over_test "j overflow" (overflow J_block) true;
@@ -563,6 +571,11 @@ let game_over_tests = [
   game_over_test "s overflow" (overflow S_block) true;
   game_over_test "t overflow" (overflow T_block) true;
   game_over_test "z overflow" (overflow Z_block) true;
+]
+
+let other_tests = [
+  copy_grid_test "empty copy" (initial ());
+  copy_grid_test "4x9 copy" block_4x9;
 ]
 
 (********************************************************************
@@ -645,6 +658,7 @@ let suite =
     score_tests;
     level_and_lines_tests;
     hold_tests;
+    other_tests;
   ]
 
 let _ = print_newline (); print_endline "Running State Tests..."

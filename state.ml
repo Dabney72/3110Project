@@ -64,9 +64,8 @@ let grid_width st =
 let grid_height st =
   Array.length st.grid
 
-let convert_opt = function 
-  | None -> 0
-  | Some _ -> 1
+let convert_opt o =
+  if Option.is_some o then 1 else 0
 
 let copy_row acc arr = 
   Array.append acc [|Array.copy arr|]
@@ -311,7 +310,7 @@ let rotate dir st =
   end
 
 let rotate_cw =
-  rotate rotate_ccw
+  rotate rotate_cw
 
 let rotate_ccw =
   rotate rotate_ccw
