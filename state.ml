@@ -21,6 +21,7 @@ type t = {
   mutable lines_cleared : int;
   mutable game_over : bool;
   mutable use_hold : bool;
+  mutable combo_multiplier : int;
 }
 
 (** [get_falling st] is the current block that is falling.
@@ -47,6 +48,9 @@ let get_level t =
 
 let get_lines_cleared t =
   t.lines_cleared
+
+let get_combo_multi t =
+  t.combo_multiplier
 
 let game_over t =
   t.game_over
@@ -239,7 +243,8 @@ let increment_score st =
   Array.iteri inc_score st.grid;
   increment_lines_cleared st !consec;
   points := !points + get_points !consec;
-  st.score <- st.score + !points;
+  st.score <- st.score + (st.combo_multiplier * !points);
+  st.combo_multiplier <- if !points > 0 then st.combo_multiplier + 1 else 1;
   !rows
 
 (** [update_score st] checks to see if any rows are completely filled and 
@@ -358,6 +363,7 @@ let initialize ?auto_spawn:(auto = true) () =
     lines_cleared = 0;
     game_over = false;
     use_hold = true;
+    combo_multiplier = 1;
   } in
   if auto then spawn_next st;
   st

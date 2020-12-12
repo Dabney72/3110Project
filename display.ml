@@ -64,6 +64,13 @@ let draw_lines_cleared lines =
   moveto 50 250;
   draw_string ("Lines Cleared: " ^ string_of_int lines)
 
+(** [draw_combo_multi multi] draws the combo multiplier [multi] onto an opened
+    game screen at the top if it is greater than 1. *)
+let draw_combo_multi multi =
+  if multi > 1 then (moveto ((size_x () / 2) - 50) (size_y () - 20); 
+                     draw_string 
+                       ("COMBO: " ^ string_of_int multi ^ "x Multiplier!"))
+
 (** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
     [x], [y]. *)
 let draw_tetromino x y tetromino =
@@ -156,7 +163,8 @@ let draw_game_screen state =
   draw_level (get_level state);
   draw_lines_cleared (get_lines_cleared state);
   draw_hold (get_hold state);
-  draw_upcoming (get_upcoming state)
+  draw_upcoming (get_upcoming state);
+  draw_combo_multi (get_combo_multi state)
 
 let draw_game_over_screen score level lines =
   clear_graph ();

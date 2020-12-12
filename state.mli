@@ -39,8 +39,11 @@ val get_upcoming : t -> Tetromino.tetromino_type list
 (** [get_level st] is the current difficulty level of the tetris game. *)
 val get_level : t -> int
 
-(** [get_level st] is the number of lines cleared of the tetris game. *)
+(** [get_lines_cleared st] is the number of lines cleared of the tetris game. *)
 val get_lines_cleared : t -> int
+
+(** [get_combo_multi st] is the combo multiplier of the tetris game. *)
+val get_combo_multi : t -> int
 
 (** [game_over st] is whether the game is over in [st]. *)
 val game_over : t -> bool

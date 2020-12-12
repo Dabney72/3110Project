@@ -35,6 +35,9 @@ let test_level lvl =
 let test_lines lines =
   Graphics.open_graph ""; draw_level lines
 
+let test_combo_multi multi =
+  Graphics.open_graph ""; draw_combo_multi multi
+
 (** [test_held_block tetr] opens an empty display and then draws [tetr] as the 
     held block. 
     Requires: [tetr] has type tetromino_type. *)
