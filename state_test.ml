@@ -570,7 +570,7 @@ let game_over_tests = [
  ********************************************************************)
 
 let score_tests = [
-  (* TODO: Add tests for scoring. *)
+  (* TODO: Add tests for scoring (combos also). *)
 ]
 
 (********************************************************************
@@ -608,6 +608,10 @@ let level_and_lines_tests = [
   level_test "adding 10 lines to game at level 10 doesn't increase level"
     10 make_level_10_game 10;
 ]
+
+(********************************************************************
+   Hold Testing
+ ********************************************************************)
 
 let initial_x = (initialize ())
 let initial_y = (initialize ())
