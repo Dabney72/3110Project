@@ -104,34 +104,6 @@ let rotate_cw =
 let rotate_ccw =
   rotate ccw
 
-(** [get_coord x y tetromino] is "X" if it corresponds to a block on
-    [tetromino], and "*" if it does not. *)
-let get_coord x y tetromino =
-  if List.mem (x, y) tetromino.composition 
-  then "X"
-  else "*"
-
-(** [create_str_grid coords tetromino] is an array representing the coordinate
-    system of [tetromino]. The array fills entries corresponding with blocks
-    with "X", and entries corresponding to an empty space with "*". *)
-let create_str_grid coords tetromino =
-  for x = 0 to Array.length coords - 1 do 
-    for y = 0 to Array.length coords - 1 do
-      coords.(y).(x) <- get_coord x y tetromino
-    done
-  done
-
-(** [row_to_string row] concatenates all of the strings in [row]. *)
-let row_to_string row =
-  Array.fold_left (^) "" row ^ "\n"
-
-let to_string tetromino =
-  let coords = Array.make_matrix tetromino.width tetromino.width " " in
-  create_str_grid coords tetromino;
-  "\n\n" 
-  ^ Array.fold_left (fun acc arr -> acc ^ row_to_string arr) "" coords ^
-  "\n"
-
 let get_name = function
   | I_block -> "I block"
   | L_block -> "L block"

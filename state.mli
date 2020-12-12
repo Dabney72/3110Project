@@ -87,6 +87,10 @@ val grid_width : t -> int
 (** [grid_height st] is the height of the tetris grid in game state [st]. *)
 val grid_height : t -> int
 
+(** [copy_grid st] is a copy of the current grid in [st], represented with
+    an integer matrix. *)
+val copy_grid : t -> int array array
+
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
     at the top of the grid. *)
 val spawn_tetromino : Tetromino.tetromino_type -> t -> unit

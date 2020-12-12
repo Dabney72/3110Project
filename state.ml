@@ -58,6 +58,17 @@ let grid_width st = Array.length st.grid.(0)
 
 let grid_height st = Array.length st.grid
 
+let convert_opt = function 
+  | None -> 0
+  | Some _ -> 1
+
+let copy_row acc arr = 
+  Array.append acc [|Array.copy arr|]
+
+let copy_grid st =
+  Array.fold_left copy_row [||] st.grid
+  |> Array.map (Array.map convert_opt)
+
 (** [optimum coord cmp comp] is the most extreme coordinate in [comp].
     [coord] is a function that tells which coordinate to optimize (e.g. 
     fst for x or snd for y), and [cmp a b] is true if a is more extreme than b. 

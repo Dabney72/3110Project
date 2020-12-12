@@ -44,8 +44,5 @@ val get_width : t -> int
 (** [get_comp tetromino] is list of the four coordinates of [tetromino]. *)
 val get_comp : t -> (int * int) list
 
-(** [to_string tetromino] is a string representation of [tetromino]. *)
-val to_string : t -> string
-
 (** [get_name t_type] is the name of [t_type]. *)
 val get_name : tetromino_type -> string
