@@ -569,8 +569,37 @@ let game_over_tests = [
    Score Testing
  ********************************************************************)
 
+let make_grid height = 
+  let rest = Array.make_matrix (20 - height) 10 None in
+  let grid = Array.make_matrix height 10 None in 
+  let change_last_col arr i x = 
+    if i = 9 then arr.(i)  <- None else arr.(i) <- Some I_block in
+  let fix_row arr = 
+    Array.iteri (change_last_col arr) arr in
+  Array.iter fix_row grid;
+  Array.append rest grid
+
+let sim_fall st = fall st; st
+
+let simulate_lines_cleared ln = 
+  let st = initial () |> update_grid (make_grid ln) in
+  st
+  |> spawn I_block
+  |> sim_fall
+  |> rotate 1
+  |> right 5
+  |> drop_block
+  |> get_score
+
+let score_test name output ln =
+  name >:: (fun _ -> assert_equal output (simulate_lines_cleared ln)
+               ~printer: string_of_int)
+
 let score_tests = [
-  (* TODO: Add tests for scoring. *)
+  score_test "one line cleared" 40 1;
+  score_test "two consecutive lines cleared" 100 2;
+  score_test "three consecutive lines cleared" 300 3;
+  score_test "four consecutive lines cleared" 1200 4;
 ]
 
 (********************************************************************

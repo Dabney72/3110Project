@@ -107,5 +107,7 @@ val spawn_next : t -> unit
    the documentation. *)
 
 val increment_lines_cleared : t -> int -> unit
+
+val update_grid : Tetromino.tetromino_type option array array -> t -> t
 (**/**)
 

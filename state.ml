@@ -217,6 +217,11 @@ let increment_lines_cleared st ln =
   if st.lines_cleared >= 10 * st.level && st.level < 10
   then st.level <- min 10 (st.level + 1)
 
+(** [update_grid grid st] sets the current grid of [st] equal to [grid]. *)
+let update_grid grid st = 
+  st.grid <- grid;
+  st
+
 (** [increment_score st] updates the player's score according to the number of
     rows they have completely filled and returns a list of the indexes of the 
     rows that were accounted for while adding score. *)
@@ -310,7 +315,7 @@ let rotate dir st =
   end
 
 let rotate_cw =
-  rotate rotate_ccw
+  rotate rotate_cw
 
 let rotate_ccw =
   rotate rotate_ccw
