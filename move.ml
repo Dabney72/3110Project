@@ -87,7 +87,11 @@ let holes grid =
     by summing the absolute value of the difference in height of adjacent
     columns. *)
 let bumpiness grid =
-  failwith "Unimplemented" (* TODO: Implement *)
+  let bump = ref 0 in
+  for x = 0 to Array.length grid.(0) - 2 do
+    bump := !bump + abs((max_height x 0 grid) - (max_height (x + 1) 0 grid))
+  done;
+  !bump
 
 let move_outcome proj_grid = [
   aggregate_height proj_grid;

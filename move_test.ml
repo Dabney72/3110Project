@@ -63,6 +63,52 @@ let grid2 = prepend_n 13 [|
     [|1;1;0;1;1;1;1;0;1;1|];
   |]
 
+let grid3 = [|
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+|]
+
+let grid4 =[|
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+|]
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -118,14 +164,26 @@ let grid_qualities_test = [
   aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
   aggregate_height_test "grid1 heights" 48 grid1;
   aggregate_height_test "grid2 heights" 47 grid2;
+  aggregate_height_test "grid3 heights" 200 grid3;
+  aggregate_height_test "grid4 heights" 195 grid4;
   complete_lines_test "empty grid lines" 0 (Array.make_matrix 20 10 0);
   complete_lines_test "full grid lines" 20 (Array.make_matrix 20 10 1);
   complete_lines_test "grid1 lines" 2 grid1;
   complete_lines_test "grid2 lines" 0 grid2;
+  complete_lines_test "grid3 lines" 10 grid3;
+  complete_lines_test "grid4 lines" 0 grid4;
   holes_test "empty grid holes" 0 (Array.make_matrix 20 10 0);
   holes_test "full grid holes" 0 (Array.make_matrix 20 10 1);
   holes_test "grid1 holes" 2 grid1;
   holes_test "grid2 holes" 1 grid2;
+  holes_test "grid3 holes" 100 grid3;
+  holes_test "grid4 holes" 95 grid4;
+  bumpiness_test "empty grid bumpiness" 0 (Array.make_matrix 20 10 0);
+  bumpiness_test "full grid bumpiness" 0 (Array.make_matrix 20 10 1);
+  bumpiness_test "grid1 bumpiness" 6 grid1;
+  bumpiness_test "grid2 bumpiness" 20 grid2;
+  bumpiness_test "grid3 bumpiness" 0 grid3;
+  bumpiness_test "grid4 bumpiness" 9 grid4;
 ]
 
 let suite =
