@@ -110,7 +110,7 @@ let rec main () =
             Printf.fprintf oc "%d %d %d %d %d %d\n" a b c d e f; 
             make_file t;
           end
-        | _ -> failwith "Something's wrong"
+        | _ -> failwith "Pattern match error"
       in make_file nl;
       wait_for_space ();
       main ()
