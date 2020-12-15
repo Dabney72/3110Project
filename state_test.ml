@@ -9,6 +9,7 @@ open Printers
 let to_intgrid arr =
   let convert = function
     | None -> 0
+    | Some Shadow -> 0
     | Some _ -> 1 in 
   let convertrow = Array.map convert in 
   Array.map convertrow arr
