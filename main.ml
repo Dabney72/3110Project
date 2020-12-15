@@ -30,10 +30,14 @@ let write_score_guide () =
   Printf.fprintf sg "%s \n" "Enjoy the Game!";
   close_out sg
 
-(**[mycompare [w;x;y;z] [a;b;c;d]] is a comparison function comparing the scores for 
+(**[mycompare lst1 lst2] is a comparison function comparing the scores for 
    sorting purposes *)
-let mycompare [u;v;w;x;y;z] [a;b;c;d;e;f] =
-  if u<a then 1 else -1
+let mycompare lst1 lst2 =
+  if List.length lst1 = List.length lst2 then 
+    if List.hd lst1 > List.hd lst2 then -1 else 1
+  else 
+    failwith "Lengths are not the same"
+
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
 let rec wait_for_space () =
@@ -110,7 +114,7 @@ let rec main () =
             Printf.fprintf oc "%d %d %d %d %d %d\n" a b c d e f; 
             make_file t;
           end
-        | _ -> failwith "Pattern match"
+        | _ -> failwith "Error"
       in make_file nl;
       wait_for_space ();
       main ()
