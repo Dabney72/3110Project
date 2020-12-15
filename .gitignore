@@ -5,8 +5,12 @@ _build
 _coverage
 bisect*.coverage
 
-#docs
+# docs
 doc.public
 doc.private
+
+# score files
+highscore.txt
+score_guide.txt
 
 .DS_Store
