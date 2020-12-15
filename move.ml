@@ -21,7 +21,7 @@ let num_moves_right m = m.moves_right
 
 let grid_after_move st m =
   failwith "Unimplemented" (* TODO: Implement. I've added a copy_grid function
-  to state that will give an int array array of the grid in that state. *)
+                              to state that will give an int array array of the grid in that state. *)
 
 let rotate_n n st =
   for i = 1 to n do st |> State.rotate_cw done
@@ -122,3 +122,4 @@ let get_possible_moves tt grid_width =
   | S_block
   | Z_block -> possible_moves 2 jlszt_width grid_width
   | O_block -> possible_moves 1 o_width grid_width
+  | Shadow -> failwith "No moves for shadow"

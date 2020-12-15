@@ -1,5 +1,7 @@
 open Tetromino
 
+module ShadowMap = Map.Make(Int)
+
 type direction = 
   | Left
   | Right
@@ -14,6 +16,7 @@ type falling = {
 type t = {
   mutable grid : tetromino_type option array array;
   mutable falling_block : falling option;
+  mutable shadow_block : (int * int) list;
   mutable upcoming_blocks : tetromino_type list;
   mutable held_block : tetromino_type option;
   mutable score : int;
@@ -106,13 +109,17 @@ let block_coords tetromino pos st =
     Requires: (r + offset_r, c + offset_c) is not out of the grid bounds for 
     any (r, c) in [comp]. *)
 let blocks_surrounding st offset_r offset_c comp =
+  let is_valid r c = match st.grid.(r).(c) with 
+    | Some Shadow -> false
+    | None -> false
+    | _-> true in
   let rec loop st = function
     | [] -> false
     | (r', c') :: t ->
       let r = r' + offset_r in
       let c = c' + offset_c in 
       not (List.mem (r, c) comp) (* Make sure block can't collide with itself *)
-      && Option.is_some st.grid.(r).(c)
+      && is_valid r c
       || loop st t
   in loop st comp
 
@@ -166,6 +173,50 @@ let place_block st falling value =
 let get_top_left tetromino st =
   (0, (grid_width st - get_width tetromino) / 2)
 
+(** [maximum_drop st height lst] is [lst] but every (row, col) pair is projected
+    down by a constant that is the minimum distance between each pair and a 
+    placed block below that pair. *)
+let maximum_drop st height lst = 
+  let update_lowest lowest (r, c) = 
+    let r' = ref r in
+    while (List.mem (!r', c) lst) do 
+      r' := !r' + 1
+    done; 
+    while (!r' + 1) < height && Option.is_none(st.grid.(!r' + 1).(c)) do
+      r' := !r' + 1
+    done;
+    if !r' = 20 then 0 else min (!r' - r) lowest in
+  let change = List.fold_left update_lowest max_int lst in
+  let add (r, c) = (r + change, c) in 
+  List.map add lst
+
+(** [shadow_pos st falling] is a list of (row, col) where the shadow for the
+    current falling block should be placed. *)
+let shadow_pos st falling = 
+  let height = grid_height st in
+  let falling_pos (y, x) = 
+    match falling.pos with
+    | (r, c) -> (r + x), (c + y) in
+  let valid_spot (r, c) = Option.is_none st.grid.(r).(c) in 
+  get_comp falling.block  
+  |> List.map falling_pos
+  |> maximum_drop st height
+  |> List.filter valid_spot 
+
+(** [create_shadow st] creates a shadow for the falling block in order to predict
+    where that block will drop. *)
+let create_shadow st =
+  match st.falling_block with
+  | Some falling -> 
+    let place_shadow (r, c) = st.grid.(r).(c) <- Some Shadow in
+    let location = shadow_pos st falling in
+    List.iter place_shadow location; st.shadow_block <- location 
+  | None -> st.shadow_block <- []
+
+let delete_shadow st = 
+  let remove (r, c) = st.grid.(r).(c) <- None in 
+  List.iter remove st.shadow_block
+
 (** [can_spawn tetromino pos st] is whether [tetromino] can be spawned at 
     position [pos] in state [st]. *)
 let can_spawn tetromino pos st =
@@ -181,7 +232,6 @@ let truncate tetromino =
              |> get_comp
              |> List.filter (fun (_, y) -> y >= 1) in
   create_tetromino crds (get_width tetromino)
-
 let spawn_tetromino tetromino_type st =
   let tetromino = init_tetromino tetromino_type in
   let (r, c) as top_left = get_top_left tetromino st in 
@@ -205,7 +255,9 @@ let spawn_next st =
   match st.upcoming_blocks with
   | [] -> failwith "Error: no upcoming blocks found"
   | h :: t -> 
+    delete_shadow st;
     spawn_tetromino h st;
+    create_shadow st;
     if List.length t <= 3
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
@@ -271,6 +323,7 @@ let update_score st =
 (** [move st p] takes in the falling block in [st] and moves it one unit in 
     direction [dir]. *)
 let move st dir =
+  delete_shadow st;
   match st.falling_block with
   | None -> failwith "No block to move"
   | Some ({block_type; pos = (x, y)} as falling) ->
@@ -281,7 +334,8 @@ let move st dir =
         | Right -> (x, y + 1)
         | Down -> (x + 1, y) in
       place_block st falling None;
-      place_block st { falling with pos = new_pos } (Some block_type)
+      place_block st { falling with pos = new_pos } (Some block_type);
+      create_shadow st
     end
 
 let move_left st =
@@ -361,6 +415,7 @@ let initialize ?auto_spawn:(auto = true) () =
   let st = {
     grid = Array.make_matrix 20 10 None;
     falling_block = None;
+    shadow_block = [];
     upcoming_blocks = generate_list ();
     held_block = None;
     score = 0;

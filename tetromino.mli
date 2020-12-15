@@ -10,6 +10,7 @@ type tetromino_type =
   | S_block
   | T_block
   | Z_block
+  | Shadow
 
 (** The type [t] represents a tetris piece: a composition of four squares
     connected orthogonally. *)

@@ -6,6 +6,23 @@ type tetromino_type =
   | S_block
   | T_block
   | Z_block
+  | Shadow
+
+(* type tetromino_type =
+   | I_block
+   | I_shadow
+   | L_block
+   | L_shadow
+   | J_block
+   | J_shadow
+   | O_block
+   | O_shadow
+   | S_block
+   | S_shadow
+   | T_block
+   | T_shadow
+   | Z_block
+   | Z_shadow *)
 
 type t = {
   composition : (int * int) list;
@@ -55,6 +72,7 @@ let init_tetromino = function
   | S_block -> s_block
   | T_block -> t_block
   | Z_block -> z_block
+  | _ -> failwith "Error: shadows don't have blocks"
 
 let create_tetromino comp w = {
   composition = comp;
@@ -112,3 +130,4 @@ let get_name = function
   | S_block -> "S block"
   | T_block -> "T block"
   | Z_block -> "Z block"
+  | Shadow -> "Shadow block"

@@ -11,7 +11,8 @@ let change_color = function
   | O_block -> set_color yellow;
   | S_block -> set_color green;
   | T_block -> set_color magenta;
-  | Z_block -> set_color red
+  | Z_block -> set_color red;
+  | _ -> set_color (rgb 128 128 128)
 
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
