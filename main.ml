@@ -33,7 +33,7 @@ let write_score_guide () =
 (**[mycompare [w;x;y;z] [a;b;c;d]] is a comparison function comparing the scores for 
    sorting purposes *)
 let mycompare [u;v;w;x;y;z] [a;b;c;d;e;f] =
-  if u>a then 1 else -1
+  if u<a then 1 else -1
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
 let rec wait_for_space () =
