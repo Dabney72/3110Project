@@ -384,8 +384,11 @@ let drop ?auto_respawn:(auto = true) st =
 
 let fall ?auto_respawn:(auto = true) st =
   if not (collision_under st)
-  then move st Down
-  else begin 
+  then begin 
+    move st Down; 
+    if (collision_under st) then delete_shadow st 
+  end
+  else begin
     update_score st; 
     st.use_hold <-true;
     if auto then spawn_next st 
