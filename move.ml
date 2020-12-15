@@ -37,24 +37,61 @@ let execute st m =
   left_n m.moves_left st;
   right_n m.moves_right st
 
+(** [max_height x 0 grid] is the maximum height of column [x] in [grid]. *)
+let rec max_height x y grid =
+  match grid.(y).(x) with
+  | 1 -> Array.length grid - y
+  | _ -> if y = Array.length grid - 1 then 0 else max_height x (y + 1) grid
+
 (** [aggregate_height grid] is the sum of the height of each line in [grid]. *)
 let aggregate_height grid = 
-  failwith "Unimplemented" (* TODO: Implement *)
+  let heights = ref 0 in
+  for x = 0 to Array.length grid.(0) - 1 do
+    heights := !heights + max_height x 0 grid
+  done;
+  !heights
+
+(** [is_complete 0 y grid] is true if row [y] of [grid] is complete and false
+    otherwise. *)
+let rec is_complete x y grid =
+  match grid.(y).(x) with
+  | 1 -> if x = Array.length grid.(0) - 1 then true 
+    else is_complete (x + 1) y grid
+  | _ -> false
 
 (** [complete_lines grid] is the number of complete lines in [grid]. *)
 let complete_lines grid =
-  failwith "Unimplemented" (* TODO: Implement *)
+  let lines = ref 0 in
+  for y = 0 to Array.length grid - 1 do
+    if is_complete 0 y grid then lines := !lines + 1 else ()
+  done;
+  !lines
+
+(** [is_hole x y grid] is true if position [x], [y] of [grid] is a hole and
+    false otherwise. *)
+let is_hole x y grid =
+  grid.(y).(x) = 0 && grid.(y - 1).(x) = 1
 
 (** [holes grid] is the number of holes in [grid]. A hole is defined by an
     empty square with a full square directly on top of it. *)
 let holes grid =
-  failwith "Unimplemented" (* TODO: Implement *)
+  let holes = ref 0 in
+  for x = 0 to Array.length grid.(0) - 1 do
+    for y = 1 to Array.length grid - 1 do
+      if is_hole x y grid then holes := !holes + 1 else ()
+    done;
+  done;
+  !holes
 
 (** [bumpiness grid] is the variation of column heights in [grid], calculated
     by summing the absolute value of the difference in height of adjacent
     columns. *)
 let bumpiness grid =
-  failwith "Unimplemented" (* TODO: Implement *)
+  let bump = ref 0 in
+  for x = 0 to Array.length grid.(0) - 2 do
+    bump := !bump + abs((max_height x 0 grid) - (max_height (x + 1) 0 grid))
+  done;
+  !bump
 
 let move_outcome proj_grid = [
   aggregate_height proj_grid;

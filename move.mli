@@ -37,3 +37,13 @@ val move_outcome : int array array -> float list
 (** [get_possible_moves tt grid_width] is a list of the possible moves for the
     tetromino of type [tt] in a grid of width [grid_width]. *)
 val get_possible_moves : Tetromino.tetromino_type -> int -> t list
+
+(**/**)
+val aggregate_height : int array array -> int
+
+val complete_lines : int array array -> int
+
+val holes : int array array -> int
+
+val bumpiness : int array array -> int
+(**/**)

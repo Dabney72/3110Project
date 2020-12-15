@@ -37,7 +37,7 @@ let outcome_test name proj_grid expected =
 let grid_after_move_test name st move expected =
   name >:: fun _ -> 
     assert_equal expected (grid_after_move st move)
-    ~printer: pp_int_matrix
+      ~printer: pp_int_matrix
 
 (** [prepend_n] is [arr] with a 10-by-n matrix of zeroes added on top of it. *)
 let prepend_n n arr =
@@ -63,6 +63,52 @@ let grid2 = prepend_n 13 [|
     [|1;1;0;1;1;1;1;0;1;1|];
   |]
 
+let grid3 = [|
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+  [|1;1;1;1;1;1;1;1;1;1|];
+  [|0;0;0;0;0;0;0;0;0;0|];
+|]
+
+let grid4 =[|
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+|]
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -83,9 +129,9 @@ let move_tests = [
 ]
 
 (* TODO: Implement the four outcome functions (aggregate_height, complete_lines,
-  holes, bumpiness) in move.ml, and make sure these test cases pass (if they're
-  not passing and you think they should, it's possible that I got the numbers
-  wrong, but I think I inserted the outputs correctly). *)
+   holes, bumpiness) in move.ml, and make sure these test cases pass (if they're
+   not passing and you think they should, it's possible that I got the numbers
+   wrong, but I think I inserted the outputs correctly). *)
 let outcome_tests = [
   (* outcome_test "First 5 filled" filled_5 [50.0; 5.0; 0.0; 0.0]; *)
   (* outcome_test "Grid 1" grid1 [48.0; 2.0; 2.0; 6.0]; *)
@@ -97,11 +143,55 @@ let grid_tests = [
 
 ]
 
+let aggregate_height_test name output grid =
+  name >:: fun _ -> assert_equal output (aggregate_height grid) 
+      ~printer: string_of_int
+
+let complete_lines_test name output grid =
+  name >:: fun _ -> assert_equal output (complete_lines grid) 
+      ~printer: string_of_int
+
+let holes_test name output grid =
+  name >:: fun _ -> assert_equal output (holes grid) 
+      ~printer: string_of_int
+
+let bumpiness_test name output grid =
+  name >:: fun _ -> assert_equal output (bumpiness grid) 
+      ~printer: string_of_int
+
+let grid_qualities_test = [
+  aggregate_height_test "empty grid heights" 0 (Array.make_matrix 20 10 0);
+  aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
+  aggregate_height_test "grid1 heights" 48 grid1;
+  aggregate_height_test "grid2 heights" 47 grid2;
+  aggregate_height_test "grid3 heights" 200 grid3;
+  aggregate_height_test "grid4 heights" 195 grid4;
+  complete_lines_test "empty grid lines" 0 (Array.make_matrix 20 10 0);
+  complete_lines_test "full grid lines" 20 (Array.make_matrix 20 10 1);
+  complete_lines_test "grid1 lines" 2 grid1;
+  complete_lines_test "grid2 lines" 0 grid2;
+  complete_lines_test "grid3 lines" 10 grid3;
+  complete_lines_test "grid4 lines" 0 grid4;
+  holes_test "empty grid holes" 0 (Array.make_matrix 20 10 0);
+  holes_test "full grid holes" 0 (Array.make_matrix 20 10 1);
+  holes_test "grid1 holes" 2 grid1;
+  holes_test "grid2 holes" 1 grid2;
+  holes_test "grid3 holes" 100 grid3;
+  holes_test "grid4 holes" 95 grid4;
+  bumpiness_test "empty grid bumpiness" 0 (Array.make_matrix 20 10 0);
+  bumpiness_test "full grid bumpiness" 0 (Array.make_matrix 20 10 1);
+  bumpiness_test "grid1 bumpiness" 6 grid1;
+  bumpiness_test "grid2 bumpiness" 20 grid2;
+  bumpiness_test "grid3 bumpiness" 0 grid3;
+  bumpiness_test "grid4 bumpiness" 9 grid4;
+]
+
 let suite =
   "Move test suite"  >::: List.flatten [
     move_tests;
     outcome_tests;
     grid_tests;
+    grid_qualities_test;
   ]
 
 let _ = print_newline (); print_endline "Running AI Move Tests..."
