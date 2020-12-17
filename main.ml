@@ -26,7 +26,11 @@ let read_lines name =
    sorting purposes *)
 let mycompare lst1 lst2 =
   if List.length lst1 = List.length lst2 then 
-    if List.hd lst1 > List.hd lst2 then -1 else 1
+    begin
+      match lst1,lst2 with
+      |[_;_;_;_;_;a1],[_;_;_;_;_;a2]-> if a1 > a2 then -1 else 1
+      | _,_ -> failwith "Error in comparison"
+    end
   else 
     failwith "Lengths are not the same"
 
@@ -83,9 +87,9 @@ let rec main () =
     begin
       let t = Unix.localtime (Unix.time ()) in
       let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Score   Month Day Year Hour(24-hr) Min \n";
-      Printf.fprintf oc "%d %8d %5d %5d %6d %7d \n" (get_score state) 
-        (t.tm_mon+1) t.tm_mday (t.tm_year+1900) (t.tm_hour) (t.tm_min);
+      Printf.fprintf oc "%s" "Month Day Year Hour(24-hr) Minute     Score\n";
+      Printf.fprintf oc "%d %5d %5d %5d %1od %11d \n"  (t.tm_mon+1) t.tm_mday 
+        (t.tm_year+1900) (t.tm_hour) (t.tm_min) (get_score state);
       close_out oc; 
       wait_for_space ();
       main ()
@@ -94,16 +98,16 @@ let rec main () =
     begin
       let t = Unix.localtime (Unix.time ()) in
       let nc = read_lines "highscore.txt" in 
-      let nl = List.sort mycompare ([(get_score state);(t.tm_mon+1);t.tm_mday;
-                                     (t.tm_year+1900);(t.tm_hour);(t.tm_min)]::nc)
+      let nl = List.sort mycompare ([(t.tm_mon+1);t.tm_mday;(t.tm_year+1900);
+                                     (t.tm_hour);(t.tm_min);(get_score state)]::nc)
       in
       let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Score   Month Day Year Hour(24-hr) Min \n";
+      Printf.fprintf oc "%s" "Month Day Year Hour(24-hr) Minute     Score \n";
       let rec make_file list= 
         match list with 
         | [] -> close_out oc;
         | [a;b;c;d;e;f]::t -> begin
-            Printf.fprintf oc "%d %8d %5d %5d %6d %7d \n" a b c d e f; 
+            Printf.fprintf oc "%d %5d %5d %5d %10d %11d \n" a b c d e f; 
             make_file t;
           end
         | _ -> failwith "Error"
