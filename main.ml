@@ -3,6 +3,7 @@ open Display
 open Tetromino
 open State
 open Unix  
+open Str
 
 (**[read_lines name] reads lines froma given text file to a int int list for
    the purposes of this game only*)

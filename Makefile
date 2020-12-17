@@ -11,7 +11,7 @@ STRATEGY_TEST = strategy_test.byte
 STRATEGIES_TEST = strategies_test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag 'package(bisect_ppx-ocamlbuild)'
-PKGS=unix,ounit2,graphics,str
+PKGS=unix,ounit2,graphics
 
 default: build
 	utop
