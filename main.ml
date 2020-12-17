@@ -83,8 +83,8 @@ let rec main () =
     begin
       let t = Unix.localtime (Unix.time ()) in
       let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Score Month Day Year Hour Min \n";
-      Printf.fprintf oc "%d %d %d %d %d %d \n" (get_score state) 
+      Printf.fprintf oc "%s" "Score   Month Day Year Hour(24-hr) Min \n";
+      Printf.fprintf oc "%d %8d %5d %5d %6d %7d \n" (get_score state) 
         (t.tm_mon+1) t.tm_mday (t.tm_year+1900) (t.tm_hour) (t.tm_min);
       close_out oc; 
       wait_for_space ();
@@ -98,12 +98,12 @@ let rec main () =
                                      (t.tm_year+1900);(t.tm_hour);(t.tm_min)]::nc)
       in
       let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Score Month Day Year Hour(24-hr) Min \n";
+      Printf.fprintf oc "%s" "Score   Month Day Year Hour(24-hr) Min \n";
       let rec make_file list= 
         match list with 
         | [] -> close_out oc;
         | [a;b;c;d;e;f]::t -> begin
-            Printf.fprintf oc "%d %6d %5d %5d %2d %11d\n" a b c d e f; 
+            Printf.fprintf oc "%d %8d %5d %5d %6d %7d \n" a b c d e f; 
             make_file t;
           end
         | _ -> failwith "Error"
