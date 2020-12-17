@@ -2,6 +2,7 @@ open Graphics
 open Display
 open Tetromino
 open State
+open Strategy
 open Unix  
 open Str
 
@@ -53,6 +54,16 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
+let ai = false
+
+let ai_strategy = Strategy.initialize ()
+
+let play_game_user state = 
+  if key_pressed () then read_input state (read_key ()) else ()
+
+let play_game_ai state =
+  move_next_piece ai_strategy state
+
 (** [main ()] runs the tetris game. *)
 let rec main () =
   (* Initialize game variables and game state and wait for a space bar press to
@@ -61,7 +72,7 @@ let rec main () =
   open_graph "";
   draw_start_screen ();
   wait_for_space ();
-  let state = initialize () in
+  let state = State.initialize () in
   draw_game_screen state;
   (* Main game loop that runs until game over. *)  
   while not (game_over state) do
@@ -69,7 +80,7 @@ let rec main () =
     (* Gets current difficulty level to change how fast the game goes. *)
     let diff = 11 - (get_level state) in
     (* Checks if there is an input from the player. *)
-    let () = if key_pressed () then read_input state (read_key ()) else () in
+    let () = if ai then play_game_ai state else play_game_user state in
     draw_game_screen state;
     (* Increments counter until it is greater than diff to cause a game update. 
        In the future diff can be changed to speedup the game. *)
