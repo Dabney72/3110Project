@@ -172,14 +172,14 @@ let draw_game_over_screen score level lines =
   clear_graph ();
   moveto (size_x () / 2 - 20) (6 * size_y () / 7);
   draw_string "Game Over";
-  moveto (size_x () / 2 - 80) ((size_y () / 2) + 25);
+  moveto (size_x () / 2 - 80) ((4 * size_y () / 7) + 25);
   draw_string ("Your final score was: " ^ string_of_int score);
-  moveto (size_x () / 2 - 80) (size_y () / 2);
+  moveto (size_x () / 2 - 80) (4 * size_y () / 7);
   draw_string ("Your final level was: " ^ string_of_int level);
-  moveto (size_x () / 2 - 80) ((size_y () / 2) - 25);
+  moveto (size_x () / 2 - 80) ((4 * size_y () / 7) - 25);
   draw_string ("Your total lines cleared was: " ^ string_of_int lines);
-  moveto (size_x () / 2 - 240) (2 * size_y () / 7);
-  draw_string ("High scores for this computer can be found in highscore.txt " ^
-               "in the game directory");
+  moveto (size_x () / 2 - 200) (2 * size_y () / 7);
+  draw_string ("Your high scores can be found in highscore.txt in the game " ^
+               "directory");
   moveto (size_x () / 2 - 90) (1 * size_y () / 7);
   draw_string "Press the space bar to play again"
