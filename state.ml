@@ -232,6 +232,7 @@ let truncate tetromino =
              |> get_comp
              |> List.filter (fun (_, y) -> y >= 1) in
   create_tetromino crds (get_width tetromino)
+
 let spawn_tetromino tetromino_type st =
   let tetromino = init_tetromino tetromino_type in
   let (r, c) as top_left = get_top_left tetromino st in 
@@ -257,7 +258,7 @@ let spawn_next st =
   | h :: t -> 
     delete_shadow st;
     spawn_tetromino h st;
-    create_shadow st;
+    if not (collision_under st) then create_shadow st;
     if List.length t <= 3
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
@@ -364,8 +365,10 @@ let rotate dir st =
       valid_position st falling_positions (r + x) (c + y) in
   if List.for_all valid_placement rotate_comp 
   then begin
+    delete_shadow st;
     place_block st falling None;
-    place_block st {falling with block = dir falling.block} (Some falling.block_type)
+    place_block st {falling with block = dir falling.block} (Some falling.block_type);
+    create_shadow st
   end
 
 let rotate_cw =

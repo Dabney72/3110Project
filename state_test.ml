@@ -9,7 +9,7 @@ open Printers
 let to_intgrid arr =
   let convert = function
     | None -> 0
-    | Some Shadow -> 0
+    | Some Shadow -> 2
     | Some _ -> 1 in 
   let convertrow = Array.map convert in 
   Array.map convertrow arr
@@ -182,22 +182,22 @@ let t_drop = initial () |> spawn_and_drop T_block
 let z_drop = initial () |> spawn_and_drop Z_block
 
 (* Spawn block, move it all the way to the left then return the state.*)
-let i_leftmost = initial () |> spawn I_block |> left 10
-let l_leftmost = initial () |> spawn L_block |> left 10
-let j_leftmost = initial () |> spawn J_block |> left 10
-let o_leftmost = initial () |> spawn O_block |> left 10
-let s_leftmost = initial () |> spawn S_block |> left 10
-let t_leftmost = initial () |> spawn T_block |> left 10
-let z_leftmost = initial () |> spawn Z_block |> left 10
+let i_lmost = initial () |> spawn I_block |> left 10
+let l_lmost = initial () |> spawn L_block |> left 10
+let j_lmost = initial () |> spawn J_block |> left 10
+let o_lmost = initial () |> spawn O_block |> left 10
+let s_lmost = initial () |> spawn S_block |> left 10
+let t_lmost = initial () |> spawn T_block |> left 10
+let z_lmost = initial () |> spawn Z_block |> left 10
 
 (* Spawn block, move it all the way to the left then return the state.*)
-let i_rightmost = initial () |> spawn I_block |> right 10
-let l_rightmost = initial () |> spawn L_block |> right 10
-let j_rightmost = initial () |> spawn J_block |> right 10
-let o_rightmost = initial () |> spawn O_block |> right 10
-let s_rightmost = initial () |> spawn S_block |> right 10
-let t_rightmost = initial () |> spawn T_block |> right 10
-let z_rightmost = initial () |> spawn Z_block |> right 10
+let i_rmost = initial () |> spawn I_block |> right 10
+let l_rmost = initial () |> spawn L_block |> right 10
+let j_rmost = initial () |> spawn J_block |> right 10
+let o_rmost = initial () |> spawn O_block |> right 10
+let s_rmost = initial () |> spawn S_block |> right 10
+let t_rmost = initial () |> spawn T_block |> right 10
+let z_rmost = initial () |> spawn Z_block |> right 10
 
 (* Spawn block, move it all the way to the down using fall then return the state.*)
 let i_downmost = initial () |> spawn I_block |> down 20
@@ -242,6 +242,9 @@ let i_top = initial () |> spawn I_block
 
 let overflow blk = i_top |> spawn blk
 
+let tenbyfourteen = Array.make_matrix 14 10 0
+
+let combine top3 bottom = bottom |> Array.append tenbyfourteen |> Array.append top3
 
 (* Top three rows of spawning each tetromino block then moving it left. *)
 let i_left_top3 = [|
@@ -249,35 +252,83 @@ let i_left_top3 = [|
   [|0;0;1;1;1;1;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let i_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;2;2;2;2;0;0;0;0|]
+|]
+
 let l_left_top3 = [|
   [|0;0;0;0;1;0;0;0;0;0|]; 
   [|0;0;1;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let l_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;2;0;0;0;0;0|]; 
+  [|0;0;2;2;2;0;0;0;0;0|]
+|]
+
 let j_left_top3 = [|
   [|0;0;1;0;0;0;0;0;0;0|]; 
   [|0;0;1;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let j_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;2;0;0;0;0;0;0;0|]; 
+  [|0;0;2;2;2;0;0;0;0;0|]
+|]
+
 let o_left_top3 = [|
   [|0;0;0;1;1;0;0;0;0;0|]; 
   [|0;0;0;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let o_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;2;2;0;0;0;0;0|]; 
+  [|0;0;0;2;2;0;0;0;0;0|]
+|]
+
 let s_left_top3 = [|
   [|0;0;0;1;1;0;0;0;0;0|]; 
   [|0;0;1;1;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let s_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;2;2;0;0;0;0;0|]; 
+  [|0;0;2;2;0;0;0;0;0;0|]
+|]
+
 let t_left_top3 = [|
   [|0;0;0;1;0;0;0;0;0;0|]; 
   [|0;0;1;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let t_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;2;0;0;0;0;0;0|]; 
+  [|0;0;2;2;2;0;0;0;0;0|]
+|]
+
 let z_left_top3 = [|
   [|0;0;1;1;0;0;0;0;0;0|]; 
   [|0;0;0;1;1;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
+|]
+
+let z_left_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;2;2;0;0;0;0;0;0|]; 
+  [|0;0;0;2;2;0;0;0;0;0|]
 |]
 
 (* Top three rows of spawning each tetromino block then moving it to leftmost. *)
@@ -286,37 +337,84 @@ let i_lmost_top3 = [|
   [|1;1;1;1;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let i_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|2;2;2;2;0;0;0;0;0;0|]
+|]
+
 let l_lmost_top3 = [|
   [|0;0;1;0;0;0;0;0;0;0|]; 
   [|1;1;1;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let l_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;2;0;0;0;0;0;0;0|]; 
+  [|2;2;2;0;0;0;0;0;0;0|]
+|]
+
 let j_lmost_top3 = [|
   [|1;0;0;0;0;0;0;0;0;0|]; 
   [|1;1;1;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let j_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|2;0;0;0;0;0;0;0;0;0|]; 
+  [|2;2;2;0;0;0;0;0;0;0|]
+|]
+
 let o_lmost_top3 = [|
   [|1;1;0;0;0;0;0;0;0;0|]; 
   [|1;1;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let o_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|2;2;0;0;0;0;0;0;0;0|]; 
+  [|2;2;0;0;0;0;0;0;0;0|]
+|]
+
 let s_lmost_top3 = [|
   [|0;1;1;0;0;0;0;0;0;0|]; 
   [|1;1;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let s_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;2;2;0;0;0;0;0;0;0|]; 
+  [|2;2;0;0;0;0;0;0;0;0|]
+|]
+
 let t_lmost_top3 = [|
   [|0;1;0;0;0;0;0;0;0;0|]; 
   [|1;1;1;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let t_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;2;0;0;0;0;0;0;0;0|]; 
+  [|2;2;2;0;0;0;0;0;0;0|]
+|]
+
 let z_lmost_top3 = [|
   [|1;1;0;0;0;0;0;0;0;0|]; 
   [|0;1;1;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
+let z_lmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|2;2;0;0;0;0;0;0;0;0|]; 
+  [|0;2;2;0;0;0;0;0;0;0|]
+|]
 
 (* Top three rows of spawning each tetromino block then moving it right. *)
 let i_right_top3 = [|
@@ -324,72 +422,168 @@ let i_right_top3 = [|
   [|0;0;0;0;1;1;1;1;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let i_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;2;2;2;2;0;0|]
+|]
+
 let l_right_top3 = [|
   [|0;0;0;0;0;0;1;0;0;0|]; 
   [|0;0;0;0;1;1;1;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let l_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;2;0;0;0|]; 
+  [|0;0;0;0;2;2;2;0;0;0|]
+|]
+
 let j_right_top3 = [|
   [|0;0;0;0;1;0;0;0;0;0|]; 
   [|0;0;0;0;1;1;1;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let j_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;2;0;0;0;0;0|]; 
+  [|0;0;0;0;2;2;2;0;0;0|]
+|]
+
 let o_right_top3 = [|
   [|0;0;0;0;0;1;1;0;0;0|]; 
   [|0;0;0;0;0;1;1;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let o_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;2;2;0;0;0|]; 
+  [|0;0;0;0;0;2;2;0;0;0|]
+|]
+
 let s_right_top3 = [|
   [|0;0;0;0;0;1;1;0;0;0|]; 
   [|0;0;0;0;1;1;0;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let s_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;2;2;0;0;0|]; 
+  [|0;0;0;0;2;2;0;0;0;0|]
+|]
+
 let t_right_top3 = [|
   [|0;0;0;0;0;1;0;0;0;0|]; 
   [|0;0;0;0;1;1;1;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let t_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;2;0;0;0;0|]; 
+  [|0;0;0;0;2;2;2;0;0;0|]
+|]
+
 let z_right_top3 = [|
   [|0;0;0;0;1;1;0;0;0;0|]; 
   [|0;0;0;0;0;1;1;0;0;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
 
-(* Top three rows of spawning each tetromino block then moving it to leftmost. *)
+let z_right_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;2;2;0;0;0;0|]; 
+  [|0;0;0;0;0;2;2;0;0;0|]
+|]
+
+(* Top three rows of spawning each tetromino block then moving it to rightmost. *)
 let i_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;0;1;1;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let i_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;2;2;2;2|]
+|]
+
 let l_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;0;1|]; 
   [|0;0;0;0;0;0;0;1;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let l_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;0;2|]; 
+  [|0;0;0;0;0;0;0;2;2;2|]
+|]
+
 let j_rmost_top3 = [|
   [|0;0;0;0;0;0;0;1;0;0|]; 
   [|0;0;0;0;0;0;0;1;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let j_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;2;0;0|]; 
+  [|0;0;0;0;0;0;0;2;2;2|]
+|]
+
 let o_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;1;1|]; 
   [|0;0;0;0;0;0;0;0;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let o_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;2;2|]; 
+  [|0;0;0;0;0;0;0;0;2;2|]
+|]
+
 let s_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;1;1|]; 
   [|0;0;0;0;0;0;0;1;1;0|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let s_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;2;2|]; 
+  [|0;0;0;0;0;0;0;2;2;0|]
+|]
+
 let t_rmost_top3 = [|
   [|0;0;0;0;0;0;0;0;1;0|]; 
   [|0;0;0;0;0;0;0;1;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
 |]
+
+let t_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;0;2;0|]; 
+  [|0;0;0;0;0;0;0;2;2;2|]
+|]
+
 let z_rmost_top3 = [|
   [|0;0;0;0;0;0;0;1;1;0|]; 
   [|0;0;0;0;0;0;0;0;1;1|]; 
   [|0;0;0;0;0;0;0;0;0;0|]
+|]
+
+let z_rmost_bot = [|
+  [|0;0;0;0;0;0;0;0;0;0|]; 
+  [|0;0;0;0;0;0;0;2;2;0|]; 
+  [|0;0;0;0;0;0;0;0;2;2|]
 |]
 
 (* Top three rows of spawning each tetromino block then moving it down a row. *)
@@ -398,6 +592,7 @@ let i_down_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;1;1;1;1;0;0;0|]
 |]
+
 let l_down_top3 = [|
   [|0;0;0;0;0;0;0;0;0;0|]; 
   [|0;0;0;0;0;1;0;0;0;0|]; 
@@ -487,54 +682,101 @@ let i_rotated_rmost = [|
   [|0;0;0;0;0;0;0;0;0;1|]
 |]
 
+let i_left_grid = combine i_left_top3 i_left_bot
+let l_left_grid = combine l_left_top3 l_left_bot
+let j_left_grid = combine j_left_top3 j_left_bot
+let o_left_grid = combine o_left_top3 o_left_bot
+let s_left_grid = combine s_left_top3 s_left_bot
+let t_left_grid = combine t_left_top3 t_left_bot
+let z_left_grid = combine z_left_top3 z_left_bot
+
+let i_lmost_grid = combine i_lmost_top3 i_lmost_bot
+let l_lmost_grid = combine l_lmost_top3 l_lmost_bot
+let j_lmost_grid = combine j_lmost_top3 j_lmost_bot
+let o_lmost_grid = combine o_lmost_top3 o_lmost_bot
+let s_lmost_grid = combine s_lmost_top3 s_lmost_bot
+let t_lmost_grid = combine t_lmost_top3 t_lmost_bot
+let z_lmost_grid = combine z_lmost_top3 z_lmost_bot
+
+
 let filled_4 = Array.append (Array.make_matrix 16 10 0) almost_filled
 let i_rot_left = Array.append (Array.make_matrix 16 10 0) i_rotated_lmost
 let i_rot_right = Array.append (Array.make_matrix 16 10 0) i_rotated_rmost
 
 let move_left_tests = [
-  grid_test "move spawned i block left" i_left (prepend3 i_left_top3);
-  grid_test "move spawned l block left" l_left (prepend3 l_left_top3);
-  grid_test "move spawned j block left" j_left (prepend3 j_left_top3);
-  grid_test "move spawned o block left" o_left (prepend3 o_left_top3);
-  grid_test "move spawned s block left" s_left (prepend3 s_left_top3);
-  grid_test "move spawned t block left" t_left (prepend3 t_left_top3);
-  grid_test "move spawned z block left" z_left (prepend3 z_left_top3);
-  grid_test "move spawned i block lmost" i_leftmost (prepend3 i_lmost_top3);
-  grid_test "move spawned l block lmost" l_leftmost (prepend3 l_lmost_top3);
-  grid_test "move spawned j block lmost" j_leftmost (prepend3 j_lmost_top3);
-  grid_test "move spawned o block lmost" o_leftmost (prepend3 o_lmost_top3);
-  grid_test "move spawned s block lmost" s_leftmost (prepend3 s_lmost_top3);
-  grid_test "move spawned t block lmost" t_leftmost (prepend3 t_lmost_top3);
-  grid_test "move spawned z block lmost" z_leftmost (prepend3 z_lmost_top3);
+  grid_test "move spawned i block left" i_left i_left_grid;
+  grid_test "move spawned l block left" l_left l_left_grid;
+  grid_test "move spawned j block left" j_left j_left_grid;
+  grid_test "move spawned o block left" o_left o_left_grid;
+  grid_test "move spawned s block left" s_left s_left_grid;
+  grid_test "move spawned t block left" t_left t_left_grid;
+  grid_test "move spawned z block left" z_left z_left_grid;
+  grid_test "move spawned i block lmost" i_lmost i_lmost_grid;
+  grid_test "move spawned l block lmost" l_lmost l_lmost_grid;
+  grid_test "move spawned j block lmost" j_lmost j_lmost_grid;
+  grid_test "move spawned o block lmost" o_lmost o_lmost_grid;
+  grid_test "move spawned s block lmost" s_lmost s_lmost_grid;
+  grid_test "move spawned t block lmost" t_lmost t_lmost_grid;
+  grid_test "move spawned z block lmost" z_lmost z_lmost_grid;
   grid_test "rotate i block at left edge" i_rotation_left i_rot_left;
   grid_test "rotate i block at right edge" i_rotation_right i_rot_right;
 ]
 
+let i_right_grid = combine i_right_top3 i_right_bot
+let l_right_grid = combine l_right_top3 l_right_bot
+let j_right_grid = combine j_right_top3 j_right_bot
+let o_right_grid = combine o_right_top3 o_right_bot
+let s_right_grid = combine s_right_top3 s_right_bot
+let t_right_grid = combine t_right_top3 t_right_bot
+let z_right_grid = combine z_right_top3 z_right_bot
+
+let i_rmost_grid = combine i_rmost_top3 i_rmost_bot
+let l_rmost_grid = combine l_rmost_top3 l_rmost_bot
+let j_rmost_grid = combine j_rmost_top3 j_rmost_bot
+let o_rmost_grid = combine o_rmost_top3 o_rmost_bot
+let s_rmost_grid = combine s_rmost_top3 s_rmost_bot
+let t_rmost_grid = combine t_rmost_top3 t_rmost_bot
+let z_rmost_grid = combine z_rmost_top3 z_rmost_bot
+
 let move_right_tests = [
-  grid_test "move spawned i block right" i_right (prepend3 i_right_top3);
-  grid_test "move spawned l block right" l_right (prepend3 l_right_top3);
-  grid_test "move spawned j block right" j_right (prepend3 j_right_top3);
-  grid_test "move spawned o block right" o_right (prepend3 o_right_top3);
-  grid_test "move spawned s block right" s_right (prepend3 s_right_top3);
-  grid_test "move spawned t block right" t_right (prepend3 t_right_top3);
-  grid_test "move spawned z block right" z_right (prepend3 z_right_top3);
-  grid_test "move spawned i block rmost" i_rightmost (prepend3 i_rmost_top3);
-  grid_test "move spawned l block rmost" l_rightmost (prepend3 l_rmost_top3);
-  grid_test "move spawned j block rmost" j_rightmost (prepend3 j_rmost_top3);
-  grid_test "move spawned o block rmost" o_rightmost (prepend3 o_rmost_top3);
-  grid_test "move spawned s block rmost" s_rightmost (prepend3 s_rmost_top3);
-  grid_test "move spawned t block rmost" t_rightmost (prepend3 t_rmost_top3);
-  grid_test "move spawned z block rmost" z_rightmost (prepend3 z_rmost_top3);
+  grid_test "move spawned i block right" i_right i_right_grid;
+  grid_test "move spawned l block right" l_right l_right_grid;
+  grid_test "move spawned j block right" j_right j_right_grid;
+  grid_test "move spawned o block right" o_right o_right_grid;
+  grid_test "move spawned s block right" s_right s_right_grid;
+  grid_test "move spawned t block right" t_right t_right_grid;
+  grid_test "move spawned z block right" z_right z_right_grid;
+  grid_test "move spawned i block rmost" i_rmost i_rmost_grid;
+  grid_test "move spawned l block rmost" l_rmost l_rmost_grid;
+  grid_test "move spawned j block rmost" j_rmost j_rmost_grid;
+  grid_test "move spawned o block rmost" o_rmost o_rmost_grid;
+  grid_test "move spawned s block rmost" s_rmost s_rmost_grid;
+  grid_test "move spawned t block rmost" t_rmost t_rmost_grid;
+  grid_test "move spawned z block rmost" z_rmost z_rmost_grid;
 ]
 
+let row_to_shadow = Array.map (fun x -> if x = 1 then 2 else 0) 
+
+let to_shadow grid = Array.map row_to_shadow grid
+
+let combine_down grid1 grid2 =  grid2 |> to_shadow |> combine grid1
+
+let i_down_grid = combine_down i_down_top3 i_down_top3
+let l_down_grid = combine_down l_down_top3 l_down_top3
+let j_down_grid = combine_down j_down_top3 j_down_top3
+let o_down_grid = combine_down o_down_top3 o_down_top3
+let s_down_grid = combine_down s_down_top3 s_down_top3
+let t_down_grid = combine_down t_down_top3 t_down_top3
+let z_down_grid = combine_down z_down_top3 z_down_top3
+
 let fall_tests = [
-  grid_test "move spawned i block down" i_down (prepend3 i_down_top3);
-  grid_test "move spawned l block down" l_down (prepend3 l_down_top3);
-  grid_test "move spawned j block down" j_down (prepend3 j_down_top3);
-  grid_test "move spawned o block down" o_down (prepend3 o_down_top3);
-  grid_test "move spawned s block down" s_down (prepend3 s_down_top3);
-  grid_test "move spawned t block down" t_down (prepend3 t_down_top3);
-  grid_test "move spawned z block down" z_down (prepend3 z_down_top3);
+  grid_test "move spawned i block down" i_down i_down_grid;
+  grid_test "move spawned l block down" l_down l_down_grid;
+  grid_test "move spawned j block down" j_down j_down_grid;
+  grid_test "move spawned o block down" o_down o_down_grid;
+  grid_test "move spawned s block down" s_down s_down_grid;
+  grid_test "move spawned t block down" t_down t_down_grid;
+  grid_test "move spawned z block down" z_down z_down_grid;
   grid_test "move spawned i block dmost" i_downmost (append3 i_dmost_bot3);
   grid_test "move spawned l block dmost" l_downmost (append3 l_dmost_bot3);
   grid_test "move spawned j block dmost" j_downmost (append3 j_dmost_bot3);
