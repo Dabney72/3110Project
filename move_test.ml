@@ -3,6 +3,18 @@ open Move
 open Tetromino
 open Printers
 
+(** [cmp_matrices m1 m2] is true if the matrices m1 and m2 have all the same 
+    contents at the same indices and false otherwise. 
+    Requires: [m1] and [m2] have the same dimensions. *)
+let cmp_matrices m1 m2 =
+  let cmpr = ref true in
+  for i = 0 to Array.length m1 - 1 do
+    for j = 0 to Array.length m1.(0) - 1 do
+      cmpr := !cmpr && m1.(i).(j) = m2.(i).(j);
+    done;
+  done;
+  !cmpr
+
 (** [not_redundant move] is whether [move] rotates the piece 0 to 3 times,
     and if [move] either only moves the piece to the left or only moves 
     the piece to the right. *)
@@ -30,14 +42,6 @@ let outcome_test name proj_grid expected =
   name >:: fun _ ->
     assert_equal expected (move_outcome proj_grid)
       ~printer: (pp_list string_of_float)
-
-(** [grid_after_move_test name st move expected] is an OUnit test case named
-    [name] for [grid_after_move st move], asserting that the output is
-    [expected]. *)
-let grid_after_move_test name st move expected =
-  name >:: fun _ -> 
-    assert_equal expected (grid_after_move st move)
-      ~printer: pp_int_matrix
 
 (** [prepend_n] is [arr] with a 10-by-n matrix of zeroes added on top of it. *)
 let prepend_n n arr =
@@ -109,6 +113,12 @@ let grid4 =[|
   [|0;1;0;1;0;1;0;1;0;1|];
 |]
 
+(* gamt_grids are grids use to test the output for the various
+   grid_after_move_tests. *)
+let gamt_grid1 = prepend_n 19 [|
+    [|0;0;0;1;1;1;1;0;0;0|];
+  |]
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -138,10 +148,11 @@ let outcome_tests = [
   (* outcome_test "Grid 2" grid2 [47.0; 0.0; 1.0; 20.0]; *)
 ]
 
-(* TODO: Add tests for grid_after_move  *)
-let grid_tests = [
+let grid_after_move_test name output st move =
+  name >:: fun _ -> 
+    assert_equal ~cmp:cmp_matrices ~printer: pp_int_matrix
+      output (grid_after_move st move)
 
-]
 
 let aggregate_height_test name output grid =
   name >:: fun _ -> assert_equal output (aggregate_height grid) 
@@ -159,7 +170,9 @@ let bumpiness_test name output grid =
   name >:: fun _ -> assert_equal output (bumpiness grid) 
       ~printer: string_of_int
 
-let grid_qualities_test = [
+let grid_tests = [
+  grid_after_move_test "no moves on initial grid with line" gamt_grid1
+    (State.initialize ~first_block: (Some I_block) ()) (initialize 0 0 0);
   aggregate_height_test "empty grid heights" 0 (Array.make_matrix 20 10 0);
   aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
   aggregate_height_test "grid1 heights" 48 grid1;
@@ -191,7 +204,6 @@ let suite =
     move_tests;
     outcome_tests;
     grid_tests;
-    grid_qualities_test;
   ]
 
 let _ = print_newline (); print_endline "Running AI Move Tests..."

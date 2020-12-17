@@ -19,10 +19,6 @@ let num_moves_left m = m.moves_left
 
 let num_moves_right m = m.moves_right
 
-let grid_after_move st m =
-  failwith "Unimplemented" (* TODO: Implement. I've added a copy_grid function
-                              to state that will give an int array array of the grid in that state. *)
-
 let rotate_n n st =
   for i = 1 to n do st |> State.rotate_cw done
 
@@ -36,6 +32,12 @@ let execute st m =
   rotate_n m.rotations st;
   left_n m.moves_left st;
   right_n m.moves_right st
+
+let grid_after_move st m =
+  let st' = copy_grid_and_falling st in
+  execute st' m;
+  drop ?auto_respawn: (Some false) st';
+  copy_grid st'
 
 (** [max_height x 0 grid] is the maximum height of column [x] in [grid]. *)
 let rec max_height x y grid =

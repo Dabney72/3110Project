@@ -18,7 +18,8 @@ type t
     - No lines cleared
     - Game over set to false
     - Use hold set to false *)
-val initialize : ?auto_spawn: bool -> unit -> t
+val initialize : ?first_block: Tetromino.tetromino_type option -> 
+  ?auto_spawn: bool -> unit -> t
 
 (** [get_grid st] is a 2d array that contains the placements of the blocks. The
     grid is in row major so grid.(0) is the first row and grid.(0).(1) is the
@@ -93,6 +94,11 @@ val grid_height : t -> int
 (** [copy_grid st] is a copy of the current grid in [st], represented with
     an integer matrix. *)
 val copy_grid : t -> int array array
+
+
+(** [copy_grid_and_falling st] is a game state with the same grid and falling
+    block as [st] while the other fields are the initizlized values. *)
+val copy_grid_and_falling : t -> t
 
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
     at the top of the grid. *)

@@ -12,7 +12,7 @@ let change_color = function
   | S_block -> set_color green;
   | T_block -> set_color magenta;
   | Z_block -> set_color red;
-  | _ -> set_color (rgb 128 128 128)
+  | Shadow -> set_color (rgb 128 128 128)
 
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
@@ -103,6 +103,7 @@ let draw_tetromino x y tetromino =
     set_color black; draw_rect (x - 10) ( y - 20) 20 20;
     draw_rect (x + 10) (y - 20) 20 20; draw_rect (x - 30) y 20 20;
     draw_rect (x - 10) y 20 20
+  | Shadow -> failwith "Can't draw shadow tetromino"
 
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
     tetromino or an empty box if it is none. *)
@@ -142,17 +143,17 @@ let draw_start_screen () =
                "and Rafael Chaves");
   moveto ((size_x () / 2) - 92) ((size_y () * 2 / 3) - 30);
   draw_string "The controls are the following:";
-  moveto 80 ((size_y () * 2 / 3) - 50);
+  moveto 70 ((size_y () * 2 / 3) - 50);
   draw_string ("* [a/d] to move the falling tetromino left and right " ^
                "respectively");
-  moveto 80 ((size_y () * 2 / 3) - 70);
+  moveto 70 ((size_y () * 2 / 3) - 70);
   draw_string "* [w] to immediately drop the falling tetromino down";
-  moveto 80 ((size_y () * 2 / 3) - 90);
+  moveto 70 ((size_y () * 2 / 3) - 90);
   draw_string "* [s] to have the falling tetromino fall faster";
-  moveto 80 ((size_y () * 2 / 3) - 110);
+  moveto 70 ((size_y () * 2 / 3) - 110);
   draw_string ("* [k/l] to rotate the falling tetromino counter-clockwise " ^
                "and clockwise respectively");
-  moveto 80 ((size_y () * 2 / 3) - 130);
+  moveto 70 ((size_y () * 2 / 3) - 130);
   draw_string "* [space bar] to hold the falling tetromino";
   moveto ((size_x () / 2) - 110) 50;
   draw_string "Press the space bar to start the game"
@@ -171,11 +172,14 @@ let draw_game_over_screen score level lines =
   clear_graph ();
   moveto (size_x () / 2 - 20) (6 * size_y () / 7);
   draw_string "Game Over";
-  moveto (size_x () / 2 - 80) ((size_y () / 2) + 25);
+  moveto (size_x () / 2 - 80) ((4 * size_y () / 7) + 25);
   draw_string ("Your final score was: " ^ string_of_int score);
-  moveto (size_x () / 2 - 80) (size_y () / 2);
+  moveto (size_x () / 2 - 80) (4 * size_y () / 7);
   draw_string ("Your final level was: " ^ string_of_int level);
-  moveto (size_x () / 2 - 80) ((size_y () / 2) - 25);
+  moveto (size_x () / 2 - 80) ((4 * size_y () / 7) - 25);
   draw_string ("Your total lines cleared was: " ^ string_of_int lines);
+  moveto (size_x () / 2 - 200) (2 * size_y () / 7);
+  draw_string ("Your high scores can be found in highscore.txt in the game " ^
+               "directory");
   moveto (size_x () / 2 - 90) (1 * size_y () / 7);
   draw_string "Press the space bar to play again"
