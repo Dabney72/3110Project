@@ -13,22 +13,14 @@ let read_lines name =
   let try_read () =
     try Some (input_line file) with End_of_file -> None in
   let rec loop acc = match try_read () with
-    | Some s -> loop (List.map int_of_string (Str.split (Str.regexp "[^0-9]+") s) :: acc)
+    | Some s -> begin
+        if Str.string_match (Str.regexp "[0-9]+") s 0 = true then 
+          loop (List.map int_of_string (Str.split (Str.regexp "[^0-9]+") s) :: acc)
+        else 
+          loop acc
+      end
     | None -> close_in file; List.rev acc in
   loop []
-
-(**[write_score_guide ()] contains information on how to read the high_score.txt file*)
-let write_score_guide () = 
-  let sg = open_out "score_guide.txt" in
-  Printf.fprintf sg "%s \n" "Score guide for highscore.txt";
-  Printf.fprintf sg "%s \n" "First column: Score";
-  Printf.fprintf sg "%s \n" "Second column: Month";
-  Printf.fprintf sg "%s \n" "Third column: Day";
-  Printf.fprintf sg "%s \n" "Fourth column: Year";
-  Printf.fprintf sg "%s \n" "Fifth column: Time (24-hr)";
-  Printf.fprintf sg "%s \n" "Sixth column: Minutes";
-  Printf.fprintf sg "%s \n" "Enjoy the Game!";
-  close_out sg
 
 (**[mycompare lst1 lst2] is a comparison function comparing the scores for 
    sorting purposes *)
@@ -86,13 +78,12 @@ let rec main () =
   sleepf 1.0;
   draw_game_over_screen (get_score state) (get_level state)
     (get_lines_cleared state);
-  (* Writing out the high score file *)
-  if Sys.file_exists "score_guide.txt" = false then write_score_guide () else ();
   if Sys.file_exists "highscore.txt" = false 
   then 
     begin
       let t = Unix.localtime (Unix.time ()) in
       let oc = open_out "highscore.txt" in
+      Printf.fprintf oc "%s" "Score Month Day Year Hour Min \n";
       Printf.fprintf oc "%d %d %d %d %d %d \n" (get_score state) 
         (t.tm_mon+1) t.tm_mday (t.tm_year+1900) (t.tm_hour) (t.tm_min);
       close_out oc; 
@@ -107,11 +98,12 @@ let rec main () =
                                      (t.tm_year+1900);(t.tm_hour);(t.tm_min)]::nc)
       in
       let oc = open_out "highscore.txt" in
+      Printf.fprintf oc "%s" "Score Month Day Year Hour(24-hr) Min \n";
       let rec make_file list= 
         match list with 
         | [] -> close_out oc;
         | [a;b;c;d;e;f]::t -> begin
-            Printf.fprintf oc "%d %d %d %d %d %d\n" a b c d e f; 
+            Printf.fprintf oc "%d %6d %5d %5d %2d %11d\n" a b c d e f; 
             make_file t;
           end
         | _ -> failwith "Error"
