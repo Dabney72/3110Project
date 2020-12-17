@@ -34,6 +34,9 @@ let get_falling st =
   | None -> failwith "No falling block"
   | Some f -> f
 
+let get_falling_block st =
+  (get_falling st).block_type
+
 let get_grid st =
   st.grid
 
@@ -67,15 +70,19 @@ let grid_width st =
 let grid_height st =
   Array.length st.grid
 
-let convert_opt o =
-  if Option.is_some o then 1 else 0
+let convert_opt = function
+  | None 
+  | Some Shadow -> 0
+  | _ -> 1
 
 let copy_row acc arr = 
   Array.append acc [|Array.copy arr|]
 
 let copy_grid st =
   Array.fold_left copy_row [||] st.grid
-  |> Array.map (Array.map convert_opt)
+
+let copy_grid_int st =
+  copy_grid st |> Array.map (Array.map convert_opt)
 
 (** [optimum coord cmp comp] is the most extreme coordinate in [comp].
     [coord] is a function that tells which coordinate to optimize (e.g. 

@@ -36,13 +36,6 @@ let possible_moves_test name tt grid_width expected_length =
     assert_bool "Error: incorrect number of possible moves" 
       (List.length result = expected_length)
 
-(** [outcome_test name proj_grid expected] is an OUnit test case named [name]
-    for [move_outcome proj_grid], asserting that the output is [expected]. *)
-let outcome_test name proj_grid expected =
-  name >:: fun _ ->
-    assert_equal expected (move_outcome proj_grid)
-      ~printer: (pp_list string_of_float)
-
 (** [prepend_n] is [arr] with a 10-by-n matrix of zeroes added on top of it. *)
 let prepend_n n arr =
   let top = Array.make_matrix n 10 0 in
@@ -138,16 +131,6 @@ let move_tests = [
     T_block 10 34;
 ]
 
-(* TODO: Implement the four outcome functions (aggregate_height, complete_lines,
-   holes, bumpiness) in move.ml, and make sure these test cases pass (if they're
-   not passing and you think they should, it's possible that I got the numbers
-   wrong, but I think I inserted the outputs correctly). *)
-let outcome_tests = [
-  (* outcome_test "First 5 filled" filled_5 [50.0; 5.0; 0.0; 0.0]; *)
-  (* outcome_test "Grid 1" grid1 [48.0; 2.0; 2.0; 6.0]; *)
-  (* outcome_test "Grid 2" grid2 [47.0; 0.0; 1.0; 20.0]; *)
-]
-
 let grid_after_move_test name output st move =
   name >:: fun _ -> 
     assert_equal ~cmp:cmp_matrices ~printer: pp_int_matrix
@@ -202,7 +185,6 @@ let grid_tests = [
 let suite =
   "Move test suite"  >::: List.flatten [
     move_tests;
-    outcome_tests;
     grid_tests;
   ]
 

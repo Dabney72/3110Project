@@ -37,8 +37,8 @@ let game_over_test name st expected =
 (** [copy_grid_test name st] is an OUnit test case named [name], ensuring that
     the grid in [st] is not mutated when a copy of it is mutated. *)
 let copy_grid_test name st =
-  let grid = copy_grid st in
-  let grid_mut = copy_grid st in
+  let grid = copy_grid_int st in
+  let grid_mut = copy_grid_int st in
   Array.iter (fun arr -> arr.(1) <- 3) grid_mut;
   name >:: fun _ -> assert_equal grid (get_grid st |> to_intgrid)
 
