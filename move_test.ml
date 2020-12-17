@@ -3,6 +3,18 @@ open Move
 open Tetromino
 open Printers
 
+(** [cmp_matrices m1 m2] is true if the matrices m1 and m2 have all the same 
+    contents at the same indices and false otherwise. 
+    Requires: [m1] and [m2] have the same dimensions. *)
+let cmp_matrices m1 m2 =
+  let cmpr = ref true in
+  for i = 0 to Array.length m1 - 1 do
+    for j = 0 to Array.length m1.(0) - 1 do
+      cmpr := !cmpr && m1.(i).(j) = m2.(i).(j);
+    done;
+  done;
+  !cmpr
+
 (** [not_redundant move] is whether [move] rotates the piece 0 to 3 times,
     and if [move] either only moves the piece to the left or only moves 
     the piece to the right. *)
@@ -101,6 +113,12 @@ let grid4 =[|
   [|0;1;0;1;0;1;0;1;0;1|];
 |]
 
+(* gamt_grids are grids use to test the output for the various
+   grid_after_move_tests. *)
+let gamt_grid1 = prepend_n 19 [|
+    [|0;0;0;1;1;1;1;0;0;0|];
+  |]
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -132,8 +150,9 @@ let outcome_tests = [
 
 let grid_after_move_test name output st move =
   name >:: fun _ -> 
-    assert_equal output (grid_after_move st move)
-      ~printer: pp_int_matrix
+    assert_equal ~cmp:cmp_matrices ~printer: pp_int_matrix
+      output (grid_after_move st move)
+
 
 let aggregate_height_test name output grid =
   name >:: fun _ -> assert_equal output (aggregate_height grid) 
@@ -152,8 +171,8 @@ let bumpiness_test name output grid =
       ~printer: string_of_int
 
 let grid_tests = [
-  grid_after_move_test "no moves on empty grid" (Array.make_matrix 20 10 0) 
-    (State.initialize ()) (initialize 0 0 0);
+  grid_after_move_test "no moves on initial grid with line" gamt_grid1
+    (State.initialize ~first_block: (Some I_block) ()) (initialize 0 0 0);
   aggregate_height_test "empty grid heights" 0 (Array.make_matrix 20 10 0);
   aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
   aggregate_height_test "grid1 heights" 48 grid1;

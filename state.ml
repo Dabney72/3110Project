@@ -414,12 +414,14 @@ let hold st =
     end
   else ()
 
-let initialize ?auto_spawn:(auto = true) () =
+let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
   let st = {
     grid = Array.make_matrix 20 10 None;
     falling_block = None;
     shadow_block = [];
-    upcoming_blocks = generate_list ();
+    upcoming_blocks = (match first with 
+        | Some tetr -> (tetr :: generate_list ())
+        | None -> generate_list ());
     held_block = None;
     score = 0;
     level = 1;
@@ -430,3 +432,6 @@ let initialize ?auto_spawn:(auto = true) () =
   } in
   if auto then spawn_next st;
   st
+
+let copy_grid_and_falling st =
+  {(initialize ()) with grid = st.grid; falling_block = st.falling_block}
