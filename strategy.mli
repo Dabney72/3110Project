@@ -8,11 +8,10 @@ type t
     between 0 and 1. The vector is then normalized. *)
 val initialize : unit -> t
 
-(** [crossover s1 s2] combines strategies [s1] and [s2] by computing
-    [s] = [fitness(s1) * s1 + fitness(s2) * s2]. Thus, it is a weighted
-    average of vectors , with more weight on the parent with the greater
-    fitness score. *)
-val crossover : t -> t -> t
+(** [crossover s1 s2 f1 f2] combines strategies [s1] and [s2] by computing
+    [s] = [f1 * s1 + f2 * s2], where [f1] is the total number of lines cleared
+    (fitness) by [s1], and [f2] is the fitness of [s2]. *)
+val crossover : t -> t -> float -> float -> t
 
 (** [mutate s] is [s] with a random component of its vector adjusted by a
     random amount up to + or - 0.2, and then normalized. *)
@@ -24,6 +23,25 @@ val mutate : t -> t
     A high score indicates that [s] thinks [o] is a good outcome. *)
 val score : t -> float list -> float
 
-(** [play_game s] plays a tetris game with the strategy [s], and returns
+(** [move_next_piece s st] moves and drops the upcoming piece in [st] according
+    to the strategy [s]. *)
+val move_next_piece : t -> State.t -> unit
+
+(** [play_random_game s] plays a tetris game with the strategy [s], and returns
     the number of lines that were cleared as a float. *)
-val play_game : t -> float
+val play_random_game : t -> float
+
+(** [train s x] is the average score obtained by the strategy [s] after
+    playing [x] random tetris games. *)
+val train : t -> int -> float 
+
+(**/**)
+
+(** [init_with_weights a b c d] is a strategy vector with the weights [a], [b],
+    [c], and [d]. The result is then normalized. *)
+val init_with_weights : float -> float -> float -> float -> t
+
+(** [to_list s] is [s] as a float list. *)
+val to_list : t -> float list
+
+(**/**)
