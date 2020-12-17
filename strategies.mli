@@ -1,7 +1,7 @@
 (** A population of different tetris strategies. *)
 
-(** The type t maintains a list of strategies, a generation size, a mutation
-    percentage, and a max score. *)
+(** The type t maintains a list of strategies and their fitness scores,
+    a generation size, a mutation percentage, and a max fitness score. *)
 type t
 
 (** [initialize gen_size mut_pct] initializes a population of strategies
@@ -18,9 +18,15 @@ val tournament_selection : t -> t
     crossovers are done. *)
 val delete_last : t -> t
 
-(** [generation s] advances [s] to the next generation, performing crossovers,
-    mutations, and deletions. *)
-val generation : t -> t
+(** [mutate s] mutates each strategy in [s] with the probability specified by
+    [s]. *)
+val mutate: t -> t
 
 (** [display s] prints the list of strategies. *)
 val display : t -> unit
+
+(** [generation ?display s] advances [s] to the next generation,
+    performing crossovers, mutations, and deletions. 
+    [?display] is an optional argument for printing the output of each
+    generation. It is defaulted to false. *)
+val generation : ?display: bool -> t -> t
