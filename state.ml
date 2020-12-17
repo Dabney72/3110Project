@@ -447,13 +447,13 @@ let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
     as [m]. *)
 let copy_matrix m =
   let copied_m = Array.make_matrix (Array.length m) (Array.length m.(0)) None in
-  for i = 0 to Array.length m do
-    for j = 0 to Array.length m.(0) do
+  for i = 0 to Array.length m -1 do
+    for j = 0 to Array.length m.(0) - 1 do
       copied_m.(i).(j) <- m.(i).(j)
     done;
   done;
   copied_m 
 
 let copy_grid_and_falling st =
-  {(initialize ()) with grid = (copy_matrix st.grid);
+  {(initialize ()) with grid = copy_matrix st.grid;
                         falling_block = st.falling_block}

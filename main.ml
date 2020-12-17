@@ -54,7 +54,7 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-let ai = false
+let ai = true
 
 let ai_strategy = Strategy.initialize ()
 
