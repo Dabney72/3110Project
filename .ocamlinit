@@ -7,3 +7,4 @@
 #load "move.cmo";;
 #load "strategy.cmo";;
 #load "strategies.cmo";;
+#load "printers.cmo";;

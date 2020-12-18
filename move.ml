@@ -31,20 +31,13 @@ let right_n n st =
 
 let execute st m =
   rotate_n m.rotations st;
-  draw_game_screen st;
-  Unix.sleepf 0.5;
   left_n m.moves_left st;
-  draw_game_screen st;
-  Unix.sleepf 0.5;
   right_n m.moves_right st
-
 
 let grid_after_move st m =
   let st' = copy_grid_and_falling st in
-  rotate_n m.rotations st;
-  left_n m.moves_left st;
-  right_n m.moves_right st;
-  drop ~auto_respawn: false st';
+  execute st' m;
+  drop ~line_clears: false ~auto_respawn: false st';
   copy_grid_int st'
 
 (** [max_height x 0 grid] is the maximum height of column [x] in [grid]. *)
@@ -80,10 +73,7 @@ let complete_lines grid =
 (** [is_hole x y grid] is true if position [x], [y] of [grid] is a hole and
     false otherwise. *)
 let is_hole x y grid =
-  if grid.(y).(x) = 1 then false
-  else if block_above x y grid then true 
-  else false 
-
+  grid.(y).(x) = 0 && grid.(y - 1).(x) = 1
 
 (** [holes grid] is the number of holes in [grid]. A hole is defined by an
     empty square with a full square directly on top of it. *)

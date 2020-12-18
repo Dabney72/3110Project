@@ -69,13 +69,15 @@ val rotate_cw : t -> unit
     counterclockwise. *)
 val rotate_ccw : t -> unit
 
-(** [drop ?auto_respawn st] instantaneously drops the currently falling
-    tetromino to the bottom of the grid. If there is a block in the way,
+(** [drop ?line_clears ?auto_respawn st] instantaneously drops the currently
+    falling tetromino to the bottom of the grid. If there is a block in the way,
     it will drop it on top of that block.
     The optional argument [auto_respawn] is whether the user would like
     the next block to be spawned automatically after the block is placed.
-    Its default value is true. *)
-val drop : ?auto_respawn : bool -> t -> unit
+    Defaulted to true.
+    The optional argument [line_clears] is whether lines should be cleared
+    if the drop results in a full row. Defaulted to true. *)
+val drop : ?line_clears: bool -> ?auto_respawn : bool -> t -> unit
 
 (** [hold st] puts the currently falling tetromino to the side for later use.
     If there is already a block being held, that block will spawn at the top. If
