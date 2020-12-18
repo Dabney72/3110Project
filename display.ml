@@ -155,8 +155,8 @@ let draw_start_screen () =
                "and clockwise respectively");
   moveto 70 ((size_y () * 2 / 3) - 130);
   draw_string "* [space bar] to hold the falling tetromino";
-  moveto ((size_x () / 2) - 110) 50;
-  draw_string "Press the space bar to start the game"
+  moveto ((size_x () / 2) - 250) 50;
+  draw_string "Press the [space bar] to start playing the game or [a] to have the A.I. play the game"
 
 let draw_game_screen state =
   clear_graph ();

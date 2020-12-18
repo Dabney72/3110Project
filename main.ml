@@ -35,10 +35,18 @@ let mycompare lst1 lst2 =
   else 
     failwith "Lengths are not the same"
 
-
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
 let rec wait_for_space () =
   if read_key () = ' ' then () else wait_for_space ()
+
+(** [wait_for_space_or_a ai] stalls until either the space bar or 'a' key is 
+    pressed. If space is pressed then [ai] gets set to false, but if 'a' is 
+    pressed then [ai] gets set to true. *)
+let rec wait_for_space_or_a ai =
+  match read_key () with
+  | ' ' -> ai := false
+  | 'a' -> ai := true
+  | _ -> wait_for_space_or_a ai
 
 (** [read_input state char] updates game state [state] based on the character
     [char] is or does nothing if [char] is not one of the valid inputs. 
@@ -54,8 +62,6 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-let ai = false
-
 let ai_strategy = Strategy.initialize ()
 
 let play_game_user state = 
@@ -68,10 +74,11 @@ let play_game_ai state =
 let rec main () =
   (* Initialize game variables and game state and wait for a space bar press to
      start game. *)
+  let ai = ref false in
   let counter = ref 0 in
   open_graph "";
   draw_start_screen ();
-  wait_for_space ();
+  wait_for_space_or_a ai;
   let state = State.initialize () in
   draw_game_screen state;
   (* Main game loop that runs until game over. *)  
@@ -80,7 +87,7 @@ let rec main () =
     (* Gets current difficulty level to change how fast the game goes. *)
     let diff = 11 - (get_level state) in
     (* Checks if there is an input from the player. *)
-    let () = if ai then play_game_ai state else play_game_user state in
+    let () = if !ai then play_game_ai state else play_game_user state in
     draw_game_screen state;
     (* Increments counter until it is greater than diff to cause a game update. 
        In the future diff can be changed to speedup the game. *)
