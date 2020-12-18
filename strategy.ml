@@ -52,19 +52,19 @@ let score s o =
 let cmp_scores s st m1 m2 =
   let m1_outcome = grid_after_move st m1 |> move_outcome in
   let m2_outcome = grid_after_move st m2 |> move_outcome in
-  score s m1_outcome -. score s m2_outcome |> int_of_float
+  score s m2_outcome -. score s m1_outcome |> int_of_float
 
 let move_next_piece s st =
   let next = get_falling_block st in
   let possible_moves = get_possible_moves next (grid_width st) in
-  match List.sort (cmp_scores s st) possible_moves with
+  let sorted = List.sort (cmp_scores s st) possible_moves in
+  match sorted with
   | [] -> failwith "No possible moves detected" (* list of moves is empty *)
-  | h :: _ -> execute st h; drop ?auto_respawn: (Some false) st
+  | h :: _ -> execute st h; drop st
 
 let play_random_game s =
-  let st = State.initialize ~auto_spawn: false () in
+  let st = State.initialize () in
   while not (game_over st) do
-    spawn_next st;
     move_next_piece s st
   done; 
   float_of_int (get_lines_cleared st)

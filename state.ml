@@ -443,17 +443,6 @@ let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
   if auto then spawn_next st;
   st
 
-(** [cppy_matrix m] returns a fresh matrix with the same dimensions and entries
-    as [m]. *)
-let copy_matrix m =
-  let copied_m = Array.make_matrix (Array.length m) (Array.length m.(0)) None in
-  for i = 0 to Array.length m do
-    for j = 0 to Array.length m.(0) do
-      copied_m.(i).(j) <- m.(i).(j)
-    done;
-  done;
-  copied_m 
-
-let copy_grid_and_falling st =
-  {(initialize ()) with grid = (copy_matrix st.grid);
-                        falling_block = st.falling_block}
+let copy_grid_and_falling st = 
+  {(initialize ()) with grid = (copy_grid st);
+                        falling_block = Some (get_falling st)}

@@ -36,7 +36,7 @@ let execute st m =
 let grid_after_move st m =
   let st' = copy_grid_and_falling st in
   execute st' m;
-  drop ?auto_respawn: (Some false) st';
+  drop ~auto_respawn: false st';
   copy_grid_int st'
 
 (** [max_height x 0 grid] is the maximum height of column [x] in [grid]. *)

@@ -11,11 +11,14 @@ val initialize : int -> float -> t
 (** [tournament_selection s] selects 10% of the population at random, and the
     two fittest individuals in this subpool proceed on for crossover to produce
     a new offspring. This process is repeated until the number of new offsprings
-    produced reaches 30% of the population size. *)
+    produced reaches 30% of the generation size. *)
 val tournament_selection : t -> t
 
 (** [delete_last s] deletes the worst 30% of the population, to be done after
-    crossovers are done. *)
+    crossovers are done. This is to be done after [tournament_selection],
+    so if a generation size is 1000, [tournament_selection] will produce
+    1300 strategies, and [delete_last] will reduce this back down to 1300 - 
+    .3*1000 = 1000. *)
 val delete_last : t -> t
 
 (** [mutate s] mutates each strategy in [s] with the probability specified by
