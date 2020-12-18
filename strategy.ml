@@ -47,20 +47,22 @@ let mutate s =
 let score s o =
   List.fold_right2 (fun w p acc -> acc +. w *. p) s o 0.0
 
-(** [cmp_scores s st] compares [m1] and [m2] based on the score they get
-    using strategy [s] in game state [st]. *)
-let cmp_scores s st m1 m2 =
-  let m1_outcome = grid_after_move st m1 |> move_outcome in
-  let m2_outcome = grid_after_move st m2 |> move_outcome in
-  score s m2_outcome -. score s m1_outcome |> int_of_float
+(** [move_score st s m] is [(score, m)], where [score] is the score that 
+    strategy [s] gives [m] in state [st]. *)
+let move_score st s m =
+  (m |> grid_after_move st |> move_outcome |> score s, m)
+
+(** [max_score current_max s] is [current_max] if [fst current_max] >= [fst s],
+    and [s] otherwise. *)
+let max_score current_max s =
+  if fst current_max >= fst s then current_max else s
 
 let move_next_piece s st =
   let next = get_falling_block st in
   let possible_moves = get_possible_moves next (grid_width st) in
-  let sorted = List.sort (cmp_scores s st) possible_moves in
-  match sorted with
-  | [] -> failwith "No possible moves detected" (* list of moves is empty *)
-  | h :: _ -> execute st h; fall st
+  let scores = possible_moves |> List.map (move_score st s) in
+  let move = List.fold_left max_score (List.hd scores) scores |> snd in 
+  execute st move; fall st
 
 let play_random_game s =
   let st = State.initialize () in
@@ -73,9 +75,7 @@ let train s x =
   let rec loop acc n = 
     if n = x
     then acc 
-    else loop (play_random_game s :: acc) (n + 1)
-  in 
-  let outcome = loop [] 0 in
-  List.fold_left ( +. ) 0. outcome /. float_of_int (List.length outcome)
+    else loop (acc +. play_random_game s) (n + 1)
+  in loop 0.0 0 /. float_of_int x
 
 let to_list s = s

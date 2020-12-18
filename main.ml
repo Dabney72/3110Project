@@ -5,6 +5,7 @@ open State
 open Strategy
 open Unix  
 open Str
+open Printers
 
 (**[read_lines name] reads lines froma given text file to a int int list for
    the purposes of this game only*)
@@ -62,8 +63,11 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-let ai_strategy = Strategy.initialize ()
-(* let ai_strategy = Strategies.initialize 1000 0.05 *)
+(** [-0.989144479989705339; 0.00239436400334614146; -0.0187718879248342727;
+    -0.14572261646927781] *)
+let ai_strategy = 
+  Strategy.init_with_weights (-0.989144479989705339) 0.00239436400334614146
+    (-0.0187718879248342727) (-0.14572261646927781)
 
 let play_game_user state = 
   if key_pressed () then read_input state (read_key ()) else ()
@@ -74,6 +78,7 @@ let play_game_ai state =
 
 (** [main ()] runs the tetris game. *)
 let rec main () =
+  print_endline (pp_list string_of_float (to_list ai_strategy));
   (* Initialize game variables and game state and wait for a space bar press to
      start game. *)
   let ai = ref false in
