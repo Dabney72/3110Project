@@ -100,7 +100,7 @@ let rec main () =
   sleepf 1.0;
   draw_game_over_screen (get_score state) (get_level state)
     (get_lines_cleared state);
-  if Sys.file_exists "highscore.txt" = false 
+  if Sys.file_exists "highscore.txt" = false && !ai = false
   then 
     begin
       let t = Unix.localtime (Unix.time ()) in
@@ -112,7 +112,7 @@ let rec main () =
       wait_for_space ();
       main ()
     end
-  else 
+  else if Sys.file_exists "highscore.txt" = true && !ai = false then
     begin
       let t = Unix.localtime (Unix.time ()) in
       let nc = read_lines "highscore.txt" in 
@@ -133,4 +133,10 @@ let rec main () =
       wait_for_space ();
       main ()
     end
+  else 
+    begin
+      wait_for_space ();
+      main ()
+    end
+
 let () = main ()
