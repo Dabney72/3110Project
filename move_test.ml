@@ -57,7 +57,7 @@ let grid2 = prepend_n 13 [|
     [|0;0;1;1;1;1;1;0;1;1|];
     [|0;0;1;1;1;1;1;0;1;1|];
     [|1;0;1;1;1;1;1;0;1;1|];
-    [|1;1;1;1;1;1;1;0;1;1|];
+    [|1;1;0;1;1;1;1;0;1;1|];
     [|1;1;0;1;1;1;1;0;1;1|];
   |]
 
@@ -87,7 +87,9 @@ let grid3 = [|
 let grid4 =[|
   [|1;0;1;0;1;0;1;0;1;0|];
   [|0;1;0;1;0;1;0;1;0;1|];
-  [|1;0;1;0;1;0;1;0;1;0|];
+  [|1;0;1;0;1;0;1;0;0;0|];
+  [|0;1;0;1;0;1;0;1;0;1|];
+  [|1;0;1;0;1;0;1;0;0;0|];
   [|0;1;0;1;0;1;0;1;0;1|];
   [|1;0;1;0;1;0;1;0;1;0|];
   [|0;1;0;1;0;1;0;1;0;1|];
@@ -101,9 +103,7 @@ let grid4 =[|
   [|0;1;0;1;0;1;0;1;0;1|];
   [|1;0;1;0;1;0;1;0;1;0|];
   [|0;1;0;1;0;1;0;1;0;1|];
-  [|1;0;1;0;1;0;1;0;1;0|];
-  [|0;1;0;1;0;1;0;1;0;1|];
-  [|1;0;1;0;1;0;1;0;1;0|];
+  [|0;0;1;0;1;0;1;0;1;0|];
   [|0;1;0;1;0;1;0;1;0;1|];
 |]
 
@@ -234,9 +234,9 @@ let grid_tests = [
   holes_test "empty grid holes" 0 (Array.make_matrix 20 10 0);
   holes_test "full grid holes" 0 (Array.make_matrix 20 10 1);
   holes_test "grid1 holes" 2 grid1;
-  holes_test "grid2 holes" 1 grid2;
+  holes_test "grid2 holes" 2 grid2;
   holes_test "grid3 holes" 100 grid3;
-  holes_test "grid4 holes" 95 grid4;
+  holes_test "grid4 holes" 98 grid4;
   bumpiness_test "empty grid bumpiness" 0 (Array.make_matrix 20 10 0);
   bumpiness_test "full grid bumpiness" 0 (Array.make_matrix 20 10 1);
   bumpiness_test "grid1 bumpiness" 6 grid1;

@@ -31,13 +31,8 @@ let right_n n st =
   for i = 1 to n do st |> State.move_right done
 
 let execute st m =
-  (* sleepf 0.5; *)
   rotate_n m.rotations st;
-  (* sleepf 0.5;
-     draw_game_screen st; *)
   left_n m.moves_left st;
-  (* sleepf 0.5;
-     draw_game_screen st; *)
   right_n m.moves_right st
 
 let grid_after_move st m =
@@ -78,11 +73,14 @@ let complete_lines grid =
 
 (** [is_hole x y grid] is true if position [x], [y] of [grid] is a hole and
     false otherwise. *)
-let is_hole x y grid =
-  grid.(y).(x) = 0 && grid.(y - 1).(x) = 1
+let rec is_hole x y grid =
+  if y > 0
+  then grid.(y).(x) = 0 && (grid.(y - 1).(x) = 1 || is_hole x (y - 1) grid)
+  else false
 
-(** [holes grid] is the number of holes in [grid]. A hole is defined by an
-    empty square with a full square directly on top of it. *)
+(** [holes grid] is the number of holes in [grid]. 
+    A hole is defined by an empty square with 0 or more empty squares followed
+    by a full square on top. *)
 let holes grid =
   let holes = ref 0 in
   for x = 0 to Array.length grid.(0) - 1 do
