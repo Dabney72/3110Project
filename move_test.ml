@@ -112,6 +112,27 @@ let gamt_grid1 = prepend_n 19 [|
     [|0;0;0;1;1;1;1;0;0;0|];
   |]
 
+let gamt_grid2 = prepend_n 18 [|
+    [|0;0;1;1;0;0;0;0;0;0|];
+    [|0;0;1;1;0;0;0;0;0;0|];
+  |]
+
+let gamt_grid3 = prepend_n 18 [|
+    [|0;0;0;0;0;0;0;1;1;0|];
+    [|0;0;0;0;0;0;1;1;0;0|];
+  |]
+
+let gamt_grid4 = prepend_n 17 [|
+    [|0;0;0;0;1;0;0;0;0;0|];
+    [|0;0;0;0;1;0;0;0;0;0|];
+    [|0;0;0;0;1;1;0;0;0;0|];
+  |]
+
+let gamt_grid5 = prepend_n 18 [|
+    [|0;0;0;0;1;1;1;0;0;0|];
+    [|0;0;0;0;0;1;0;0;0;0|];
+  |]
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -154,8 +175,19 @@ let bumpiness_test name output grid =
       ~printer: string_of_int
 
 let grid_tests = [
-  grid_after_move_test "no moves on initial grid with line" gamt_grid1
+  grid_after_move_test "no moves for I block" gamt_grid1
     (State.initialize ~first_block: (Some I_block) ()) (initialize 0 0 0);
+  grid_after_move_test "4 rotations 3 moves left and 3 moves right for I block"
+    gamt_grid1 (State.initialize ~first_block: (Some I_block) ()) 
+    (initialize 4 3 3);
+  grid_after_move_test "2 moves left for O block" gamt_grid2
+    (State.initialize ~first_block: (Some O_block) ()) (initialize 0 2 0);
+  grid_after_move_test "3 moves right for S Block" gamt_grid3
+    (State.initialize ~first_block: (Some S_block) ()) (initialize 0 0 3);
+  grid_after_move_test "1 rotation for L Block" gamt_grid4
+    (State.initialize ~first_block: (Some L_block) ()) (initialize 1 0 0);
+  grid_after_move_test "2 rotations and 1 move right for T Block" gamt_grid5
+    (State.initialize ~first_block: (Some T_block) ()) (initialize 2 0 1);
   aggregate_height_test "empty grid heights" 0 (Array.make_matrix 20 10 0);
   aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
   aggregate_height_test "grid1 heights" 48 grid1;

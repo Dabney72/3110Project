@@ -837,25 +837,30 @@ let make_grid height =
 
 let sim_fall st = fall st; st
 
-let simulate_lines_cleared ln = 
-  let st = initial () |> update_grid (make_grid ln) in
-  st
-  |> spawn I_block
-  |> sim_fall
-  |> rotate 1
-  |> right 5
-  |> drop_block
-  |> get_score
+let simulate_lines_cleared ln combo = 
+  let st = ref (initial () |> update_grid (make_grid ln)) in
+  for i = 1 to combo do 
+    st := !st
+          |> spawn I_block
+          |> sim_fall
+          |> rotate 1
+          |> right 5
+          |> drop_block
+  done;
+  get_score !st
 
-let score_test name output ln =
-  name >:: (fun _ -> assert_equal output (simulate_lines_cleared ln)
+
+let score_test name output ln combo =
+  name >:: (fun _ -> assert_equal output (simulate_lines_cleared ln combo)
                ~printer: string_of_int)
 
 let score_tests = [
-  score_test "one line cleared" 40 1;
-  score_test "two consecutive lines cleared" 100 2;
-  score_test "three consecutive lines cleared" 300 3;
-  score_test "four consecutive lines cleared" 1200 4;
+  score_test "one line cleared" 40 1 1;
+  score_test "two consecutive lines cleared" 100 2 1;
+  score_test "three consecutive lines cleared" 300 3 1;
+  score_test "four consecutive lines cleared" 1200 4 1;
+  score_test "combo of two four line clears back to back" 3600 8 2;
+  score_test "combo of three four line clears back to back" 7200 12 3;
 ]
 
 (********************************************************************
