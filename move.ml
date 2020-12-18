@@ -1,5 +1,6 @@
 open State
 open Tetromino
+open Display
 
 type t = {
   rotations: int;
@@ -29,13 +30,20 @@ let right_n n st =
   for i = 1 to n do st |> State.move_right done
 
 let execute st m =
+  Unix.sleepf 0.2;
   rotate_n m.rotations st;
+  draw_game_screen st;
+  Unix.sleepf 0.2;
   left_n m.moves_left st;
+  draw_game_screen st;
+  Unix.sleepf 0.2;
   right_n m.moves_right st
 
 let grid_after_move st m =
   let st' = copy_grid_and_falling st in
-  execute st' m;
+  rotate_n m.rotations st;
+  left_n m.moves_left st;
+  right_n m.moves_right st;
   drop ~auto_respawn: false st';
   copy_grid_int st'
 
