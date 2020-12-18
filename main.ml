@@ -62,13 +62,15 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-let ai_strategy = Strategy.initialize ()
+(* let ai_strategy = Strategy.initialize () *)
+let ai_strategy = Strategies.initialize 1000 0.05
 
 let play_game_user state = 
   if key_pressed () then read_input state (read_key ()) else ()
 
 let play_game_ai state =
-  move_next_piece ai_strategy state
+  (* move_next_piece ai_strategy state *)
+  Strategies.generation ai_strategy |> ignore
 
 (** [main ()] runs the tetris game. *)
 let rec main () =

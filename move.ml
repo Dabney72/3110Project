@@ -38,6 +38,7 @@ let execute st m =
   Unix.sleepf 0.5;
   right_n m.moves_right st
 
+
 let grid_after_move st m =
   let st' = copy_grid_and_falling st in
   rotate_n m.rotations st;
@@ -79,7 +80,10 @@ let complete_lines grid =
 (** [is_hole x y grid] is true if position [x], [y] of [grid] is a hole and
     false otherwise. *)
 let is_hole x y grid =
-  grid.(y).(x) = 0 && grid.(y - 1).(x) = 1
+  if grid.(y).(x) = 1 then false
+  else if block_above x y grid then true 
+  else false 
+
 
 (** [holes grid] is the number of holes in [grid]. A hole is defined by an
     empty square with a full square directly on top of it. *)
