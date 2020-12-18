@@ -1,6 +1,6 @@
 (** Test file for Display.ml file.
     Due to the nature of the display functions these tests can only be used by 
-    opening this file in utop and running the test functions in order to check 
+    opening this file in utop and running the test functions in order to check
     by eye that the produced drawings make sense. *)
 
 open Display
@@ -10,8 +10,8 @@ open Tetromino
 let test_start () =
   Graphics.open_graph ""; draw_start_screen ()
 
-(** [test_grid grd] opens an empty display and then draws an empty grid with the 
-    same dimensions as [grd] and with spots filled in if the corresponding entry 
+(** [test_grid grd] opens an empty display and then draws an empty grid with the
+    same dimensions as [grd] and with spots filled in if the corresponding entry
     in [grd] is a 1 (see draw_grid documentation for more info).
     Requires: [grd] has type tetromino_type option array array. *)
 let test_grid grd = 

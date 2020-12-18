@@ -14,6 +14,23 @@ let change_color = function
   | Z_block -> set_color red;
   | Shadow -> set_color (rgb 128 128 128)
 
+(** [draw_tetominoes_in_grid x y size arr] draws the square [x], [y] with side
+    length [size] in grid. *)
+let draw_tetrominoes_in_grid x y size arr = 
+  let start_x = size_x () / 2 in
+  let start_y = size_y () / 2 in
+  let grid_width = Array.length arr.(0) * size in
+  let grid_height = Array.length arr * size in
+  let y_adjstd = Array.length arr - 1 - y in 
+  match arr.(y).(x) with 
+  | None -> ()
+  | Some tetromino -> 
+    change_color tetromino;
+    fill_rect (start_x + x * size - grid_width / 2) 
+      (start_y + y_adjstd * size - grid_height / 2) size size; 
+    set_color black; draw_rect (start_x + x * size - grid_width / 2) 
+      (start_y + y_adjstd * size - grid_height / 2) size size
+
 (** [draw_grid arr] opens a graph to display a grid with each position filled in
     in black if the corresponding [arr] entry is a 1.
     Note: [arr.(0).(0)] corresponds to the top left position of the grid.
@@ -28,22 +45,11 @@ let draw_grid arr =
   let start_y = size_y () / 2 in
   let grid_width = Array.length arr.(0) * box_size in
   let grid_height = Array.length arr * box_size in
-  let draw_tetrominoes_in_grid start_x start_y x y size arr = 
-    let y_adjstd = Array.length arr - 1 - y in 
-    match arr.(y).(x) with 
-    | None -> ()
-    | Some tetromino -> 
-      change_color tetromino;
-      fill_rect (start_x + x * size - grid_width / 2) 
-        (start_y + y_adjstd * size - grid_height / 2) size size; 
-      set_color black; draw_rect (start_x + x * box_size - grid_width / 2) 
-        (start_y + y_adjstd * box_size - grid_height / 2) box_size box_size;
-  in
   draw_rect (start_x - grid_width / 2) (start_y - grid_height / 2) grid_width
     grid_height;
   for x = 0 to Array.length arr.(0) - 1 do
     for y = 0 to Array.length arr - 1 do
-      draw_tetrominoes_in_grid start_x start_y x y box_size arr;
+      draw_tetrominoes_in_grid x y box_size arr;
     done
   done
 
@@ -68,41 +74,62 @@ let draw_lines_cleared lines =
 (** [draw_combo_multi multi] draws the combo multiplier [multi] onto an opened
     game screen at the top if it is greater than 1. *)
 let draw_combo_multi multi =
-  if multi > 1 then (moveto ((size_x () / 2) - 75) (size_y () - 20); 
-                     draw_string 
-                       ("COMBO: Next points are " ^ string_of_int multi ^ "x!"))
+  if multi > 1 
+  then (moveto ((size_x () / 2) - 75) (size_y () - 20); draw_string 
+          ("COMBO: Next points are " ^ string_of_int multi ^ "x!"))
+
+let draw_I_block x y =
+  fill_rect (x - 40) (y - 10) 80 20; set_color black; 
+  draw_rect (x - 40) (y - 10) 20 20; draw_rect (x - 20) (y - 10) 20 20;
+  draw_rect x (y - 10) 20 20; draw_rect (x + 20) (y - 10) 20 20
+
+let draw_L_block x y =
+  fill_rect (x - 30) (y - 20) 60 20; fill_rect (x + 10) y 20 20;
+  set_color black; draw_rect (x - 30) ( y - 20) 20 20; 
+  draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) ( y - 20) 20 20;
+  draw_rect (x + 10) y 20 20
+
+let draw_J_block x y =
+  fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 30) y 20 20;
+  set_color black; draw_rect (x - 30) ( y - 20) 20 20; 
+  draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) ( y - 20) 20 20;
+  draw_rect (x - 30) y 20 20
+
+let draw_O_block x y =
+  fill_rect (x - 20) (y - 20) 40 40; set_color black;
+  draw_rect (x - 20) (y - 20) 20 20; draw_rect x ( y - 20) 20 20;
+  draw_rect (x - 20) y 20 20; draw_rect x y 20 20
+
+let draw_S_block x y =
+  fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20;
+  set_color black; draw_rect (x - 30) ( y - 20) 20 20;
+  draw_rect (x - 10) (y - 20) 20 20; draw_rect (x - 10) y 20 20;
+  draw_rect (x + 10) y 20 20
+
+let draw_T_block x y =
+  fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 10) y 20 20;
+  set_color black; draw_rect (x - 30) ( y - 20) 20 20;
+  draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) (y - 20) 20 20;
+  draw_rect (x - 10) y 20 20
+
+let draw_Z_block x y =
+  fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20;
+  set_color black; draw_rect (x - 10) ( y - 20) 20 20;
+  draw_rect (x + 10) (y - 20) 20 20; draw_rect (x - 30) y 20 20;
+  draw_rect (x - 10) y 20 20
 
 (** [draw_tetromino x y tetromino] draws [tetromino] centered at the position 
     [x], [y]. *)
 let draw_tetromino x y tetromino =
   change_color tetromino;
   match tetromino with
-  | I_block -> fill_rect (x - 40) (y - 10) 80 20; set_color black; 
-    draw_rect (x - 40) (y - 10) 20 20; draw_rect (x - 20) (y - 10) 20 20;
-    draw_rect x (y - 10) 20 20; draw_rect (x + 20) (y - 10) 20 20
-  | L_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x + 10) y 20 20;
-    set_color black; draw_rect (x - 30) ( y - 20) 20 20; 
-    draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) ( y - 20) 20 20;
-    draw_rect (x + 10) y 20 20
-  | J_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 30) y 20 20;
-    set_color black; draw_rect (x - 30) ( y - 20) 20 20; 
-    draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) ( y - 20) 20 20;
-    draw_rect (x - 30) y 20 20
-  | O_block -> fill_rect (x - 20) (y - 20) 40 40; set_color black;
-    draw_rect (x - 20) (y - 20) 20 20; draw_rect x ( y - 20) 20 20;
-    draw_rect (x - 20) y 20 20; draw_rect x y 20 20
-  | S_block -> fill_rect (x - 30) (y - 20) 40 20; fill_rect (x - 10) y 40 20;
-    set_color black; draw_rect (x - 30) ( y - 20) 20 20;
-    draw_rect (x - 10) (y - 20) 20 20; draw_rect (x - 10) y 20 20;
-    draw_rect (x + 10) y 20 20
-  | T_block -> fill_rect (x - 30) (y - 20) 60 20; fill_rect (x - 10) y 20 20;
-    set_color black; draw_rect (x - 30) ( y - 20) 20 20;
-    draw_rect (x - 10) (y - 20) 20 20; draw_rect (x + 10) (y - 20) 20 20;
-    draw_rect (x - 10) y 20 20
-  | Z_block -> fill_rect (x - 30) y 40 20; fill_rect (x - 10) (y - 20) 40 20;
-    set_color black; draw_rect (x - 10) ( y - 20) 20 20;
-    draw_rect (x + 10) (y - 20) 20 20; draw_rect (x - 30) y 20 20;
-    draw_rect (x - 10) y 20 20
+  | I_block -> draw_I_block x y;
+  | L_block -> draw_L_block x y;
+  | J_block -> draw_J_block x y;
+  | O_block -> draw_O_block x y;
+  | S_block -> draw_S_block x y;
+  | T_block -> draw_T_block x y;
+  | Z_block -> draw_Z_block x y;
   | Shadow -> failwith "Can't draw shadow tetromino"
 
 (** [draw_hold tetromino] draws [teromino] onto an opened game screen if it some
@@ -125,14 +152,9 @@ let draw_upcoming tlst =
   draw_rect 450 225 100 100;
   draw_rect 450 125 100 100;
   match tlst with
-  | [] -> failwith "Less than 3 upcoming blocks"
-  | h :: t -> draw_tetromino 500 375 h;
-    match t with
-    | [] -> failwith "Less than 3 upcoming blocks"
-    | h :: t -> draw_tetromino 500 275 h;
-      match t with 
-      | [] -> failwith "Less than 3 upcoming blocks"
-      | h :: t -> draw_tetromino 500 175 h
+  | h1 :: h2 :: h3 :: t -> draw_tetromino 500 375 h1; 
+    draw_tetromino 500 275 h2; draw_tetromino 500 175 h3
+  | _ -> failwith "Less than 3 upcoming blocks"
 
 let draw_start_screen () =
   clear_graph ();
@@ -156,7 +178,8 @@ let draw_start_screen () =
   moveto 70 ((size_y () * 2 / 3) - 130);
   draw_string "* [space bar] to hold the falling tetromino";
   moveto ((size_x () / 2) - 250) 50;
-  draw_string "Press the [space bar] to start playing the game or [a] to have the A.I. play the game"
+  draw_string ("Press the [space bar] to start playing the game or [a] to " ^ 
+               "have the A.I. play the game")
 
 let draw_game_screen state =
   clear_graph ();
@@ -182,4 +205,4 @@ let draw_game_over_screen score level lines =
   draw_string ("Your high scores can be found in highscore.txt in the game " ^
                "directory");
   moveto (size_x () / 2 - 90) (1 * size_y () / 7);
-  draw_string "Press the space bar to play again"
+  draw_string "Press the [space bar] to play again"
