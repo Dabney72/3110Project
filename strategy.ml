@@ -60,7 +60,7 @@ let move_next_piece s st =
   let sorted = List.sort (cmp_scores s st) possible_moves in
   match sorted with
   | [] -> failwith "No possible moves detected" (* list of moves is empty *)
-  | h :: _ -> execute st h; drop st
+  | h :: _ -> execute st h; fall st
 
 let play_random_game s =
   let st = State.initialize () in

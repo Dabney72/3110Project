@@ -1,6 +1,7 @@
 open State
 open Tetromino
 open Display
+open Unix
 
 type t = {
   rotations: int;
@@ -30,8 +31,13 @@ let right_n n st =
   for i = 1 to n do st |> State.move_right done
 
 let execute st m =
+  (* sleepf 0.5; *)
   rotate_n m.rotations st;
+  (* sleepf 0.5;
+     draw_game_screen st; *)
   left_n m.moves_left st;
+  (* sleepf 0.5;
+     draw_game_screen st; *)
   right_n m.moves_right st
 
 let grid_after_move st m =
