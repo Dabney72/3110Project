@@ -31,19 +31,13 @@ let right_n n st =
 
 let execute st m =
   rotate_n m.rotations st;
-  draw_game_screen st;
-  Unix.sleepf 0.5;
   left_n m.moves_left st;
-  draw_game_screen st;
-  Unix.sleepf 0.5;
   right_n m.moves_right st
 
 let grid_after_move st m =
   let st' = copy_grid_and_falling st in
-  rotate_n m.rotations st;
-  left_n m.moves_left st;
-  right_n m.moves_right st;
-  drop ~auto_respawn: false st';
+  execute st' m;
+  drop ~line_clears: false ~auto_respawn: false st';
   copy_grid_int st'
 
 (** [max_height x 0 grid] is the maximum height of column [x] in [grid]. *)

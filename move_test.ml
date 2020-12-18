@@ -2,6 +2,7 @@ open OUnit2
 open Move
 open Tetromino
 open Printers
+open State_test
 
 (** [cmp_matrices m1 m2] is true if the matrices m1 and m2 have all the same 
     contents at the same indices and false otherwise. 
@@ -133,6 +134,33 @@ let gamt_grid5 = prepend_n 18 [|
     [|0;0;0;0;0;1;0;0;0;0|];
   |]
 
+let gamt_grid6 = prepend_n 18 [|
+    [|0;0;0;0;0;0;0;1;1;0|];
+    [|1;1;1;1;1;1;1;1;1;1|];
+  |]
+
+let gamt_grid7 = prepend_n 16 [|
+    [|1;1;1;1;1;1;1;1;1;1|];
+    [|1;1;1;1;1;1;1;1;1;1|];
+    [|1;1;1;1;1;1;1;1;1;1|];
+    [|1;1;1;1;1;1;1;1;1;1|];
+  |]
+
+let init_with_block block = State.initialize ~first_block: (Some block) ()
+
+let first_8 = 
+  initial ()
+  |> spawn_move_drop I_block 0 4 0
+  |> spawn_move_drop I_block 0 0 1
+  |> spawn Z_block
+
+let almost_tetris =
+  initial ()
+  |> spawn_move_drop_n I_block 0 0 3 4
+  |> spawn_move_drop_n I_block 0 1 0 4
+  |> spawn_move_drop I_block 1 4 0
+  |> spawn I_block
+
 let filled_5 = prepend_n 15 (Array.make_matrix 5 10 1)
 
 let move_tests = [
@@ -176,18 +204,21 @@ let bumpiness_test name output grid =
 
 let grid_tests = [
   grid_after_move_test "no moves for I block" gamt_grid1
-    (State.initialize ~first_block: (Some I_block) ()) (initialize 0 0 0);
+    (init_with_block I_block) (initialize 0 0 0);
   grid_after_move_test "4 rotations 3 moves left and 3 moves right for I block"
-    gamt_grid1 (State.initialize ~first_block: (Some I_block) ()) 
-    (initialize 4 3 3);
+    gamt_grid1 (init_with_block I_block) (initialize 4 3 3);
   grid_after_move_test "2 moves left for O block" gamt_grid2
-    (State.initialize ~first_block: (Some O_block) ()) (initialize 0 2 0);
+    (init_with_block O_block) (initialize 0 2 0);
   grid_after_move_test "3 moves right for S Block" gamt_grid3
-    (State.initialize ~first_block: (Some S_block) ()) (initialize 0 0 3);
+    (init_with_block S_block) (initialize 0 0 3);
   grid_after_move_test "1 rotation for L Block" gamt_grid4
-    (State.initialize ~first_block: (Some L_block) ()) (initialize 1 0 0);
+    (init_with_block L_block) (initialize 1 0 0);
   grid_after_move_test "2 rotations and 1 move right for T Block" gamt_grid5
-    (State.initialize ~first_block: (Some T_block) ()) (initialize 2 0 1);
+    (init_with_block T_block) (initialize 2 0 1);
+  grid_after_move_test "Clear line with Z block" gamt_grid6
+    first_8 (initialize 0 0 5);
+  grid_after_move_test "Tetris with I block" gamt_grid7
+    almost_tetris (initialize 1 5 0);
   aggregate_height_test "empty grid heights" 0 (Array.make_matrix 20 10 0);
   aggregate_height_test "full grid heights" 200 (Array.make_matrix 20 10 1);
   aggregate_height_test "grid1 heights" 48 grid1;

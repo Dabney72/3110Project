@@ -221,7 +221,8 @@ let create_shadow st =
   | None -> st.shadow_block <- []
 
 let delete_shadow st = 
-  let remove (r, c) = st.grid.(r).(c) <- None in 
+  let remove (r, c) = 
+  if st.grid.(r).(c) = Some Shadow then st.grid.(r).(c) <- None in 
   List.iter remove st.shadow_block
 
 (** [can_spawn tetromino pos st] is whether [tetromino] can be spawned at 
@@ -384,11 +385,11 @@ let rotate_cw =
 let rotate_ccw =
   rotate rotate_ccw
 
-let drop ?auto_respawn:(auto = true) st =
+let drop ?line_clears:(lc=true) ?auto_respawn:(auto=true) st =
   while not (collision_under st) do
     move st Down
   done;
-  update_score st;
+  if lc then update_score st;
   st.use_hold <-true;
   if auto then spawn_next st
 
@@ -396,7 +397,8 @@ let fall ?auto_respawn:(auto = true) st =
   if not (collision_under st)
   then begin 
     move st Down; 
-    if (collision_under st) then delete_shadow st 
+    if (collision_under st)
+    then begin delete_shadow st end
   end
   else begin
     update_score st; 
@@ -444,5 +446,5 @@ let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
   st
 
 let copy_grid_and_falling st = 
-  {(initialize ()) with grid = (copy_grid st);
+  {(initialize ()) with grid = copy_grid st;
                         falling_block = Some (get_falling st)}

@@ -64,7 +64,7 @@ let move_next_piece s st =
 
 let play_random_game s =
   let st = State.initialize () in
-  while not (game_over st) do
+  while not (game_over st) && get_lines_cleared st < 100 do
     move_next_piece s st
   done; 
   float_of_int (get_lines_cleared st)
