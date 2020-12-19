@@ -6,14 +6,12 @@ type t = {
   generation_size : int;
   mutation_percent : float;
   mutable population : (Strategy.t * float) array;
-  mutable max_score : float;
 }
 
 let initialize gen_size mut_pct = {
   generation_size = gen_size;
   mutation_percent = mut_pct;
   population = Array.init gen_size (fun _ -> (Strategy.initialize (), 0.0));
-  max_score = 0.0;
 }
 
 (** [select_index length set] is a random number between 0 and [length] - 1, 
@@ -82,6 +80,12 @@ let mutate s =
 
 let display s =
   failwith "Unimplemented"
+
+let max_strategy acc s =
+  if snd acc >= snd s then acc else s
+
+let get_best_strategy s =
+  s.population |> Array.fold_left max_strategy s.population.(0)
 
 let generation ?display:(d=false) s =
   let gen = s |> tournament_selection |> mutate |> delete_last in

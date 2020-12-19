@@ -271,15 +271,11 @@ let spawn_next st =
     then st.upcoming_blocks <- t @ generate_list ()
     else st.upcoming_blocks <- t 
 
-(** [increment_lines_cleared st ln] updates the lines_cleared for game state
-    [st] based on how many lines [ln] were given as cleared. This also updates
-    level if the new lines_cleared value exceeds the next multiple of ten.*)
 let increment_lines_cleared st ln =
   st.lines_cleared <- st.lines_cleared + ln;
   if st.lines_cleared >= 10 * st.level && st.level < 10
   then st.level <- st.level + 1
 
-(** [update_grid grid st] sets the current grid of [st] equal to [grid]. *)
 let update_grid grid st = 
   st.grid <- grid;
   st

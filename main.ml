@@ -7,31 +7,29 @@ open Unix
 open Str
 open Printers
 
-(**[read_lines name] reads lines from a [name] text file to a int int list*)
+(** [read_lines name] reads lines from a [name] text file to a int int list. *)
 let read_lines name =
   let file = open_in name in
   let try_read () =
     try Some (input_line file) with End_of_file -> None in
   let rec loop acc = match try_read () with
     | Some line -> begin
-        if Str.string_match (Str.regexp "[0-9]+") line 0 = true then 
+        if Str.string_match (Str.regexp "[0-9]+") line 0 then
           loop (List.map int_of_string (Str.split (Str.regexp "[^0-9]+") line) 
                 :: acc)
-        else 
-          loop acc
+        else loop acc
       end
     | None -> close_in file; List.rev acc in
   loop []
 
-(**[mycompare lst1 lst2] is a comparison function comparing the scores for 
-   sorting purposes *)
+(** [mycompare lst1 lst2] is a comparison function comparing the scores for 
+    sorting purposes. *)
 let mycompare lst1 lst2 =
-  if List.length lst1 = List.length lst2 then 
-    begin
-      match lst1,lst2 with
-      |[_;_;_;_;_;score1],[_;_;_;_;_;score2]-> if score1 > score2 then -1 else 1
-      | _,_ -> failwith "Comparison Error"
-    end
+  if List.length lst1 = List.length lst2 then begin
+    match lst1,lst2 with
+    |[_;_;_;_;_;score1],[_;_;_;_;_;score2] -> score2 - score1
+    | _,_ -> failwith "Comparison Error"
+  end
   else 
     failwith "Lengths are not the same"
 
@@ -46,8 +44,7 @@ let print_line_score file mon dy yr hr min score =
 
 (** [rec write_multiple_lines file list] writes each score line in the list
     to the highscore.txtfile and closes the file once all the scores has been 
-    written. Used if there are multiple scores to be written to the file.
-*)
+    written. Used if there are multiple scores to be written to the file. *)
 let rec write_multiple_lines file list= 
   match list with 
   | [] -> close_out file;
@@ -59,7 +56,8 @@ let rec write_multiple_lines file list=
   | _ -> failwith "Error"
 
 (** [write_highscore_file ai_indicator mon dy yr hr min score] produces a text
-    file containing all the scores the player has sorted by score in descending order.*)
+    file containing all the scores the player has sorted by score in
+    descending order. *)
 let write_highscore_file ai_indicator mon dy yr hr min score = 
   if Sys.file_exists "highscore.txt" = false && !ai_indicator = false then 
     begin
@@ -73,7 +71,8 @@ let write_highscore_file ai_indicator mon dy yr hr min score =
       let nc = read_lines "highscore.txt" in 
       let oc = open_out "highscore.txt" in
       print_header oc "Month Day Year Hour(24-hr) Minute     Score\n";
-      write_multiple_lines oc (List.sort mycompare ([mon;dy;yr;hr;min;score]::nc))
+      write_multiple_lines oc 
+        (List.sort mycompare ([mon;dy;yr;hr;min;score]::nc))
     end
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
@@ -103,18 +102,33 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-(** [-0.989144479989705339; 0.00239436400334614146; -0.0187718879248342727;
-    -0.14572261646927781] *)
-let ai_strategy = 
-  Strategy.init_with_weights (-0.989144479989705339) 0.00239436400334614146
-    (-0.0187718879248342727) (-0.14572261646927781)
+let ai_strategy = Strategy.initialize ()
 
-let play_game_user state = 
+(** [user_move state] reads an input and executes a move in [state] based on
+    that input. *)
+let user_move state = 
   if key_pressed () then read_input state (read_key ()) else ()
 
-let play_game_ai state =
+(** [ai_move state] has an ai play its next move in [state]. *)
+let ai_move state =
   move_next_piece ai_strategy state
-(* Strategies.generation ai_strategy |> ignore *)
+
+let play_game state counter ai =
+  while not (game_over state) do
+    sleepf 0.05;
+    (* Gets current difficulty level to change how fast the game goes. *)
+    let diff = 11 - (get_level state) in
+
+    let () = if !ai then ai_move state else user_move state in
+    draw_game_screen state;
+
+    (* Increments counter until it is greater than diff to cause a game update. 
+       In the future diff can be changed to speedup the game. *)
+    counter := !counter + 1;
+    let () = if !counter > diff then fall state else () in
+    let () = if !counter > diff then counter := 0 else () in
+    ()
+  done
 
 (** [main ()] runs the tetris game. *)
 let rec main () =
@@ -128,21 +142,7 @@ let rec main () =
   wait_for_space_or_a ai;
   let state = State.initialize () in
   draw_game_screen state;
-  (* Main game loop that runs until game over. *)  
-  while not (game_over state) do
-    sleepf 0.05;
-    (* Gets current difficulty level to change how fast the game goes. *)
-    let diff = 11 - (get_level state) in
-    (* Checks if there is an input from the player. *)
-    let () = if !ai then play_game_ai state else play_game_user state in
-    draw_game_screen state;
-    (* Increments counter until it is greater than diff to cause a game update. 
-       In the future diff can be changed to speedup the game. *)
-    counter := !counter + 1;
-    let () = if !counter > diff then fall state else () in
-    let () = if !counter > diff then counter := 0 else () in
-    ()
-  done;
+  play_game state counter ai;
   (* Game over where a space bar press will restart main. *)
   sleepf 1.0;
   draw_game_over_screen (get_score state) (get_level state)
