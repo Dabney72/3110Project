@@ -44,6 +44,20 @@ let print_header file string =
 let print_line_score file mon dy yr hr min score =
   Printf.fprintf file "%d %5d %5d %5d %10d %11d \n" mon dy yr hr min score
 
+(** [rec write_multiple_lines file list] writes each score line in the list
+    to the highscore.txtfile and closes the file once all the scores has been 
+    written. Used if there are multiple scores to be written to the file.
+*)
+let rec write_multiple_lines file list= 
+  match list with 
+  | [] -> close_out file;
+  | [month;day;year;hour;minute;score_num]::t -> 
+    begin
+      print_line_score file month day year hour minute score_num; 
+      write_multiple_lines file t; 
+    end
+  | _ -> failwith "Error"
+
 (** [write_highscore_file ai_indicator mon dy yr hr min score] produces a text
     file containing all the scores the player has sorted by score in descending order.*)
 let write_highscore_file ai_indicator mon dy yr hr min score = 
@@ -57,19 +71,9 @@ let write_highscore_file ai_indicator mon dy yr hr min score =
   else if Sys.file_exists "highscore.txt" = true && !ai_indicator = false then
     begin
       let nc = read_lines "highscore.txt" in 
-      let nl = List.sort mycompare ([mon;dy;yr;hr;min;score]::nc) in
       let oc = open_out "highscore.txt" in
       print_header oc "Month Day Year Hour(24-hr) Minute     Score\n";
-      let rec make_file list= 
-        match list with 
-        | [] -> close_out oc;
-        | [month;day;year;hour;minute;score_num]::t -> 
-          begin
-            print_line_score oc month day year hour minute score_num; 
-            make_file t; 
-          end
-        | _ -> failwith "Error"
-      in make_file nl;
+      write_multiple_lines oc (List.sort mycompare ([mon;dy;yr;hr;min;score]::nc))
     end
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
