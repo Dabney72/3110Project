@@ -1,4 +1,4 @@
-(** A Tetris piece. *)
+(** A module for each Tetris piece and basic functions on them. *)
 
 (** The type [tetromino_type] represents the type of tetromino. Each type
     has a different block composition. *)

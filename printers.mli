@@ -1,4 +1,4 @@
-(** Custom printers. *)
+(** A module of custom printers for the Tetris game. *)
 
 (** [pp_int_matrix m] pretty prints an int matrix [m]. *)
 val pp_int_matrix : int array array -> string

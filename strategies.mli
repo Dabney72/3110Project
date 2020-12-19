@@ -1,4 +1,4 @@
-(** A population of different Tetris strategies. *)
+(** A module for the population of different Tetris A.I. strategies. *)
 
 (** The type t maintains a list of strategies and their fitness scores,
     a generation size, a mutation percentage, and a max fitness score. *)

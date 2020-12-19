@@ -1,4 +1,4 @@
-(** A single AI move in the game. *)
+(** A module for handling a single A.I. move in the Tetris game. *)
 
 (** The type [t] represents a move. A move contains the number of rotations,
     the number of moves to the left, and the number of moves to the right.
@@ -39,6 +39,10 @@ val move_outcome : int array array -> float list
 val get_possible_moves : Tetromino.tetromino_type -> int -> t list
 
 (**/**)
+
+(* These helper function are for testing purposes only and therefore are 
+   excluded from the documentation.*)
+
 val aggregate_height : int array array -> int
 
 val complete_lines : int array array -> int

@@ -1,4 +1,4 @@
-(** An AI strategy for Tetris. *)
+(** A module for the Tetris A.I. strategy. *)
 
 (** The type [t] is a strategy for each block, which is a 4d vector of floats
     (a, b, c, d). The strategy uses these parameters to calculate a score for
@@ -38,6 +38,9 @@ val play_random_game : t -> float
 val train : t -> int -> float 
 
 (**/**)
+
+(* These helper function are for testing purposes only and therefore are 
+   excluded from the documentation.*)
 
 (** [init_with_weights a b c d] is a strategy vector with the weights [a], [b],
     [c], and [d]. The result is then normalized. *)
