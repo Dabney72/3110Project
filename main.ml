@@ -7,17 +7,16 @@ open Unix
 open Str
 open Printers
 
-(**[read_lines name] reads lines froma given text file to a int int list for
-   the purposes of this game only*)
-
+(**[read_lines name] reads lines from a [name] text file to a int int list*)
 let read_lines name =
   let file = open_in name in
   let try_read () =
     try Some (input_line file) with End_of_file -> None in
   let rec loop acc = match try_read () with
-    | Some s -> begin
-        if Str.string_match (Str.regexp "[0-9]+") s 0 = true then 
-          loop (List.map int_of_string (Str.split (Str.regexp "[^0-9]+") s) :: acc)
+    | Some line -> begin
+        if Str.string_match (Str.regexp "[0-9]+") line 0 = true then 
+          loop (List.map int_of_string (Str.split (Str.regexp "[^0-9]+") line) 
+                :: acc)
         else 
           loop acc
       end
@@ -30,19 +29,57 @@ let mycompare lst1 lst2 =
   if List.length lst1 = List.length lst2 then 
     begin
       match lst1,lst2 with
-      |[_;_;_;_;_;a1],[_;_;_;_;_;a2]-> if a1 > a2 then -1 else 1
-      | _,_ -> failwith "Error in comparison"
+      |[_;_;_;_;_;score1],[_;_;_;_;_;score2]-> if score1 > score2 then -1 else 1
+      | _,_ -> failwith "Comparison Error"
     end
   else 
     failwith "Lengths are not the same"
+
+(**[print_header file string] writes out the headers for the highscore.txt file *)
+let print_header file string = 
+  Printf.fprintf file "%s" string
+
+(**[print_line_score file mon dy yr hr min score] writes out a line containing
+   the month,day,year,hour,minute, and score to the highscore.txt file *)
+let print_line_score file mon dy yr hr min score =
+  Printf.fprintf file "%d %5d %5d %5d %10d %11d \n" mon dy yr hr min score
+
+(** [write_highscore_file ai_indicator mon dy yr hr min score] produces a text
+    file containing all the scores the player has sorted by score in descending order.*)
+let write_highscore_file ai_indicator mon dy yr hr min score = 
+  if Sys.file_exists "highscore.txt" = false && !ai_indicator = false
+  then 
+    begin
+      let oc = open_out "highscore.txt" in
+      print_header oc "Month Day Year Hour(24-hr) Minute     Score\n";
+      print_line_score oc mon dy yr hr min score;
+      close_out oc; 
+    end
+  else if Sys.file_exists "highscore.txt" = true && !ai_indicator = false then
+    begin
+      let nc = read_lines "highscore.txt" in 
+      let nl = List.sort mycompare ([mon;dy;yr;hr;min;score]::nc) in
+      let oc = open_out "highscore.txt" in
+      print_header oc "Month Day Year Hour(24-hr) Minute     Score\n";
+      let rec make_file list= 
+        match list with 
+        | [] -> close_out oc;
+        | [month;day;year;hour;minute;score_num]::t -> begin
+            print_line_score oc month day year hour minute score_num; 
+            make_file t;
+          end
+        | _ -> failwith "Error"
+      in make_file nl;
+    end
+  else ()
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
 let rec wait_for_space () =
   if read_key () = ' ' then () else wait_for_space ()
 
 (** [wait_for_space_or_a ai] stalls until either the space bar or 'a' key is 
-    pressed. If space is pressed then [ai] gets set to false, but if 'a' is 
-    pressed then [ai] gets set to true. *)
+    pressed. If space is pressed then [ai] is set to false, but if 'a' is 
+    pressed then [ai] is set to true. *)
 let rec wait_for_space_or_a ai =
   match read_key () with
   | ' ' -> ai := false
@@ -107,43 +144,10 @@ let rec main () =
   sleepf 1.0;
   draw_game_over_screen (get_score state) (get_level state)
     (get_lines_cleared state);
-  if Sys.file_exists "highscore.txt" = false && !ai = false
-  then 
-    begin
-      let t = Unix.localtime (Unix.time ()) in
-      let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Month Day Year Hour(24-hr) Minute     Score\n";
-      Printf.fprintf oc "%d %5d %5d %5d %1od %11d \n"  (t.tm_mon+1) t.tm_mday 
-        (t.tm_year+1900) (t.tm_hour) (t.tm_min) (get_score state);
-      close_out oc; 
-      wait_for_space ();
-      main ()
-    end
-  else if Sys.file_exists "highscore.txt" = true && !ai = false then
-    begin
-      let t = Unix.localtime (Unix.time ()) in
-      let nc = read_lines "highscore.txt" in 
-      let nl = List.sort mycompare ([(t.tm_mon+1);t.tm_mday;(t.tm_year+1900);
-                                     (t.tm_hour);(t.tm_min);(get_score state)]::nc)
-      in
-      let oc = open_out "highscore.txt" in
-      Printf.fprintf oc "%s" "Month Day Year Hour(24-hr) Minute     Score \n";
-      let rec make_file list= 
-        match list with 
-        | [] -> close_out oc;
-        | [a;b;c;d;e;f]::t -> begin
-            Printf.fprintf oc "%d %5d %5d %5d %10d %11d \n" a b c d e f; 
-            make_file t;
-          end
-        | _ -> failwith "Error"
-      in make_file nl;
-      wait_for_space ();
-      main ()
-    end
-  else 
-    begin
-      wait_for_space ();
-      main ()
-    end
+  let t = Unix.localtime (Unix.time ()) in
+  write_highscore_file ai (t.tm_mon+1) t.tm_mday (t.tm_year+1900) (t.tm_hour) 
+    (t.tm_min) (get_score state);
+  wait_for_space ();
+  main ()
 
 let () = main ()
