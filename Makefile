@@ -1,5 +1,5 @@
 MODULES=main display state tetromino authors strategy strategies move \
-printers state_test tetromino_test move_test strategy_test strategies_test
+printers
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
