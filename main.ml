@@ -47,8 +47,7 @@ let print_line_score file mon dy yr hr min score =
 (** [write_highscore_file ai_indicator mon dy yr hr min score] produces a text
     file containing all the scores the player has sorted by score in descending order.*)
 let write_highscore_file ai_indicator mon dy yr hr min score = 
-  if Sys.file_exists "highscore.txt" = false && !ai_indicator = false
-  then 
+  if Sys.file_exists "highscore.txt" = false && !ai_indicator = false then 
     begin
       let oc = open_out "highscore.txt" in
       print_header oc "Month Day Year Hour(24-hr) Minute     Score\n";
@@ -64,14 +63,14 @@ let write_highscore_file ai_indicator mon dy yr hr min score =
       let rec make_file list= 
         match list with 
         | [] -> close_out oc;
-        | [month;day;year;hour;minute;score_num]::t -> begin
+        | [month;day;year;hour;minute;score_num]::t -> 
+          begin
             print_line_score oc month day year hour minute score_num; 
-            make_file t;
+            make_file t; 
           end
         | _ -> failwith "Error"
       in make_file nl;
     end
-  else ()
 
 (** [wait_for_space ()] stalls until the space bar is pressed. *)
 let rec wait_for_space () =
