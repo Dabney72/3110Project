@@ -113,15 +113,14 @@ let user_move state =
 let ai_move state =
   move_next_piece ai_strategy state
 
-let play_game state counter ai =
+let play_game state ai =
+  let counter = ref 0 in
   while not (game_over state) do
     sleepf 0.05;
     (* Gets current difficulty level to change how fast the game goes. *)
     let diff = 11 - (get_level state) in
-
     let () = if !ai then ai_move state else user_move state in
     draw_game_screen state;
-
     (* Increments counter until it is greater than diff to cause a game update. 
        In the future diff can be changed to speedup the game. *)
     counter := !counter + 1;
@@ -136,14 +135,12 @@ let rec main () =
   (* Initialize game variables and game state and wait for a space bar press to
      start game. *)
   let ai = ref false in
-  let counter = ref 0 in
   open_graph "";
   draw_start_screen ();
   wait_for_space_or_a ai;
   let state = State.initialize () in
   draw_game_screen state;
-  play_game state counter ai;
-  (* Game over where a space bar press will restart main. *)
+  play_game state ai;
   sleepf 1.0;
   draw_game_over_screen (get_score state) (get_level state)
     (get_lines_cleared state);

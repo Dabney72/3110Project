@@ -8,10 +8,16 @@ type t = {
   mutable population : (Strategy.t * float) array;
 }
 
+(** [init_strategy i] is [(s, f)], where [s] is a randomly initialized strategy
+    and [f] is its fitness score after playing a tetris game. *)
+let init_strategy _ = 
+  let s = Strategy.initialize () in
+  s, train s 1
+
 let initialize gen_size mut_pct = {
   generation_size = gen_size;
   mutation_percent = mut_pct;
-  population = Array.init gen_size (fun _ -> (Strategy.initialize (), 0.0));
+  population = Array.init gen_size init_strategy;
 }
 
 (** [select_index length set] is a random number between 0 and [length] - 1, 
