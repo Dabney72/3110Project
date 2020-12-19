@@ -1,7 +1,5 @@
 open State
 open Tetromino
-open Display
-open Unix
 
 type t = {
   rotations: int;

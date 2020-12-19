@@ -61,7 +61,10 @@ let move_next_piece s st =
   let possible_moves = get_possible_moves next (grid_width st) in
   let scores = possible_moves |> List.map (move_score st s) in
   let move = List.fold_left max_score (List.hd scores) scores |> snd in 
-  execute st move; drop st
+  execute st move; 
+  Display.draw_game_screen st; 
+  Unix.sleepf 0.5; 
+  drop st
 
 let play_random_game s =
   let st = State.initialize () in
