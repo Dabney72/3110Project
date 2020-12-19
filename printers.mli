@@ -1,4 +1,4 @@
-(** Printers for testing *)
+(** Custom printers. *)
 
 (** [pp_int_matrix m] pretty prints an int matrix [m]. *)
 val pp_int_matrix : int array array -> string

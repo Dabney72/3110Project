@@ -1,4 +1,4 @@
-(** A tetris piece. *)
+(** A Tetris piece. *)
 
 (** The type [tetromino_type] represents the type of tetromino. Each type
     has a different block composition. *)

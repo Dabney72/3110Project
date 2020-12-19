@@ -1,3 +1,5 @@
+(** An AI strategy for Tetris. *)
+
 (** The type [t] is a strategy for each block, which is a 4d vector of floats
     (a, b, c, d). The strategy uses these parameters to calculate a score for
     each possible move, then chooses the move with the highest score. *)
@@ -14,12 +16,12 @@ val initialize : unit -> t
 val crossover : t -> t -> float -> float -> t
 
 (** [mutate s] is [s] with a random component of its vector adjusted by a
-    random amount up to + or - 0.2, and then normalized. *)
+    random amount up to +- 0.2, and then normalized. *)
 val mutate : t -> t
 
 (** [score s o] is the rating that strategy [s] gives the move outcome [o], 
-    calculated by (a * aggregate height) + (b * complete lines)
-    + (c * holes) + (d * bumpiness), where a,b,c,d are the weights of [s].
+    calculated by [(a * aggregate height) + (b * complete lines)
+    + (c * holes) + (d * bumpiness)], where a,b,c,d are the weights of [s].
     A high score indicates that [s] thinks [o] is a good outcome. *)
 val score : t -> float list -> float
 

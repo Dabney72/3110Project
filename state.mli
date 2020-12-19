@@ -1,11 +1,14 @@
+(** A Tetris game state. *)
+
 (** The abstract type representing the game state, containing information
     about:
-    - the blocks that are filled in the grid
-    - current score
-    - list of upcoming blocks
+    - the current grid
     - block that is currently falling
+    - list of upcoming blocks
     - block that is currently being held
-*)
+    - information about score, level, number of lines cleared, and combo
+      multiplier
+    - whether or not the game is over *)
 type t
 
 (** [initialize ()] creates a new state that contains the following:
@@ -17,7 +20,11 @@ type t
     - Difficulty level set to one
     - No lines cleared
     - Game over set to false
-    - Use hold set to false *)
+    - Use hold set to false 
+      [first_block] is an optional argument for specifying the first block
+      that will spawn in this state.
+      [auto_spawn] is an optional argument, specifying whether the game state
+      will immediately spawn the first block upon initialization. *)
 val initialize : ?first_block: Tetromino.tetromino_type option -> 
   ?auto_spawn: bool -> unit -> t
 
@@ -101,7 +108,7 @@ val grid_height : t -> int
 val copy_grid_int : t -> int array array
 
 (** [copy_grid_and_falling st] is a game state with the same grid and falling
-    block as [st] while the other fields are the initizlized values. *)
+    block as [st] while the other fields are the initialized values. *)
 val copy_grid_and_falling : t -> t
 
 (** [spawn_tetromino tetromino] mutates the game state by placing [tetromino]
@@ -113,11 +120,17 @@ val spawn_tetromino : Tetromino.tetromino_type -> t -> unit
 val spawn_next : t -> unit
 
 (**/**)
+
 (* These function are for testing purposes only and therefore are excluded from
    the documentation. *)
 
+(** [increment_lines_cleared st ln] updates the lines_cleared for game state
+    [st] based on how many lines [ln] were given as cleared. This also updates
+    level if the new lines_cleared value exceeds the next multiple of ten. *)
 val increment_lines_cleared : t -> int -> unit
 
+(** [update_grid grid st] sets the current grid of [st] equal to [grid]. *)
 val update_grid : Tetromino.tetromino_type option array array -> t -> t
+
 (**/**)
 

@@ -1,3 +1,5 @@
+(** A module for displaying the tetris grid. *)
+
 (** [draw_start_sreen ()] draws a start screen for the tetris game. *)
 val draw_start_screen : unit -> unit
 

@@ -1,4 +1,4 @@
-(** A population of different tetris strategies. *)
+(** A population of different Tetris strategies. *)
 
 (** The type t maintains a list of strategies and their fitness scores,
     a generation size, a mutation percentage, and a max fitness score. *)
@@ -27,6 +27,10 @@ val mutate: t -> t
 
 (** [display s] prints the list of strategies. *)
 val display : t -> unit
+
+(** [get_best_strategy s] is [(strat, fit)], where [strat] is the strategy in
+    [s] with the highest fitness score, [fit]. *)
+val get_best_strategy : t -> Strategy.t * float
 
 (** [generation ?display s] advances [s] to the next generation,
     performing crossovers, mutations, and deletions. 
