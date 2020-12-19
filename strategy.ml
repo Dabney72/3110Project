@@ -11,18 +11,17 @@ let normalize lst =
   in List.map (fun x -> x /. norm) lst
 
 let initialize () =
-  let a = Random.float (-1.0) in
-  let b = Random.float 1.0 in
-  let c = Random.float (-1.0) in
-  let d = Random.float (-1.0) in
-  normalize [a; b; c; d]
+  let w1 = Random.float (-1.0) in
+  let w2 = Random.float 1.0 in
+  let w3 = Random.float (-1.0) in
+  let w4 = Random.float (-1.0) in
+  normalize [w1; w2; w3; w4]
 
-let init_with_weights a b c d = 
-  [a; b; c; d]
+let init_with_weights w1 w2 w3 w4 = [w1; w2; w3; w4]
 
-(** [scale_vector v c] scales each entry of [v] by [c]. *)
-let scale_vector v c =
-  List.map (fun x -> x *. c) v
+(** [scale_vector vec c] scales each entry of [vec] by [c]. *)
+let scale_vector vec c =
+  List.map (fun x -> x *. c) vec
 
 let crossover s1 s2 f1 f2 =
   let v1, v2 = scale_vector s1 f1, scale_vector s2 f2 in
@@ -50,10 +49,10 @@ let score s o =
 (** [move_score st s m] is [(score, m)], where [score] is the score that 
     strategy [s] gives [m] in state [st]. *)
 let move_score st s m =
-  (m |> grid_after_move st |> move_outcome |> score s, m)
+  m |> grid_after_move st |> move_outcome |> score s, m
 
-(** [max_score current_max s] is [current_max] if [fst current_max] >= [fst s],
-    and [s] otherwise. *)
+(** [max_score current_max s] is [current_max] if [fst current_max]
+    >= [fst s], and [s] otherwise. *)
 let max_score current_max s =
   if fst current_max >= fst s then current_max else s
 
@@ -62,7 +61,7 @@ let move_next_piece s st =
   let possible_moves = get_possible_moves next (grid_width st) in
   let scores = possible_moves |> List.map (move_score st s) in
   let move = List.fold_left max_score (List.hd scores) scores |> snd in 
-  execute st move; fall st
+  execute st move; drop st
 
 let play_random_game s =
   let st = State.initialize () in

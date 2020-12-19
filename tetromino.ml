@@ -8,22 +8,6 @@ type tetromino_type =
   | Z_block
   | Shadow
 
-(* type tetromino_type =
-   | I_block
-   | I_shadow
-   | L_block
-   | L_shadow
-   | J_block
-   | J_shadow
-   | O_block
-   | O_shadow
-   | S_block
-   | S_shadow
-   | T_block
-   | T_shadow
-   | Z_block
-   | Z_shadow *)
-
 type t = {
   composition : (int * int) list;
   width : int
@@ -80,16 +64,14 @@ let create_tetromino comp w = {
 }
 
 let generate_list () = 
-  let ct_list = [I_block;L_block;J_block;O_block;S_block;T_block;
-                 Z_block] in
+  let ct_list = 
+    [I_block; L_block; J_block; O_block; S_block; T_block; Z_block] in
   let start_lst = List.map (fun c -> (Random.bits (),c)) ct_list
   in List.sort compare start_lst |> List.map snd 
 
-let get_width tetromino = 
-  tetromino.width
+let get_width tetromino = tetromino.width
 
-let get_comp tetromino =
-  tetromino.composition
+let get_comp tetromino = tetromino.composition
 
 (** [cw offset comp] is a new list of coordinates obtained
     after rotating each coordinate in [comp] 90 degrees clockwise. *)
@@ -109,18 +91,15 @@ let rec ccw offset = function
 let rotate dir tetromino =
   let comp = tetromino.composition in
   let w = tetromino.width in 
-  if comp = o_block.composition 
-  && w = o_block.width
+  if comp = o_block.composition && w = o_block.width
   then tetromino
   else {
     tetromino with composition = dir (w - 1) comp;
   }
 
-let rotate_cw =
-  rotate cw
+let rotate_cw = rotate cw
 
-let rotate_ccw =
-  rotate ccw
+let rotate_ccw = rotate ccw
 
 let get_name = function
   | I_block -> "I block"
