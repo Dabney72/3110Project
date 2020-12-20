@@ -52,6 +52,3 @@ let pp_tetromino tetromino =
   "\n\n" 
   ^ Array.fold_left (fun acc arr -> acc ^ row_to_string arr) "" coords ^
   "\n"
-
-let pp_strategy s =
-  s |> Strategy.to_list |> pp_list string_of_float

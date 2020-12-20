@@ -6,7 +6,7 @@
 
     Below is a breakdown of how each module was tested:
     - state.ml: for this module, we used OUnit/bisect to automatically test
-      all of thegame mechanics that we had implemented. We also did a bit of
+      all of the game mechanics that we had implemented. We also did a bit of
       manual testing by playing the game and catching bugs through it, and then
       writing OUnit tests to reproduce the bugs.
     - display.ml: for this module, we wrote a file with a bunch of helper
@@ -15,7 +15,10 @@
     - move.ml, strategy.ml: these modules were primarily tested through OUnit
       and bisect, and we also watched the AI play on the GUI so we could see
       if it was behaving the way we wanted it to. This also resulted in
-      findings further bugs and developing more OUnit tests.
+      finding further bugs and developing more OUnit tests. For strategies.ml,
+      we had to do a bit more manual testing on the functions that had the AI
+      train on random games, since we couldn't predict the properties of the
+      output.
     - strategies.ml: due to the randomness of the output of the functions in
       this module, we could not run OUnit tests on it. Instead, we printed
       the output of the generation function and ensured that it was
