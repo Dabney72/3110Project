@@ -176,10 +176,10 @@ let get_top_left tetromino st =
 let maximum_drop st height lst = 
   let update_lowest lowest (r, c) = 
     let r' = ref r in
-    while (List.mem (!r', c) lst) do 
+    while List.mem (!r', c) lst do 
       r' := !r' + 1
     done; 
-    while (!r' + 1) < height && Option.is_none(st.grid.(!r' + 1).(c)) do
+    while !r' + 1 < height && Option.is_none(st.grid.(!r' + 1).(c)) do
       r' := !r' + 1
     done;
     if !r' = 20 then 0 else min (!r' - r) lowest in
@@ -298,7 +298,7 @@ let increment_score st =
     end in
   Array.iteri inc_score st.grid;
   points := !points + get_points st !consec;
-  st.score <- st.score + (st.combo_multiplier * !points);
+  st.score <- st.score + st.combo_multiplier * !points;
   st.combo_multiplier <- if !points > 0 then st.combo_multiplier + 1 else 1;
   !rows
 
@@ -387,7 +387,7 @@ let fall ?auto_respawn:(auto = true) st =
   if not (collision_under st)
   then begin 
     move st Down; 
-    if (collision_under st)
+    if collision_under st
     then begin delete_shadow st end
   end
   else begin
@@ -421,7 +421,7 @@ let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
     falling_block = None;
     shadow_block = [];
     upcoming_blocks = (match first with 
-        | Some tetr -> (tetr :: generate_list ())
+        | Some tetr -> tetr :: generate_list ()
         | None -> generate_list ());
     held_block = None;
     score = 0;
