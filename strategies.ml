@@ -108,3 +108,5 @@ let generation ?display:(d=false) s =
   let gen = s |> tournament_selection |> mutate |> delete_last in
   if d then display gen;
   gen
+
+let pop = initialize 30 3.0 2 |> generation ~display: true

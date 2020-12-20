@@ -10,6 +10,7 @@ MOVE_TEST = move_test.byte
 STRATEGY_TEST = strategy_test.byte
 STRATEGIES_TEST = strategies_test.byte
 MAIN=main.byte
+TRAIN=strategies.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag 'package(bisect_ppx-ocamlbuild)'
 PKGS=unix,ounit2,graphics
 
@@ -42,6 +43,9 @@ bisect: clean test
 
 start:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+
+train:
+	$(OCAMLBUILD) $(TRAIN) && ./$(TRAIN)
 
 zip:
 	zip tetris.zip *.ml* *.txt _tags Makefile .merlin .ocamlinit -x _build

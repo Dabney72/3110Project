@@ -66,17 +66,27 @@ let move_next_piece s st =
      Unix.sleepf 0.5;  *)
   drop st
 
+(** [fitness d threshold n] is the fitness score, which is 0.0 if 
+    [n] < [threshold], and [n] otherwise.
+    If [p] is true, it additionally prints the result of the game
+    (i.e. whether or not the threshold was reached). *)
+let fitness p threshold = function
+  | l1 when l1 < float_of_int threshold -> 
+    if p then print_endline "Strategy did not achieve threshold"; 0.0
+  | l2 -> 
+    if p then print_endline "Strategy achieved 100 cleared lines"; l2
+[@@coverage off] (* Coverage is off because this is a helper function for
+                    [train]. *)
+
 let play_random_game ?debug:(d=false) s =
   let st = State.initialize () in
-  while not (game_over st) && get_lines_cleared st < 200 do
-    move_next_piece s st
+  let threshold = 1000 in
+  while not (game_over st) && get_lines_cleared st < threshold do
+    move_next_piece s st;
   done;
-  if d then begin
-    if game_over st
-    then print_endline "Strategy lost game"
-    else print_endline "Strategy achieved 200 cleared lines"; 
-  end;
-  float_of_int (get_lines_cleared st)
+  fitness d threshold (float_of_int (get_lines_cleared st))
+[@@coverage off] (* Coverage is off because this is a helper function for
+                    [train]. *)
 
 let train ?debug:(d=false) s x =
   let rec loop acc n = 
@@ -84,5 +94,9 @@ let train ?debug:(d=false) s x =
     then acc 
     else loop (acc +. play_random_game ~debug: d s) (n + 1)
   in loop 0.0 0 /. float_of_int x
+[@@coverage off] (* Coverage is off because this cannot be automatically tested
+                    with OUnit, as there are no properties we can predict. To
+                    test this function, we use strategies.ml to see if the
+                    strategies are getting better as they are trained. *)
 
 let to_list s = s

@@ -102,7 +102,9 @@ let read_input state =
   | ' ' -> hold state
   | _ -> ()
 
-let ai_strategy = Strategy.initialize ()
+(* Optimal weights according to our training. *)
+let ai_strategy = Strategy.init_with_weights 
+    (-0.282525215019) 0.258235169388 (-0.829532057432) (-0.406657922414)
 
 (** [user_move state] reads an input and executes a move in [state] based on
     that input. *)
