@@ -1,20 +1,17 @@
 open Tetromino
 
-(** [pp_array arr] pretty prints an int array [arr]. *)
-let pp_array arr = 
+let pp_array pp_elt arr = 
   let build_string acc x = 
-    acc ^ "; " ^ string_of_int x in
+    acc ^ "; " ^ pp_elt x in
   let s = Array.fold_left build_string "" arr in 
   "[|" ^ String.sub s 2 (String.length s - 2) ^ "|]"
 
 let pp_int_matrix m = 
   let aux acc row = 
-    acc ^ "; \n" ^ pp_array row  in
+    acc ^ "; \n" ^ pp_array string_of_int row  in
   let s = Array.fold_left aux "" m in 
   "[|" ^ String.sub s 2 (String.length s - 2) ^ "\n|]"
 
-(** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt]
-    to pretty-print each element of [lst]. *)
 let pp_list pp_elt lst =
   let pp_elts lst =
     let rec loop n acc = function

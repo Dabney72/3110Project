@@ -1,4 +1,4 @@
-(** A module for displaying the tetris grid. *)
+(** A module for displaying the Tetris game graphics. *)
 
 (** [draw_start_sreen ()] draws a start screen for the tetris game. *)
 val draw_start_screen : unit -> unit
@@ -14,8 +14,10 @@ val draw_game_screen : State.t -> unit
 val draw_game_over_screen : int -> int -> int -> unit
 
 (**/**)
-(* These function are for testing purposes only and therefore are excluded from
-   the documentation.*)
+
+(* These helper function are for testing purposes only and therefore are 
+   excluded from the documentation.*)
+
 val draw_grid : Tetromino.tetromino_type option array array -> unit
 
 val draw_score : int -> unit

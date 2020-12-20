@@ -6,5 +6,5 @@
 #load "display.cmo";;
 #load "move.cmo";;
 #load "strategy.cmo";;
-#load "strategies.cmo";;
 #load "printers.cmo";;
+#load "strategies.cmo";;

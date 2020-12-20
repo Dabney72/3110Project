@@ -1,14 +1,15 @@
-(** A Tetris game state. *)
+(** A module for maintaining and modifying a Tetris game state. *)
 
 (** The abstract type representing the game state, containing information
     about:
     - the current grid
-    - block that is currently falling
+    - block that is currently falling and its shadow
     - list of upcoming blocks
     - block that is currently being held
     - information about score, level, number of lines cleared, and combo
       multiplier
-    - whether or not the game is over *)
+    - whether or not the game is over
+    - whether or not hold has been used on the current falling block *)
 type t
 
 (** [initialize ()] creates a new state that contains the following:
@@ -21,6 +22,9 @@ type t
     - No lines cleared
     - Game over set to false
     - Use hold set to false 
+    - Combo multiplier set to 1
+    - Difficulty level of 1
+    - No shadow block
       [first_block] is an optional argument for specifying the first block
       that will spawn in this state.
       [auto_spawn] is an optional argument, specifying whether the game state

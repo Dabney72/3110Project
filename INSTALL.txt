@@ -1,5 +1,13 @@
-*Make sure you have the Graphics package installed using OPAM in addition to all
-the baseline packages from the class OCaml install. 
-(the command is "opam install Graphics")
+* Make sure you have all the baseline packages from the class OCaml install 
+(specifically Unix, Str, OUnit, and Bisect).
 
-*Then run "make start" from the project directory.
+* Make sure you also have the Graphics package installed using OPAM 
+(the command is "opam install Graphics").
+
+* Additionally to have Graphics be able to open a display window on your
+computer you will likely have to do one of the following options:
+1) Do a local install of OCaml and download XQuartz and run the project locally
+2) Download the OCaml virtual machine and run the project in there
+
+* Once everything is installed you can just run the command "make start" from
+the project directory to start the game.

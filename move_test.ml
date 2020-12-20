@@ -185,7 +185,6 @@ let grid_after_move_test name output st move =
     assert_equal ~cmp:cmp_matrices ~printer: pp_int_matrix
       output (grid_after_move st move)
 
-
 let aggregate_height_test name output grid =
   name >:: fun _ -> assert_equal output (aggregate_height grid) 
       ~printer: string_of_int
