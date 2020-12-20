@@ -13,3 +13,6 @@ val pp_list : ('a -> string) -> 'a list -> string
 
 (** [pp_tetromino t] pretty prints the tetromino [t]. *)
 val pp_tetromino : Tetromino.t -> string
+
+(** [pp_strategy s] pretty prints the strategy [s] as a vector of weights. *)
+val pp_strategy : Strategy.t -> string
