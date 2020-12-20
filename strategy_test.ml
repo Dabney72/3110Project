@@ -46,7 +46,7 @@ let move_next_piece_test name s st expected =
   name >:: fun _ -> 
     assert_equal expected 
       (let st' = State.copy_grid_and_falling st in
-       (move_next_piece s st'; State.copy_grid_int st'))
+       move_next_piece ~slow: false s st'; State.copy_grid_int st')
       ~printer: pp_int_matrix
       ~cmp: cmp_last_18
 

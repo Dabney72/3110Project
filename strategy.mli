@@ -25,15 +25,18 @@ val mutate : t -> t
     A high score indicates that [s] thinks [o] is a good outcome. *)
 val score : t -> float list -> float
 
-(** [move_next_piece s st] moves and drops the upcoming piece in [st] according
-    to the strategy [s]. *)
-val move_next_piece : t -> State.t -> unit
+(** [move_next_piece ?slow s st] moves and drops the upcoming piece in [st]
+    according to the strategy [s]. 
+    If [slow] is true, then the AI will drop the piece slowly in the GUI.
+    defaulted to true. *)
+val move_next_piece : ?slow:bool -> t -> State.t -> unit
 
 (** [play_random_game ?debug s] plays a tetris game with the strategy [s],
     and returns the number of lines that were cleared as a float (capped at
     200). 
     If [debug] is true, then the outcome of the game is printed: either
-    that the strategy lost the game, or cleared 200 lines. Default is false. *)
+    that the strategy lost the game, or cleared 1000 lines. Default is
+    false. *)
 val play_random_game : ?debug: bool -> t -> float
 
 (** [train s x] is the average score obtained by the strategy [s] after

@@ -133,7 +133,6 @@ let play_game state ai =
 
 (** [main ()] runs the tetris game. *)
 let rec main () =
-  print_endline (pp_list string_of_float (to_list ai_strategy));
   (* Initialize game variables and game state and wait for a space bar press to
      start game. *)
   let ai = ref false in

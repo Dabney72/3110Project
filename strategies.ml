@@ -15,7 +15,7 @@ type t = {
     tetris games. *)
 let init_strategy gps _ = 
   let s = Strategy.initialize () in
-  s, train s gps
+  s, train ~debug: true s gps
 
 let initialize gen_size mut_pct gps = {
   generation_size = gen_size;
@@ -43,7 +43,7 @@ let one_tenth arr  =
   while IntSet.cardinal !set < ten_percent do 
     let i = select_index length !set in 
     set := IntSet.add i !set;
-    result := arr.(i) :: (!result)
+    result := arr.(i) :: !result
   done;
   Array.of_list !result
 
@@ -69,8 +69,7 @@ let tournament_selection s =
     end in 
     children := (child, train ~debug: true child s.gps) :: !children
   done;
-  s.population <- !children |> Array.of_list |> Array.append s.population;
-  s
+  s.population <- !children |> Array.of_list |> Array.append s.population; s
 
 let delete_last s =
   let current_pop = s.population |> Array.length |> float_of_int in
@@ -84,13 +83,14 @@ let delete_last s =
 let mutate s = 
   let mutate_aux (strategy, fitness)= 
     if s.mutation_percent <> 0.0 && Random.float 1.0 <= s.mutation_percent 
-    then (Strategy.mutate strategy, fitness)
-    else (strategy, fitness) in
+    then Strategy.mutate strategy, fitness
+    else strategy, fitness in
   let mutated = Array.map mutate_aux s.population in 
   s.population <- mutated;
   s
 
-(** [gene_to_string (s, f)] is a string representation of [(s, f)]. *)
+(** [gene_to_string (s, f)] is a string representation of the strategy and
+    fitness pair [(s, f)]. *)
 let gene_to_string (s, f) =
   "(" ^ pp_strategy s ^ ", " ^ string_of_float f ^ ")"
 

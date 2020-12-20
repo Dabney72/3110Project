@@ -56,14 +56,13 @@ let move_score st s m =
 let max_score current_max s =
   if fst current_max >= fst s then current_max else s
 
-let move_next_piece s st =
+let move_next_piece ?slow:(slow=true) s st =
   let next = get_falling_block st in
   let possible_moves = get_possible_moves next (grid_width st) in
   let scores = possible_moves |> List.map (move_score st s) in
   let move = List.fold_left max_score (List.hd scores) scores |> snd in 
   execute st move; 
-  (* Display.draw_game_screen st; 
-     Unix.sleepf 0.5;  *)
+  if slow then (Display.draw_game_screen st; Unix.sleepf 0.5);
   drop st
 
 (** [fitness d threshold n] is the fitness score, which is 0.0 if 
@@ -82,7 +81,9 @@ let play_random_game ?debug:(d=false) s =
   let st = State.initialize () in
   let threshold = 1000 in
   while not (game_over st) && get_lines_cleared st < threshold do
-    move_next_piece s st;
+    if d
+    then move_next_piece ~slow:false s st
+    else move_next_piece s st
   done;
   fitness d threshold (float_of_int (get_lines_cleared st))
 [@@coverage off] (* Coverage is off because this is a helper function for
@@ -94,9 +95,10 @@ let train ?debug:(d=false) s x =
     then acc 
     else loop (acc +. play_random_game ~debug: d s) (n + 1)
   in loop 0.0 0 /. float_of_int x
-[@@coverage off] (* Coverage is off because this cannot be automatically tested
-                    with OUnit, as there are no properties we can predict. To
-                    test this function, we use strategies.ml to see if the
-                    strategies are getting better as they are trained. *)
+[@@coverage off] (* Coverage is off because this cannot be automatically
+                    tested with OUnit, as there are no properties we can
+                    predict. To test this function, we use strategies.ml
+                    to see if the strategies are getting better as they are
+                    trained. *)
 
 let to_list s = s
