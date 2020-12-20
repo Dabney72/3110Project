@@ -33,8 +33,8 @@ let select_index length set =
   done;
   !i 
 
-(** [one_tenth arr] is an array consisting of a random 10 percent of the elements
-    in [arr]. *)
+(** [one_tenth arr] is an array consisting of a random 10 percent of the 
+    elements in [arr]. *)
 let one_tenth arr  =
   let result = ref [] in
   let set = ref IntSet.empty in
@@ -48,8 +48,8 @@ let one_tenth arr  =
   Array.of_list !result
 
 (** [two_fittest arr] is a tuple of the two strategies in [arr] that have the 
-    highest score, and if there are multiple strategies that rank in the top two, 
-    then the first two in [arr] are chosen.
+    highest score, and if there are multiple strategies that rank in the top 
+    two, then the first two in [arr] are chosen.
     Raises: [invalig_arg] if [arr] has less than 2 elements. *)
 let two_fittest arr = 
   if Array.length arr < 2 then invalid_arg "arr";
@@ -83,7 +83,7 @@ let delete_last s =
 
 let mutate s = 
   let mutate_aux (strategy, fitness)= 
-    if Random.float 1. <= s.mutation_percent 
+    if s.mutation_percent <> 0.0 && Random.float 1.0 <= s.mutation_percent 
     then (Strategy.mutate strategy, fitness)
     else (strategy, fitness) in
   let mutated = Array.map mutate_aux s.population in 

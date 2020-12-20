@@ -1,7 +1,5 @@
 open Tetromino
 
-module ShadowMap = Map.Make(Int)
-
 type direction = 
   | Left
   | Right
