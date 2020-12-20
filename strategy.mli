@@ -29,13 +29,18 @@ val score : t -> float list -> float
     to the strategy [s]. *)
 val move_next_piece : t -> State.t -> unit
 
-(** [play_random_game s] plays a tetris game with the strategy [s], and returns
-    the number of lines that were cleared as a float. *)
-val play_random_game : t -> float
+(** [play_random_game ?debug s] plays a tetris game with the strategy [s],
+    and returns the number of lines that were cleared as a float (capped at
+    200). 
+    If [debug] is true, then the outcome of the game is printed: either
+    that the strategy lost the game, or cleared 200 lines. Default is false. *)
+val play_random_game : ?debug: bool -> t -> float
 
 (** [train s x] is the average score obtained by the strategy [s] after
-    playing [x] random tetris games. *)
-val train : t -> int -> float 
+    playing [x] random tetris games.
+    If [debug] is true, then the outcome of each game will be printed. Default
+    is false. *)
+val train : ?debug: bool -> t -> int -> float 
 
 (**/**)
 

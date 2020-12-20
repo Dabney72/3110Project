@@ -1,5 +1,9 @@
 (** A module of custom printers for the Tetris game. *)
 
+(** [pp_array pp_elt arr] pretty prints an array [arr], using [pp_elt] to
+    print its elements. *)
+val pp_array : ('a -> string) -> 'a array -> string
+
 (** [pp_int_matrix m] pretty prints an int matrix [m]. *)
 val pp_int_matrix : int array array -> string
 
@@ -9,3 +13,6 @@ val pp_list : ('a -> string) -> 'a list -> string
 
 (** [pp_tetromino t] pretty prints the tetromino [t]. *)
 val pp_tetromino : Tetromino.t -> string
+
+(** [pp_strategy s] pretty prints the strategy [s] as a vector of weights. *)
+val pp_strategy : Strategy.t -> string

@@ -62,22 +62,27 @@ let move_next_piece s st =
   let scores = possible_moves |> List.map (move_score st s) in
   let move = List.fold_left max_score (List.hd scores) scores |> snd in 
   execute st move; 
-  Display.draw_game_screen st; 
-  Unix.sleepf 0.5; 
+  (* Display.draw_game_screen st; 
+     Unix.sleepf 0.5;  *)
   drop st
 
-let play_random_game s =
+let play_random_game ?debug:(d=false) s =
   let st = State.initialize () in
-  while not (game_over st) && get_lines_cleared st < 100 do
+  while not (game_over st) && get_lines_cleared st < 200 do
     move_next_piece s st
-  done; 
+  done;
+  if d then begin
+    if game_over st
+    then print_endline "Strategy lost game"
+    else print_endline "Strategy achieved 200 cleared lines"; 
+  end;
   float_of_int (get_lines_cleared st)
 
-let train s x =
+let train ?debug:(d=false) s x =
   let rec loop acc n = 
     if n = x
     then acc 
-    else loop (acc +. play_random_game s) (n + 1)
+    else loop (acc +. play_random_game ~debug: d s) (n + 1)
   in loop 0.0 0 /. float_of_int x
 
 let to_list s = s
