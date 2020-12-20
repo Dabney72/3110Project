@@ -98,16 +98,16 @@ let rec optimum coord cmp = function
     let current_val = coord h in
     if cmp current_val opt_tail then current_val else opt_tail
 
-(** [block_coords tetromino pos st] is a list of (row, column) coordinates for the 
-    tetromino [tetr] at position [pos] in state [st]. *)
+(** [block_coords tetromino pos st] is a list of (row, column) coordinates for 
+    the tetromino [tetr] at position [pos] in state [st]. *)
 let block_coords tetromino pos st =
-  let rec help comp =
+  let rec block_coords_aux comp =
     match comp with
     | [] -> []
     | (y, x) :: t -> 
       match pos with
-      | (r, c) -> (r + x, c + y) :: help t
-  in help (get_comp tetromino)
+      | (r, c) -> (r + x, c + y) :: block_coords_aux t
+  in block_coords_aux (get_comp tetromino)
 
 (** [blocks_surrounding st offset_r offset_c comp] is whether there is a block
     next to any of the coordinates in [comp]. [offset_r] and [offset_c]
@@ -116,7 +116,7 @@ let block_coords tetromino pos st =
     Requires: (r + offset_r, c + offset_c) is not out of the grid bounds for 
     any (r, c) in [comp]. *)
 let blocks_surrounding st offset_r offset_c comp =
-  let is_valid r c = match st.grid.(r).(c) with 
+  let valid_row_col r c = match st.grid.(r).(c) with 
     | Some Shadow -> false
     | None -> false
     | _-> true in
@@ -125,9 +125,7 @@ let blocks_surrounding st offset_r offset_c comp =
     | (r', c') :: t ->
       let r = r' + offset_r in
       let c = c' + offset_c in 
-      not (List.mem (r, c) comp) (* Make sure block can't collide with itself *)
-      && is_valid r c
-      || loop st t
+      not (List.mem (r, c) comp) && valid_row_col r c || loop st t
   in loop st comp
 
 (** [collision_under st] is true iff there is a block under the currently
@@ -137,9 +135,7 @@ let collision_under st =
   let falling = get_falling st in
   let coords = block_coords falling.block falling.pos st in
   let bottom_row = optimum fst (>) coords in
-  bottom_row + 1 = Array.length st.grid
-  ||
-  blocks_surrounding st 1 0 coords
+  bottom_row + 1 = Array.length st.grid || blocks_surrounding st 1 0 coords
 
 (** [collision_left st] is true iff there is a block to the left the currently
     falling block, or if the falling block has reached the left edge of the
@@ -148,9 +144,7 @@ let collision_left st =
   let falling = get_falling st in
   let coords = block_coords falling.block falling.pos st in
   let left_col = optimum snd (<) coords in
-  left_col = 0
-  ||
-  blocks_surrounding st 0 (-1) coords
+  left_col = 0 || blocks_surrounding st 0 (-1) coords
 
 (** [collision_right st] is true iff there is a block to the right the currently
     falling block, or if the falling block has reached the right edge of the
@@ -159,9 +153,7 @@ let collision_right st =
   let falling = get_falling st in
   let coords = block_coords falling.block falling.pos st in
   let right_col = optimum snd (>) coords in
-  right_col + 1 = Array.length st.grid.(0)
-  ||
-  blocks_surrounding st 0 1 coords
+  right_col + 1 = Array.length st.grid.(0) || blocks_surrounding st 0 1 coords
 
 (** [place_block st position tetromino value] takes [tetromino] and alters 
     [st]'s grid attribute. This is done by setting the rectangle that encloses 
@@ -181,8 +173,8 @@ let get_top_left tetromino st =
   (0, (grid_width st - get_width tetromino) / 2)
 
 (** [maximum_drop st height lst] is [lst] but every (row, col) pair is projected
-    down by a constant that is the minimum distance between each pair and a 
-    placed block below that pair. *)
+    down by a constant that is the minimum of the distances between each 
+    pair and the first placed block directly below that (row, col). *)
 let maximum_drop st height lst = 
   let update_lowest lowest (r, c) = 
     let r' = ref r in
@@ -210,8 +202,8 @@ let shadow_pos st falling =
   |> maximum_drop st height
   |> List.filter valid_spot 
 
-(** [create_shadow st] creates a shadow for the falling block in order to predict
-    where that block will drop. *)
+(** [create_shadow st] creates a shadow for the falling block in order 
+    to predict where that block will drop. *)
 let create_shadow st =
   match st.falling_block with
   | Some falling -> 
@@ -222,7 +214,7 @@ let create_shadow st =
 
 let delete_shadow st = 
   let remove (r, c) = 
-  if st.grid.(r).(c) = Some Shadow then st.grid.(r).(c) <- None in 
+    if st.grid.(r).(c) = Some Shadow then st.grid.(r).(c) <- None in
   List.iter remove st.shadow_block
 
 (** [can_spawn tetromino pos st] is whether [tetromino] can be spawned at 
@@ -251,7 +243,7 @@ let spawn_tetromino tetromino_type st =
   } in
   let trunc = truncate tetromino in
   let trunc_falling = { falling with block = trunc; pos = (r - 1, c) } in
-  if can_spawn tetromino top_left st
+  if can_spawn tetromino top_left st 
   then place_block st falling (Some tetromino_type)
   else if can_spawn trunc (r - 1, c) st
   then begin
@@ -280,17 +272,20 @@ let update_grid grid st =
   st.grid <- grid;
   st
 
+(** [get_points st lines] updates state by adding [lines] to the current number 
+    of lines cleared to the state and is the score corresponding to [lines]. *)
+let get_points st lines = match lines with
+  | 1 -> increment_lines_cleared st 1; 40
+  | 2 -> increment_lines_cleared st 2; 100
+  | 3 -> increment_lines_cleared st 3; 300
+  | 4 -> increment_lines_cleared st 4; 1200 
+  | _ -> 0
+
 (** [increment_score st] updates the player's score according to the number of
     rows they have completely filled and returns a list of the indexes of the 
     rows that were accounted for while adding score. *)
 let increment_score st =
   let rows = ref [] in
-  let get_points = function
-    | 1 -> increment_lines_cleared st 1; 40
-    | 2 -> increment_lines_cleared st 2; 100
-    | 3 -> increment_lines_cleared st 3; 300
-    | 4 -> increment_lines_cleared st 4; 1200 
-    | _ -> 0 in 
   let consec = ref 0 in
   let points = ref 0 in
   let inc_score index row = 
@@ -300,11 +295,11 @@ let increment_score st =
       rows := index :: !rows 
     end
     else begin
-      points := !points + get_points !consec; 
+      points := !points + get_points st !consec; 
       consec := 0 
     end in
   Array.iteri inc_score st.grid;
-  points := !points + get_points !consec;
+  points := !points + get_points st !consec;
   st.score <- st.score + (st.combo_multiplier * !points);
   st.combo_multiplier <- if !points > 0 then st.combo_multiplier + 1 else 1;
   !rows
@@ -349,9 +344,9 @@ let move_left st =
 let move_right st =
   if not (collision_right st) then move st Right
 
-(** [valid_position st positions r c] returns true if [r] and [c] are bound between
-    the grid and position row = r, column = c in the grid is either empty or 
-    one of the original [positions]. *)
+(** [valid_position st positions r c] returns true if [r] and [c] are bound 
+    between the grid and position row = r, column = c in the grid is either 
+    empty or one of the original [positions]. *)
 let valid_position st positions r c =
   if r < 0 || c < 0 then false 
   else if r >= grid_height st || c >= grid_width st then false
@@ -371,7 +366,8 @@ let rotate dir st =
   then begin
     delete_shadow st;
     place_block st falling None;
-    place_block st {falling with block = dir falling.block} (Some falling.block_type);
+    place_block st {falling with block = dir falling.block} 
+      (Some falling.block_type);
     create_shadow st
   end
 
@@ -403,23 +399,22 @@ let fall ?auto_respawn:(auto = true) st =
   end
 
 let hold st =
-  if use_hold st = true then
-    begin
-      let fall_block = get_falling st in
-      match st.held_block with
-      | None -> begin
-          st.held_block <- Some fall_block.block_type;
-          place_block st fall_block None;
-          st.use_hold <- false;
-          spawn_next st
-        end
-      | Some c -> begin
-          st.held_block <- Some fall_block.block_type;
-          place_block st fall_block None;
-          st.use_hold <- false;
-          spawn_tetromino c st
-        end
-    end
+  if use_hold st then begin
+    let fall_block = get_falling st in
+    match st.held_block with
+    | None -> begin
+        st.held_block <- Some fall_block.block_type;
+        place_block st fall_block None;
+        st.use_hold <- false;
+        spawn_next st
+      end
+    | Some c -> begin
+        st.held_block <- Some fall_block.block_type;
+        place_block st fall_block None;
+        st.use_hold <- false;
+        spawn_tetromino c st
+      end
+  end
   else ()
 
 let initialize ?first_block:(first = None) ?auto_spawn:(auto = true )() =
