@@ -48,7 +48,7 @@ train:
 	$(OCAMLBUILD) $(TRAIN) && ./$(TRAIN)
 
 zip:
-	zip tetris.zip *.ml* *.txt _tags Makefile .merlin .ocamlinit -x _build
+	zip tetris.zip *.ml* INSTALL.txt _tags Makefile .merlin .ocamlinit -x _build
 
 docs: docs-public docs-private
 
